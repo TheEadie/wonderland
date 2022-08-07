@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Wonderland.Chip8;
 
 public class ConsoleScreen

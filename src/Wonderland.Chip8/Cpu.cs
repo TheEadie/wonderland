@@ -23,7 +23,7 @@ public class Cpu
     public void Step()
     {
         var instruction = Fetch();
-        switch (instruction.One)
+        switch (instruction.Type)
         {
             // Clear Screen
             case 0x0:
@@ -32,25 +32,26 @@ public class Cpu
                 break;
             // Jump
             case 0x1:
-                PC = GetNNN(instruction);
+                PC = instruction.NNN;
                 break;
             // Set
             case 0x6:
-                V[GetX(instruction)] = GetNN(instruction);
+                V[instruction.X] = instruction.NN;
                 break;
             // Add
             case 0x7:
-                V[GetX(instruction)] += GetNN(instruction);
+                V[instruction.X] += instruction.NN;
                 break;
             // Update I
             case 0xA:
-                I = GetNNN(instruction);
+                I = instruction.NNN;
                 break;
+            // Draw sprite
             case 0xD:
-                var end = I + GetN(instruction);
+                var end = I + instruction.N;
                 var sprite = _memory[I..end];
-                var x = V[GetX(instruction)];
-                var y = V[GetY(instruction)];
+                var x = V[instruction.X];
+                var y = V[instruction.Y];
                 _gpu.Draw(x, y, sprite);
                 break;
             default:
@@ -65,37 +66,14 @@ public class Cpu
 
         var nextMemory = new Instruction(
             (ushort)opCode,
-            (byte)((opCode >> 12) % 16),
-            (byte)((opCode >> 8) % 16),
-            (byte)((opCode >> 4) % 16),
-            (byte)(opCode % 16));
+            (byte)((opCode >> 12) & 0x000F),
+            (byte)((opCode >> 8) & 0x000F),
+            (byte)((opCode >> 4) & 0x000F),
+            (byte)(opCode & 0x000F),
+            (byte)(opCode & 0x00FF),
+            (ushort)(opCode & 0x0FFF));
         PC += 2;
         return nextMemory;
-    }
-
-    private byte GetX(Instruction instruction)
-    {
-        return (byte)((instruction.OpCode >> 8) & 0x000F);
-    }
-
-    private byte GetY(Instruction instruction)
-    {
-        return (byte)((instruction.OpCode >> 4) & 0x000F);
-    }
-
-    private ushort GetNNN(Instruction instruction)
-    {
-        return (ushort)(instruction.OpCode & 0x0FFF);
-    }
-
-    private byte GetNN(Instruction instruction)
-    {
-        return (byte)(instruction.OpCode & 0x00FF);
-    }
-
-    private byte GetN(Instruction instruction)
-    {
-        return (byte)(instruction.OpCode & 0x000F);
     }
 
     public void PrintDebug()
@@ -105,4 +83,4 @@ public class Cpu
     }
 }
 
-internal record struct Instruction(ushort OpCode, byte One, byte Two, byte Three, byte Four);
+internal record struct Instruction(ushort OpCode, byte Type, byte X, byte Y, byte N, byte NN, ushort NNN);
