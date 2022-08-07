@@ -5,12 +5,14 @@ public class Emulator
     private readonly byte[] _memory;
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
-    
+    private readonly ConsoleScreen _screen;
+
     public Emulator()
     {
         _memory = new byte[4096];
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
+        _screen = new ConsoleScreen(_gpu);
     }
 
     public void Load(string pathToRom)
@@ -22,10 +24,14 @@ public class Emulator
     public void Run()
     {
         Console.WriteLine("Running...");
-        _cpu.Step();
-        _cpu.Step();
-        _cpu.Step();
-        _cpu.Step();
-        _cpu.Step();
+        _ = _screen.Draw(CancellationToken.None);
+        while (true)
+        {
+            _cpu.Step();
+            //_cpu.PrintDebug();
+            //_gpu.PrintDebug();
+
+            //Console.ReadKey();
+        }
     }
 }

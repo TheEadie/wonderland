@@ -9,7 +9,7 @@ public class Cpu
     public int I { get; private set; }
     public byte[] V { get; }
     public Stack<ushort> Stack { get; }
-    
+
     public Cpu(byte[] memory, Gpu gpu)
     {
         _memory = memory;
@@ -19,12 +19,10 @@ public class Cpu
         V = new byte[16];
         Stack = new Stack<ushort>();
     }
-    
+
     public void Step()
     {
         var instruction = Fetch();
-        Console.WriteLine($"OpCode: {instruction.OpCode:x4}");
-
         switch (instruction.One)
         {
             // Clear Screen
@@ -48,10 +46,16 @@ public class Cpu
             case 0xA:
                 I = GetNNN(instruction);
                 break;
+            case 0xD:
+                var end = I + GetN(instruction);
+                var sprite = _memory[I..end];
+                var x = V[GetX(instruction)];
+                var y = V[GetY(instruction)];
+                _gpu.Draw(x, y, sprite);
+                break;
             default:
                 throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
         }
-        PrintDebug();
     }
 
     private Instruction Fetch()
@@ -68,30 +72,30 @@ public class Cpu
         PC += 2;
         return nextMemory;
     }
-    
+
     private byte GetX(Instruction instruction)
     {
-        return (byte)((instruction.OpCode >> 8) % 16);
+        return (byte)((instruction.OpCode >> 8) & 0x000F);
     }
-    
+
     private byte GetY(Instruction instruction)
     {
-        return (byte)((instruction.OpCode >> 4) % 16);
+        return (byte)((instruction.OpCode >> 4) & 0x000F);
     }
 
     private ushort GetNNN(Instruction instruction)
     {
-        return (ushort)(instruction.OpCode % 64);
+        return (ushort)(instruction.OpCode & 0x0FFF);
     }
-    
+
     private byte GetNN(Instruction instruction)
     {
-        return (byte)(instruction.OpCode % 32);
+        return (byte)(instruction.OpCode & 0x00FF);
     }
-    
+
     private byte GetN(Instruction instruction)
     {
-        return (byte)(instruction.OpCode % 16);
+        return (byte)(instruction.OpCode & 0x000F);
     }
 
     public void PrintDebug()
