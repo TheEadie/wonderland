@@ -203,6 +203,10 @@ public class Cpu
                     case 0x65:
                         _memory[I..(I + instruction.X + 1)].CopyTo(V, 0);
                         break;
+                    // Add to index
+                    case 0x1E:
+                        I += V[instruction.X];
+                        break;
 
                     default:
                         throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
