@@ -181,6 +181,33 @@ public class Cpu
                 _gpu.Draw(x, y, sprite);
                 // TODO - set VF if any pixel are turned off
                 break;
+            case 0xF:
+                switch (instruction.NN)
+                {
+                    // Font character
+                    case 0x29:
+                        I = (ushort)(V[instruction.X] + 0x50);
+                        break;
+                    // Binary coded decimal conversion
+                    case 0x33:
+                        var value = V[instruction.X];
+                        _memory[I] = (byte)(value / 100);
+                        _memory[I + 1] = (byte)(value / 10 % 10);
+                        _memory[I + 2] = (byte)(value % 10);
+                        break;
+                    // Store memory
+                    case 0x55:
+                        V[0..(instruction.X + 1)].CopyTo(_memory, I);
+                        break;
+                    // Load memory
+                    case 0x65:
+                        _memory[I..(I + instruction.X + 1)].CopyTo(V, 0);
+                        break;
+
+                    default:
+                        throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
+                }
+                break;
             default:
                 throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
         }
