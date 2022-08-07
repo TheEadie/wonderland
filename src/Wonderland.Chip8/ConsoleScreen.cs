@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Wonderland.Chip8;
 
 public class ConsoleScreen
@@ -13,17 +15,22 @@ public class ConsoleScreen
     {
         Console.Clear();
         Console.CursorVisible = false;
+
         while (!cancellationToken.IsCancellationRequested)
         {
             var vRam = _gpu.GetVRam();
 
             int width = vRam.GetLength(0);
             int height = vRam.GetLength(1);
+
+            var startX = (Console.WindowWidth / 2) - (width / 2);
+            var startY = (Console.WindowHeight / 2) - (height / 2);
+
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < width; x++)
                 {
-                    Console.SetCursorPosition(x, y);
+                    Console.SetCursorPosition(startX + x, startY + y);
                     Console.Write(vRam[x, y] ? '■' : ' ');
                 }
             }
