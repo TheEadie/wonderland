@@ -13,6 +13,8 @@ public class Emulator
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
         _screen = new ConsoleScreen(_gpu);
+
+        _memory[0x50] = 0xF0;
     }
 
     public void Load(string pathToRom)

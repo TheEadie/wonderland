@@ -5,8 +5,8 @@ public class Cpu
     private readonly byte[] _memory;
 
     private readonly Gpu _gpu;
-    public int PC { get; private set; }
-    public int I { get; private set; }
+    public ushort PC { get; private set; }
+    public ushort I { get; private set; }
     public byte[] V { get; }
     public Stack<ushort> Stack { get; }
 
@@ -25,14 +25,51 @@ public class Cpu
         var instruction = Fetch();
         switch (instruction.Type)
         {
-            // Clear Screen
             case 0x0:
-                // TODO: Check that its actually 0x00E0
-                _gpu.Clear();
+                switch (instruction.NN)
+                {
+                    // Clear Screen
+                    case 0xE0:
+                        _gpu.Clear();
+                        break;
+                    // Return from sub-routine
+                    case 0xEE:
+                        PC = Stack.Pop();
+                        break;
+                    // Execute machine language routine (unused)
+                    default:
+                        break;
+                }
                 break;
             // Jump
             case 0x1:
                 PC = instruction.NNN;
+                break;
+            // Call Sub-routine
+            case 0x2:
+                Stack.Push(PC);
+                PC = instruction.NNN;
+                break;
+            // Equal
+            case 0x3:
+                if (V[instruction.X] == instruction.NN)
+                {
+                    PC += 2;
+                }
+                break;
+            // Not equal
+            case 0x4:
+                if (V[instruction.X] != instruction.NN)
+                {
+                    PC += 2;
+                }
+                break;
+            // Equal
+            case 0x5:
+                if (V[instruction.X] == V[instruction.Y])
+                {
+                    PC += 2;
+                }
                 break;
             // Set
             case 0x6:
@@ -42,9 +79,98 @@ public class Cpu
             case 0x7:
                 V[instruction.X] += instruction.NN;
                 break;
+            // Logic and arithmetic
+            case 0x8:
+                switch (instruction.N)
+                {
+                    // Set
+                    case 0x0:
+                        V[instruction.X] = V[instruction.Y];
+                        break;
+                    // OR
+                    case 0x1:
+                        V[instruction.X] |= V[instruction.Y];
+                        break;
+                    // AND
+                    case 0x2:
+                        V[instruction.X] &= V[instruction.Y];
+                        break;
+                    // XOR
+                    case 0x3:
+                        V[instruction.X] ^= V[instruction.Y];
+                        break;
+                    // Add
+                    case 0x4:
+                        var add = V[instruction.X] + V[instruction.Y];
+                        V[instruction.X] = (byte)add;
+                        if (add > 255)
+                        {
+                            V[0xF] = 1;
+                        }
+                        else
+                        {
+                            V[0xF] = 0;
+                        }
+                        break;
+                    // Subtract
+                    case 0x5:
+                        var subXY = V[instruction.X] - V[instruction.Y];
+                        V[instruction.X] = (byte)subXY;
+                        if (subXY > 0)
+                        {
+                            V[0xF] = 1;
+                        }
+                        else
+                        {
+                            V[0xF] = 0;
+                        }
+                        break;
+                    // Subtract
+                    case 0x7:
+                        var subYX = V[instruction.Y] - V[instruction.X];
+                        V[instruction.X] = (byte)subYX;
+                        if (subYX > 0)
+                        {
+                            V[0xF] = 1;
+                        }
+                        else
+                        {
+                            V[0xF] = 0;
+                        }
+                        break;
+                    // Shift Right
+                    case 0x6:
+                        V[0xF] = (byte)(V[instruction.X] & 1);
+                        V[instruction.X] >>= 1;
+                        break;
+                    // Shift Left
+                    case 0xE:
+                        V[0xF] = (byte)((V[instruction.X] >> 7) & 1);
+                        V[instruction.X] <<= 1;
+                        break;
+
+                }
+                break;
+            // Not equal
+            case 0x9:
+                if (V[instruction.X] != V[instruction.Y])
+                {
+                    PC += 2;
+                }
+                break;
             // Update I
             case 0xA:
                 I = instruction.NNN;
+                break;
+            // Jump
+            case 0xB:
+                PC = (ushort)(V[0x0] + instruction.NNN);
+                break;
+            // Random
+            case 0xC:
+                var random = new Random();
+                var num = random.Next(256);
+                V[instruction.X] = (byte)(num & instruction.NN);
                 break;
             // Draw sprite
             case 0xD:
@@ -53,6 +179,7 @@ public class Cpu
                 var x = V[instruction.X];
                 var y = V[instruction.Y];
                 _gpu.Draw(x, y, sprite);
+                // TODO - set VF if any pixel are turned off
                 break;
             default:
                 throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
