@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Wonderland.Chip8;
 
 public class Emulator
@@ -6,6 +8,8 @@ public class Emulator
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
     private readonly ConsoleScreen _screen;
+    private readonly List<TimeSpan> _actual60HzTimes;
+    private readonly List<TimeSpan> _actual1KHzTimes;
 
     public Emulator()
     {
@@ -13,6 +17,8 @@ public class Emulator
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
         _screen = new ConsoleScreen(_gpu);
+        _actual60HzTimes = new List<TimeSpan>();
+        _actual1KHzTimes = new List<TimeSpan>();
     }
 
     public void Load(string pathToRom)
@@ -43,17 +49,55 @@ public class Emulator
         rom.CopyTo(_memory, 0x200);
     }
 
-    public async Task Run()
+    public async Task Run(CancellationToken cancellationToken)
     {
-        Console.WriteLine("Running...");
-        _ = _screen.Draw(CancellationToken.None);
-        while (true)
+        _screen.Init();
+        await Task.WhenAll(
+            Run1Hz(cancellationToken),
+            Run60Hz(cancellationToken), 
+            Run1KHz(cancellationToken));
+    }
+    
+    private async Task Run1Hz(CancellationToken cancellationToken)
+    {
+        var ticker1Hz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond);
+        var timer = new PeriodicTimer(ticker1Hz);
+
+        while (await timer.WaitForNextTickAsync(cancellationToken))
+        {
+            var avgFrame = _actual60HzTimes.Average(x => x.TotalMilliseconds);
+            var avgCpuTick = _actual1KHzTimes.Average(x => x.TotalMilliseconds);
+            _screen.UpdateStats((int)(1000 / avgFrame), (int)(1000 / avgCpuTick));
+            _actual60HzTimes.Clear();
+            _actual1KHzTimes.Clear();
+        }
+    }
+
+    private async Task Run60Hz(CancellationToken cancellationToken)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var ticks60Hz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
+        var timer = new PeriodicTimer(ticks60Hz);
+
+        while (await timer.WaitForNextTickAsync(cancellationToken))
+        {
+            _screen.DrawFrame();
+            _actual60HzTimes.Add(stopwatch.Elapsed);
+            stopwatch.Restart();
+        }
+    }
+    
+    private async Task Run1KHz(CancellationToken cancellationToken)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var ticks1KHz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
+        var timer = new PeriodicTimer(ticks1KHz);
+
+        while (await timer.WaitForNextTickAsync(cancellationToken))
         {
             _cpu.Step();
-            //_cpu.PrintDebug();
-            //_gpu.PrintDebug();
-
-            //Console.ReadKey();
+            _actual1KHzTimes.Add(stopwatch.Elapsed);
+            stopwatch.Restart();
         }
     }
 }
