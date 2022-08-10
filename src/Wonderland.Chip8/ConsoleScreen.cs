@@ -18,7 +18,7 @@ public class ConsoleScreen
         Console.Clear();
         Console.CursorVisible = false;
     }
-    
+
     public void DrawFrame()
     {
         var vRam = _gpu.GetVRam();
@@ -26,7 +26,7 @@ public class ConsoleScreen
         var height = vRam.GetLength(1);
 
         var startX = (Console.WindowWidth / 2) - (width / 2);
-        var startY = (Console.WindowHeight / 2) - (height / 2);
+        var startY = (Console.WindowHeight / 2) - (height / 2) - 4;
 
         for (var y = 0; y < height; y++)
         {

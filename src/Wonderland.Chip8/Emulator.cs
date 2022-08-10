@@ -9,7 +9,7 @@ public class Emulator
     private readonly Gpu _gpu;
     private readonly ConsoleScreen _screen;
     private int _fps;
-    private int _actual1KHz;
+    private int _stepsPerSecond;
 
     public Emulator()
     {
@@ -49,47 +49,49 @@ public class Emulator
 
     public async Task Run(CancellationToken cancellationToken)
     {
+        var timer = Stopwatch.StartNew();
+        var prevtime1Hz = TimeSpan.Zero;
+        var prevtime60Hz = TimeSpan.Zero;
         _screen.Init();
-        await Task.WhenAll(
-            Run1Hz(cancellationToken),
-            Run60Hz(cancellationToken),
-            Run1KHz(cancellationToken));
-    }
 
-    private async Task Run1Hz(CancellationToken cancellationToken)
-    {
-        var ticker1Hz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond);
-        var timer = new PeriodicTimer(ticker1Hz);
-
-        while (await timer.WaitForNextTickAsync(cancellationToken))
+        while (!cancellationToken.IsCancellationRequested)
         {
-            _screen.UpdateStats(_fps, _actual1KHz);
-            _fps = 0;
-            _actual1KHz = 0;
+            prevtime1Hz = RunOnTimer(timer.Elapsed, prevtime1Hz,
+                TimeSpan.FromSeconds(1),
+                () =>
+                {
+                    _screen.UpdateStats(_fps, _stepsPerSecond);
+                    _fps = 0;
+                    _stepsPerSecond = 0;
+                });
+
+            prevtime60Hz = RunOnTimer(timer.Elapsed, prevtime60Hz,
+                TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60),
+                () =>
+                {
+                    _screen.DrawFrame();
+                    _fps++;
+
+                    for (var i = 0; i < 10; i++)
+                    {
+                        _cpu.Step();
+                        _stepsPerSecond++;
+                    }
+                });
         }
     }
 
-    private async Task Run60Hz(CancellationToken cancellationToken)
+    private static TimeSpan RunOnTimer(TimeSpan now, TimeSpan lastRun, TimeSpan interval, Action toRun)
     {
-        var ticks60Hz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
-        var timer = new PeriodicTimer(ticks60Hz);
-
-        while (await timer.WaitForNextTickAsync(cancellationToken))
+        var elapsed = now - lastRun;
+        while (elapsed >= interval)
         {
-            _screen.DrawFrame();
-            _fps++;
-        }
-    }
+            toRun();
 
-    private async Task Run1KHz(CancellationToken cancellationToken)
-    {
-        var ticks1KHz = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
-        var timer = new PeriodicTimer(ticks1KHz);
-
-        while (await timer.WaitForNextTickAsync(cancellationToken))
-        {
-            _cpu.Step();
-            _actual1KHz++;
+            lastRun += interval;
+            elapsed -= interval;
         }
+
+        return lastRun;
     }
 }
