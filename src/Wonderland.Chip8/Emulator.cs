@@ -43,7 +43,7 @@ public class Emulator
         rom.CopyTo(_memory, 0x200);
     }
 
-    public void Run()
+    public async Task Run()
     {
         Console.WriteLine("Running...");
         _ = _screen.Draw(CancellationToken.None);
