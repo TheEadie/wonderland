@@ -16,13 +16,13 @@ public class Emulator
 
     private bool _pause;
 
-    public Emulator()
+    public Emulator(int clockSpeed)
     {
         _memory = new byte[4096];
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
         _screen = new ConsoleScreen(_gpu, _cpu);
-        _targetClockSpeed = 1000;
+        _targetClockSpeed = clockSpeed;
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
 
