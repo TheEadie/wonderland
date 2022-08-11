@@ -1,10 +1,10 @@
 ﻿using System.CommandLine;
 using Wonderland.Chip8;
 
-var romOption = new Option<string>(
-    name: "--rom",
+var romArg = new Argument<string>(
+    name: "rom-path",
     description: "The path to the ROM to use in the emulator."
-) {IsRequired = true};
+);
 
 var clockSpeedOption = new Option<int>(
     name: "--clock-speed",
@@ -12,14 +12,14 @@ var clockSpeedOption = new Option<int>(
     getDefaultValue: () => 1000);
 
 var rootCommand = new RootCommand("Wonderland Chip-8 emulator");
-rootCommand.AddOption(romOption);
+rootCommand.AddArgument(romArg);
 rootCommand.AddOption(clockSpeedOption);
 
 rootCommand.SetHandler(async (file, clockSpeed) => 
     { 
         await RunEmulator(file, clockSpeed); 
     },
-    romOption,
+    romArg,
     clockSpeedOption);
 
 return await rootCommand.InvokeAsync(args);

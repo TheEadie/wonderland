@@ -16,7 +16,7 @@ public class Emulator
 
     private bool _pause;
 
-    public Emulator(int clockSpeed)
+    public Emulator(int clockSpeed = 1000)
     {
         _memory = new byte[4096];
         _gpu = new Gpu();
@@ -67,30 +67,34 @@ public class Emulator
         while (!cancellationToken.IsCancellationRequested)
         {
             ProcessInput();
-            
+
+            void EverySecond()
+            {
+                _screen.UpdateStats(_actualFps, _actualClockSpeed);
+                _actualFps = 0;
+                _actualClockSpeed = 0;
+            }
+
+            void EveryFrame()
+            {
+                _screen.DrawFrame();
+                _actualFps++;
+
+                if (_pause) return;
+                for (var i = 0; i < _stepsPerFrame; i++)
+                {
+                    _cpu.Step();
+                    _actualClockSpeed++;
+                }
+            }
+
             prevtime1Hz = RunOnTimer(timer.Elapsed, prevtime1Hz,
                 TimeSpan.FromSeconds(1),
-                () =>
-                {
-                    _screen.UpdateStats(_actualFps, _actualClockSpeed);
-                    _actualFps = 0;
-                    _actualClockSpeed = 0;
-                });
+                EverySecond);
 
             prevtime60Hz = RunOnTimer(timer.Elapsed, prevtime60Hz,
                 TimeSpan.FromTicks(TimeSpan.TicksPerSecond / _targetFps),
-                () =>
-                {
-                    _screen.DrawFrame();
-                    _actualFps++;
-
-                    if (_pause) return;
-                    for (var i = 0; i < _stepsPerFrame; i++)
-                    {
-                        _cpu.Step();
-                        _actualClockSpeed++;
-                    }
-                });
+                EveryFrame);
         }
     }
 
