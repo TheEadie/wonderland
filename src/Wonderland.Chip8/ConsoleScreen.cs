@@ -3,12 +3,14 @@ namespace Wonderland.Chip8;
 public class ConsoleScreen
 {
     private readonly Gpu _gpu;
+    private readonly Cpu _cpu;
     private int _fps;
     private int _instructionsPerSecond;
 
-    public ConsoleScreen(Gpu gpu)
+    public ConsoleScreen(Gpu gpu, Cpu cpu)
     {
         _gpu = gpu;
+        _cpu = cpu;
         _fps = 0;
         _instructionsPerSecond = 0;
     }
@@ -17,6 +19,7 @@ public class ConsoleScreen
     {
         Console.Clear();
         Console.CursorVisible = false;
+        Console.ForegroundColor = ConsoleColor.Green;
     }
 
     public void DrawFrame()
@@ -26,7 +29,7 @@ public class ConsoleScreen
         var height = vRam.GetLength(1);
 
         var startX = (Console.WindowWidth / 2) - (width / 2);
-        var startY = (Console.WindowHeight / 2) - (height / 2) - 4;
+        var startY = (Console.WindowHeight / 2) - (height / 2) - 6;
 
         for (var y = 0; y < height; y++)
         {
@@ -39,6 +42,18 @@ public class ConsoleScreen
 
         Console.SetCursorPosition(startX, startY + height + 2);
         Console.WriteLine($"FPS: {_fps} Instructions: {_instructionsPerSecond}  ");
+        
+        Console.SetCursorPosition(startX + width + 2, startY);
+        Console.WriteLine($"PC: {_cpu.PC:x4}");
+        Console.SetCursorPosition(startX + width + 2, startY + 1);
+        Console.WriteLine($"I: {_cpu.I:x3}");
+
+        for (var i = 0; i < 0xF; i++)
+        {
+            Console.SetCursorPosition(startX + width + 2, startY + 4+ i);
+            Console.WriteLine($"V{i:x}: {_cpu.V[i]:x}");    
+        }
+        
     }
 
     public void UpdateStats(int fps, int instructionsPerSecond)

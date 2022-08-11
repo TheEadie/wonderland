@@ -10,19 +10,23 @@ public class Emulator
     private readonly ConsoleScreen _screen;
     private readonly int _targetClockSpeed;
     private readonly int _targetFps;
+    private int _actualClockSpeed;
+    private int _actualFps;
     private readonly double _stepsPerFrame;
-    private int _fps;
-    private int _stepsPerSecond;
+
+    private bool _pause;
 
     public Emulator()
     {
         _memory = new byte[4096];
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
-        _screen = new ConsoleScreen(_gpu);
+        _screen = new ConsoleScreen(_gpu, _cpu);
         _targetClockSpeed = 1000;
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
+
+        _pause = false;
     }
 
     public void Load(string pathToRom)
@@ -62,13 +66,15 @@ public class Emulator
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            ProcessInput();
+            
             prevtime1Hz = RunOnTimer(timer.Elapsed, prevtime1Hz,
                 TimeSpan.FromSeconds(1),
                 () =>
                 {
-                    _screen.UpdateStats(_fps, _stepsPerSecond);
-                    _fps = 0;
-                    _stepsPerSecond = 0;
+                    _screen.UpdateStats(_actualFps, _actualClockSpeed);
+                    _actualFps = 0;
+                    _actualClockSpeed = 0;
                 });
 
             prevtime60Hz = RunOnTimer(timer.Elapsed, prevtime60Hz,
@@ -76,14 +82,26 @@ public class Emulator
                 () =>
                 {
                     _screen.DrawFrame();
-                    _fps++;
+                    _actualFps++;
 
+                    if (_pause) return;
                     for (var i = 0; i < _stepsPerFrame; i++)
                     {
                         _cpu.Step();
-                        _stepsPerSecond++;
+                        _actualClockSpeed++;
                     }
                 });
+        }
+    }
+
+    private void ProcessInput()
+    {
+        if (!Console.KeyAvailable) return;
+        
+        var key = Console.ReadKey(true);
+        if (key.Key == ConsoleKey.P)
+        {
+            _pause = !_pause;
         }
     }
 
