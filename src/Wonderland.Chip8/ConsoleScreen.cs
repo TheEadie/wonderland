@@ -44,7 +44,7 @@ public class ConsoleScreen
         Console.WriteLine($"FPS: {_fps}  ");
         Console.SetCursorPosition(startX + width + 2, startY + 1);
         Console.WriteLine($"Instructions: {_instructionsPerSecond}  ");
-        
+
         Console.SetCursorPosition(startX + width + 2, startY + 3);
         Console.WriteLine($"PC: {_cpu.PC:x4}");
         Console.SetCursorPosition(startX + width + 2, startY + 4);
@@ -53,17 +53,17 @@ public class ConsoleScreen
         for (var i = 0; i < 0xF; i++)
         {
             Console.SetCursorPosition(startX + width + 2, startY + 6 + i);
-            Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");    
+            Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");
         }
 
         var s = 0;
         foreach (var stackVal in _cpu.Stack)
         {
-            Console.SetCursorPosition(startX + width + 2, startY + 24 + s);
+            Console.SetCursorPosition(startX + width + 12, startY + 6 + s);
             Console.WriteLine($"S{s:x}: {stackVal:x2}");
             s++;
         }
-        
+
     }
 
     public void UpdateStats(int fps, int instructionsPerSecond)
