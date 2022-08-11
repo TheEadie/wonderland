@@ -69,8 +69,6 @@ public class Emulator
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            ProcessInput();
-
             void EverySecond()
             {
                 _screen.UpdateStats(_actualFps, _actualClockSpeed);
@@ -80,6 +78,7 @@ public class Emulator
 
             void EveryFrame()
             {
+                ProcessInput();
                 _screen.DrawFrame();
                 _actualFps++;
 
@@ -88,7 +87,6 @@ public class Emulator
                 _cpu.Step60Hz();
                 for (var i = 0; i < _stepsPerFrame; i++)
                 {
-                    ProcessInput();
                     _cpu.Step();
                     _actualClockSpeed++;
                 }

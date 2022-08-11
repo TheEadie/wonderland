@@ -11,6 +11,7 @@ public class ConsoleScreen
     {
         _gpu = gpu;
         _cpu = cpu;
+
         _fps = 0;
         _instructionsPerSecond = 0;
     }
@@ -50,7 +51,7 @@ public class ConsoleScreen
         Console.SetCursorPosition(startX + width + 2, startY + 4);
         Console.WriteLine($"I: {_cpu.I:x3}");
 
-        for (var i = 0; i < 0xF; i++)
+        for (var i = 0; i < 16; i++)
         {
             Console.SetCursorPosition(startX + width + 2, startY + 6 + i);
             Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");
@@ -63,7 +64,6 @@ public class ConsoleScreen
             Console.WriteLine($"S{s:x}: {stackVal:x2}");
             s++;
         }
-
     }
 
     public void UpdateStats(int fps, int instructionsPerSecond)
