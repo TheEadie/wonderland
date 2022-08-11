@@ -23,7 +23,7 @@ public class Emulator
         _memory = new byte[4096];
         _io = new ConsoleIO();
         _gpu = new Gpu();
-        _cpu = new Cpu(_memory, _gpu);
+        _cpu = new Cpu(_memory, _gpu, _io);
         _screen = new ConsoleScreen(_gpu, _cpu);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
@@ -104,7 +104,7 @@ public class Emulator
     private void ProcessInput()
     {
         _io.Step();
-        
+
         if (_io.Pause)
         {
             _pause = !_pause;

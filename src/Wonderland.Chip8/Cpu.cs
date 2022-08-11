@@ -5,15 +5,19 @@ public class Cpu
     private readonly byte[] _memory;
 
     private readonly Gpu _gpu;
+    private readonly ConsoleIO _io;
+
     public ushort PC { get; private set; }
     public ushort I { get; private set; }
     public byte[] V { get; }
     public Stack<ushort> Stack { get; }
 
-    public Cpu(byte[] memory, Gpu gpu)
+    public Cpu(byte[] memory, Gpu gpu, ConsoleIO io)
     {
         _memory = memory;
         _gpu = gpu;
+        _io = io;
+
         PC = 512;
         I = 0;
         V = new byte[16];
@@ -181,6 +185,25 @@ public class Cpu
                 _gpu.Draw(x, y, sprite);
                 // TODO - set VF if any pixel are turned off
                 break;
+            case 0xE:
+                switch (instruction.NN)
+                {
+                    case 0x9E:
+                        if (_io.Keys[V[instruction.X]])
+                        {
+                            PC += 2;
+                        }
+                        break;
+                    case 0xA1:
+                        if (!_io.Keys[V[instruction.X]])
+                        {
+                            PC += 2;
+                        }
+                        break;
+                    default:
+                        throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
+                }
+                break;
             case 0xF:
                 switch (instruction.NN)
                 {
@@ -207,7 +230,6 @@ public class Cpu
                     case 0x1E:
                         I += V[instruction.X];
                         break;
-
                     default:
                         throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
                 }
