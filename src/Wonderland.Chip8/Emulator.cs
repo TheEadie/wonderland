@@ -8,6 +8,8 @@ public class Emulator
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
     private readonly ConsoleScreen _screen;
+    private readonly ConsoleIO _io;
+
     private readonly int _targetClockSpeed;
     private readonly int _targetFps;
     private int _actualClockSpeed;
@@ -19,6 +21,7 @@ public class Emulator
     public Emulator(int clockSpeed = 1000)
     {
         _memory = new byte[4096];
+        _io = new ConsoleIO();
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
         _screen = new ConsoleScreen(_gpu, _cpu);
@@ -26,7 +29,7 @@ public class Emulator
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
 
-        _pause = false;
+        _pause = true;
     }
 
     public void Load(string pathToRom)
@@ -100,12 +103,15 @@ public class Emulator
 
     private void ProcessInput()
     {
-        if (!Console.KeyAvailable) return;
+        _io.Step();
         
-        var key = Console.ReadKey(true);
-        if (key.Key == ConsoleKey.P)
+        if (_io.Pause)
         {
             _pause = !_pause;
+        }
+        if (_io.StepForward)
+        {
+            _cpu.Step();
         }
     }
 

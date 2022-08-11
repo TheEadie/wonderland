@@ -52,8 +52,16 @@ public class ConsoleScreen
 
         for (var i = 0; i < 0xF; i++)
         {
-            Console.SetCursorPosition(startX + width + 2, startY + 6+ i);
+            Console.SetCursorPosition(startX + width + 2, startY + 6 + i);
             Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");    
+        }
+
+        var s = 0;
+        foreach (var stackVal in _cpu.Stack)
+        {
+            Console.SetCursorPosition(startX + width + 2, startY + 24 + s);
+            Console.WriteLine($"S{s:x}: {stackVal:x2}");
+            s++;
         }
         
     }
