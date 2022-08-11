@@ -15,20 +15,15 @@ var rootCommand = new RootCommand("Wonderland Chip-8 emulator");
 rootCommand.AddArgument(romArg);
 rootCommand.AddOption(clockSpeedOption);
 
-rootCommand.SetHandler(async (file, clockSpeed) => 
-    { 
-        await RunEmulator(file, clockSpeed); 
-    },
-    romArg,
-    clockSpeedOption);
+rootCommand.SetHandler(RunEmulator, romArg, clockSpeedOption);
 
 return await rootCommand.InvokeAsync(args);
 
 
-async Task RunEmulator(string romPath, int clockSpeed)
+void RunEmulator(string romPath, int clockSpeed)
 {
     var emulator = new Emulator(clockSpeed);
     emulator.Load(romPath);
-    await emulator.Run(CancellationToken.None);
+    emulator.Run(CancellationToken.None);
 }
 

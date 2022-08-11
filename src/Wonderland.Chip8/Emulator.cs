@@ -57,7 +57,7 @@ public class Emulator
         rom.CopyTo(_memory, 0x200);
     }
 
-    public async Task Run(CancellationToken cancellationToken)
+    public void Run(CancellationToken cancellationToken)
     {
         var timer = Stopwatch.StartNew();
         var prevtime1Hz = TimeSpan.Zero;
