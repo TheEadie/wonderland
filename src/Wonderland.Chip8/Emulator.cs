@@ -8,6 +8,9 @@ public class Emulator
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
     private readonly ConsoleScreen _screen;
+    private readonly int _targetClockSpeed;
+    private readonly int _targetFps;
+    private readonly double _stepsPerFrame;
     private int _fps;
     private int _stepsPerSecond;
 
@@ -17,6 +20,9 @@ public class Emulator
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu);
         _screen = new ConsoleScreen(_gpu);
+        _targetClockSpeed = 1000;
+        _targetFps = 60;
+        _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
     }
 
     public void Load(string pathToRom)
@@ -66,13 +72,13 @@ public class Emulator
                 });
 
             prevtime60Hz = RunOnTimer(timer.Elapsed, prevtime60Hz,
-                TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60),
+                TimeSpan.FromTicks(TimeSpan.TicksPerSecond / _targetFps),
                 () =>
                 {
                     _screen.DrawFrame();
                     _fps++;
 
-                    for (var i = 0; i < 10; i++)
+                    for (var i = 0; i < _stepsPerFrame; i++)
                     {
                         _cpu.Step();
                         _stepsPerSecond++;
