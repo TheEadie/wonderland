@@ -84,8 +84,11 @@ public class Emulator
                 _actualFps++;
 
                 if (_pause) return;
+
+                _cpu.Step60Hz();
                 for (var i = 0; i < _stepsPerFrame; i++)
                 {
+                    ProcessInput();
                     _cpu.Step();
                     _actualClockSpeed++;
                 }

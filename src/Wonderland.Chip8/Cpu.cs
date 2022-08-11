@@ -12,6 +12,9 @@ public class Cpu
     public byte[] V { get; }
     public Stack<ushort> Stack { get; }
 
+    public byte DelayTimer { get; private set; }
+    public byte SoundTimer { get; private set; }
+
     public Cpu(byte[] memory, Gpu gpu, ConsoleIO io)
     {
         _memory = memory;
@@ -22,6 +25,12 @@ public class Cpu
         I = 0;
         V = new byte[16];
         Stack = new Stack<ushort>();
+    }
+
+    public void Step60Hz()
+    {
+        DelayTimer--;
+        SoundTimer--;
     }
 
     public void Step()
@@ -230,6 +239,18 @@ public class Cpu
                     case 0x1E:
                         I += V[instruction.X];
                         break;
+                    // Get delay timer
+                    case 0x07:
+                        V[instruction.X] = DelayTimer;
+                        break;
+                    // Set delay timer
+                    case 0x15:
+                        DelayTimer = V[instruction.X];
+                        break;
+                    // Set sound timer
+                    case 0x18:
+                        SoundTimer = V[instruction.X];
+                        break;
                     default:
                         throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
                 }
@@ -260,6 +281,13 @@ public class Cpu
     {
         Console.WriteLine($"PC: {PC:x3}, I: {I:x3}");
         Console.WriteLine(string.Join(',', V.Select((x, i) => $"V{i:x}: {x:x}")));
+    }
+
+    public string GetOpCode()
+    {
+        var opCode = _memory[PC] << 8;
+        opCode += _memory[PC + 1];
+        return $"{opCode:x4}";
     }
 }
 

@@ -46,7 +46,7 @@ public class ConsoleScreen
         Console.WriteLine($"Instructions: {_instructionsPerSecond}  ");
 
         Console.SetCursorPosition(startX + width + 2, startY + 3);
-        Console.WriteLine($"PC: {_cpu.PC:x4}");
+        Console.WriteLine($"PC: {_cpu.PC:x4} - {_cpu.GetOpCode()}");
         Console.SetCursorPosition(startX + width + 2, startY + 4);
         Console.WriteLine($"I: {_cpu.I:x3}");
 

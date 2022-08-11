@@ -2,7 +2,7 @@
 
 public class ConsoleIO
 {
-    public bool[] Keys { get; } = new bool[0xF];
+    public bool[] Keys { get; } = new bool[16];
     public bool Pause { get; private set; }
     public bool StepForward { get; private set; }
 
