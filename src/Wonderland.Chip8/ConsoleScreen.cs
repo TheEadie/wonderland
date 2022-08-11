@@ -28,8 +28,8 @@ public class ConsoleScreen
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
 
-        var startX = (Console.WindowWidth / 2) - (width / 2);
-        var startY = (Console.WindowHeight / 2) - (height / 2) - 6;
+        var startX = (Console.WindowWidth / 2) - (width / 2) - 10;
+        var startY = (Console.WindowHeight / 2) - (height / 2);
 
         for (var y = 0; y < height; y++)
         {
@@ -40,17 +40,19 @@ public class ConsoleScreen
             }
         }
 
-        Console.SetCursorPosition(startX, startY + height + 2);
-        Console.WriteLine($"FPS: {_fps} Instructions: {_instructionsPerSecond}  ");
-        
         Console.SetCursorPosition(startX + width + 2, startY);
-        Console.WriteLine($"PC: {_cpu.PC:x4}");
+        Console.WriteLine($"FPS: {_fps}  ");
         Console.SetCursorPosition(startX + width + 2, startY + 1);
+        Console.WriteLine($"Instructions: {_instructionsPerSecond}  ");
+        
+        Console.SetCursorPosition(startX + width + 2, startY + 3);
+        Console.WriteLine($"PC: {_cpu.PC:x4}");
+        Console.SetCursorPosition(startX + width + 2, startY + 4);
         Console.WriteLine($"I: {_cpu.I:x3}");
 
         for (var i = 0; i < 0xF; i++)
         {
-            Console.SetCursorPosition(startX + width + 2, startY + 4+ i);
+            Console.SetCursorPosition(startX + width + 2, startY + 6+ i);
             Console.WriteLine($"V{i:x}: {_cpu.V[i]:x}");    
         }
         
