@@ -8,6 +8,8 @@ public class ConsoleIO
 
     private readonly Dictionary<ConsoleKey, byte> _lookup;
 
+    private int _cooldown;
+
     public ConsoleIO()
     {
         _lookup = new Dictionary<ConsoleKey, byte> {
@@ -34,12 +36,19 @@ public class ConsoleIO
     {
         if (!Console.KeyAvailable)
         {
-            Pause = false;
-            StepForward = false;
-
-            for (int i = 0; i < 0xF; i++)
+            if (_cooldown <= 0)
             {
-                Keys[i] = false;
+                Pause = false;
+                StepForward = false;
+
+                for (var i = 0; i < 16; i++)
+                {
+                    Keys[i] = false;
+                }
+            }
+            else
+            {
+                _cooldown--;
             }
 
             return;
@@ -62,5 +71,7 @@ public class ConsoleIO
                 }
                 break;
         }
+
+        _cooldown = 10;
     }
 }

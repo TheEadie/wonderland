@@ -24,7 +24,7 @@ public class Emulator
         _io = new ConsoleIO();
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu, _io);
-        _screen = new ConsoleScreen(_gpu, _cpu);
+        _screen = new ConsoleScreen(_gpu, _cpu, _io);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;

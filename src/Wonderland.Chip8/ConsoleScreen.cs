@@ -4,13 +4,15 @@ public class ConsoleScreen
 {
     private readonly Gpu _gpu;
     private readonly Cpu _cpu;
+    private readonly ConsoleIO _io;
     private int _fps;
     private int _instructionsPerSecond;
 
-    public ConsoleScreen(Gpu gpu, Cpu cpu)
+    public ConsoleScreen(Gpu gpu, Cpu cpu, ConsoleIO io)
     {
         _gpu = gpu;
         _cpu = cpu;
+        _io = io;
 
         _fps = 0;
         _instructionsPerSecond = 0;
@@ -64,6 +66,17 @@ public class ConsoleScreen
             Console.WriteLine($"S{s:x}: {stackVal:x2}");
             s++;
         }
+
+        var keyPressed = _io.Keys.Select((b, i) => new {Index = i, Value = b})
+            .Where(o => o.Value)
+            .Select(o => o.Index)
+            .ToList();
+
+        var keyPressedCount = keyPressed.Count;
+        var keyPressedFirst = keyPressed.FirstOrDefault();
+        var keyPressedDisplay = (keyPressedCount > 0) ? keyPressedFirst.ToString("x") : " ";
+        Console.SetCursorPosition(startX + width + 22, startY + 6);
+        Console.WriteLine($"Key: {keyPressedDisplay}");
     }
 
     public void UpdateStats(int fps, int instructionsPerSecond)
