@@ -16,6 +16,7 @@ public class Emulator
     private int _actualClockSpeed;
     private int _actualFps;
     private readonly double _stepsPerFrame;
+    private int _debugStepsSinceLastStep60Hz;
 
     private bool _pause;
 
@@ -118,7 +119,14 @@ public class Emulator
         }
         if (_io.StepForward)
         {
+            if (_debugStepsSinceLastStep60Hz >= _stepsPerFrame)
+            {
+                _cpu.Step60Hz();
+                _debugStepsSinceLastStep60Hz = 0;
+            }
+            
             _cpu.Step();
+            _debugStepsSinceLastStep60Hz++;
         }
     }
 

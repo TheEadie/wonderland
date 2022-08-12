@@ -52,25 +52,32 @@ public class ConsoleScreen : IScreen
         Console.WriteLine($"PC: {_cpu.PC:x4} - {_cpu.GetOpCode()}");
         Console.SetCursorPosition(startX + width + 2, startY + 4);
         Console.WriteLine($"I: {_cpu.I:x3}");
+        
+        Console.SetCursorPosition(startX + width + 2, startY + 5);
+        Console.WriteLine($"DT: {_cpu.DelayTimer:x2}");
+        
+        Console.SetCursorPosition(startX + width + 2, startY + 6);
+        Console.WriteLine($"ST: {_cpu.SoundTimer:x2}");
 
         for (var i = 0; i < 16; i++)
         {
-            Console.SetCursorPosition(startX + width + 2, startY + 6 + i);
+            Console.SetCursorPosition(startX + width + 2, startY + 8 + i);
             Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");
         }
 
         var s = 0;
         foreach (var stackVal in _cpu.Stack)
         {
-            Console.SetCursorPosition(startX + width + 12, startY + 6 + s);
+            Console.SetCursorPosition(startX + width + 12, startY + 8 + s);
             Console.WriteLine($"S{s:x}: {stackVal:x2}");
             s++;
         }
 
         var keyPressed = _io.GetPressedKey();
         var keyPressedDisplay = (keyPressed != null) ? keyPressed.Value.ToString("x") : " ";
-        Console.SetCursorPosition(startX + width + 22, startY + 6);
+        Console.SetCursorPosition(startX + width + 2, startY + 25);
         Console.WriteLine($"Key: {keyPressedDisplay}");
+
     }
 
     public void UpdateStats(int fps, int instructionsPerSecond)
