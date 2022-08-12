@@ -29,8 +29,8 @@ public class Cpu
 
     public void Step60Hz()
     {
-        DelayTimer--;
-        SoundTimer--;
+        if (DelayTimer > 0) DelayTimer--;
+        if (SoundTimer > 0) SoundTimer--;
     }
 
     public void Step()
@@ -191,8 +191,8 @@ public class Cpu
                 var sprite = _memory[I..end];
                 var x = V[instruction.X];
                 var y = V[instruction.Y];
-                _gpu.Draw(x, y, sprite);
-                // TODO - set VF if any pixel are turned off
+                var turnedOff = _gpu.Draw(x, y, sprite);
+                V[0xF] = turnedOff ? (byte)1 : (byte)0;
                 break;
             case 0xE:
                 switch (instruction.NN)
