@@ -1,3 +1,5 @@
+using Wonderland.Chip8.ConsoleIO;
+
 namespace Wonderland.Chip8;
 
 public class Cpu
@@ -5,7 +7,7 @@ public class Cpu
     private readonly byte[] _memory;
 
     private readonly Gpu _gpu;
-    private readonly ConsoleIO _io;
+    private readonly IInputOutput _io;
 
     public ushort PC { get; private set; }
     public ushort I { get; private set; }
@@ -15,7 +17,7 @@ public class Cpu
     public byte DelayTimer { get; private set; }
     public byte SoundTimer { get; private set; }
 
-    public Cpu(byte[] memory, Gpu gpu, ConsoleIO io)
+    public Cpu(byte[] memory, Gpu gpu, IInputOutput io)
     {
         _memory = memory;
         _gpu = gpu;

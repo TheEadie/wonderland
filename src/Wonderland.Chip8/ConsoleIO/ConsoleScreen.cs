@@ -1,14 +1,14 @@
-namespace Wonderland.Chip8;
+namespace Wonderland.Chip8.ConsoleIO;
 
-public class ConsoleScreen
+public class ConsoleScreen : IScreen
 {
     private readonly Gpu _gpu;
     private readonly Cpu _cpu;
-    private readonly ConsoleIO _io;
+    private readonly IInputOutput _io;
     private int _fps;
     private int _instructionsPerSecond;
 
-    public ConsoleScreen(Gpu gpu, Cpu cpu, ConsoleIO io)
+    public ConsoleScreen(Gpu gpu, Cpu cpu, IInputOutput io)
     {
         _gpu = gpu;
         _cpu = cpu;

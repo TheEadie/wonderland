@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Wonderland.Chip8.ConsoleIO;
 
 namespace Wonderland.Chip8;
 
@@ -7,8 +8,8 @@ public class Emulator
     private readonly byte[] _memory;
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
-    private readonly ConsoleScreen _screen;
-    private readonly ConsoleIO _io;
+    private readonly IScreen _screen;
+    private readonly IInputOutput _io;
 
     private readonly int _targetClockSpeed;
     private readonly int _targetFps;
@@ -21,7 +22,7 @@ public class Emulator
     public Emulator(int clockSpeed = 1000)
     {
         _memory = new byte[4096];
-        _io = new ConsoleIO();
+        _io = new ConsoleInput();
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu, _io);
         _screen = new ConsoleScreen(_gpu, _cpu, _io);

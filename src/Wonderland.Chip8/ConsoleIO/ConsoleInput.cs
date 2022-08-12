@@ -1,6 +1,6 @@
-﻿namespace Wonderland.Chip8;
+﻿namespace Wonderland.Chip8.ConsoleIO;
 
-public class ConsoleIO
+public class ConsoleInput : IInputOutput
 {
     public bool[] Keys { get; } = new bool[16];
     public bool Pause { get; private set; }
@@ -10,7 +10,7 @@ public class ConsoleIO
 
     private int _cooldown;
 
-    public ConsoleIO()
+    public ConsoleInput()
     {
         _lookup = new Dictionary<ConsoleKey, byte> {
             {ConsoleKey.D1, 0x1},
@@ -46,12 +46,12 @@ public class ConsoleIO
 
     public void Beep()
     {
-        Console.Beep();
+        System.Console.Beep();
     }
 
     public void Step()
     {
-        if (!Console.KeyAvailable)
+        if (!System.Console.KeyAvailable)
         {
             if (_cooldown <= 0)
             {
@@ -71,7 +71,7 @@ public class ConsoleIO
             return;
         }
 
-        var key = Console.ReadKey(true).Key;
+        var key = System.Console.ReadKey(true).Key;
 
         switch (key)
         {
