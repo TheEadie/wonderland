@@ -29,7 +29,7 @@ public class Emulator
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
 
-        _pause = true;
+        _pause = false;
     }
 
     public void Load(string pathToRom)
