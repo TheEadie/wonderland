@@ -77,18 +77,21 @@ public class ConsoleIO
         {
             case ConsoleKey.P:
                 Pause = true;
+                _cooldown = 0;
                 break;
             case ConsoleKey.N:
                 StepForward = true;
+                _cooldown = 0;
                 break;
             default:
                 if (_lookup.ContainsKey(key))
                 {
                     Keys[_lookup[key]] = true;
                 }
+                _cooldown = 10;
                 break;
         }
 
-        _cooldown = 10;
+        
     }
 }
