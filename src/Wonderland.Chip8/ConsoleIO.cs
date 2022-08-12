@@ -32,6 +32,18 @@ public class ConsoleIO
         };
     }
 
+    public byte? GetPressedKey()
+    {
+        var keyPressed = Keys.Select((b, i) => new {Index = i, Value = b})
+            .Where(o => o.Value)
+            .Select(o => o.Index)
+            .ToList();
+
+        var keyPressedCount = keyPressed.Count;
+        var keyPressedFirst = keyPressed.FirstOrDefault();
+        return (keyPressedCount > 0) ? (byte)keyPressedFirst : null;
+    }
+
     public void Step()
     {
         if (!Console.KeyAvailable)

@@ -251,6 +251,18 @@ public class Cpu
                     case 0x18:
                         SoundTimer = V[instruction.X];
                         break;
+                    // Block waiting for input
+                    case 0x0A:
+                        var pressedKey = _io.GetPressedKey();
+                        if (pressedKey is not null)
+                        {
+                            V[instruction.X] = pressedKey.Value;
+                        }
+                        else
+                        {
+                            PC -= 2;
+                        }
+                        break;
                     default:
                         throw new NotImplementedException($"Unknown Op code: {instruction.OpCode:x}");
                 }

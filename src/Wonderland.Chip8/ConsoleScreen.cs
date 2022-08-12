@@ -67,14 +67,8 @@ public class ConsoleScreen
             s++;
         }
 
-        var keyPressed = _io.Keys.Select((b, i) => new {Index = i, Value = b})
-            .Where(o => o.Value)
-            .Select(o => o.Index)
-            .ToList();
-
-        var keyPressedCount = keyPressed.Count;
-        var keyPressedFirst = keyPressed.FirstOrDefault();
-        var keyPressedDisplay = (keyPressedCount > 0) ? keyPressedFirst.ToString("x") : " ";
+        var keyPressed = _io.GetPressedKey();
+        var keyPressedDisplay = (keyPressed != null) ? keyPressed.Value.ToString("x") : " ";
         Console.SetCursorPosition(startX + width + 22, startY + 6);
         Console.WriteLine($"Key: {keyPressedDisplay}");
     }
