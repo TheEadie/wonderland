@@ -44,6 +44,11 @@ public class ConsoleIO
         return (keyPressedCount > 0) ? (byte)keyPressedFirst : null;
     }
 
+    public void Beep()
+    {
+        Console.Beep();
+    }
+
     public void Step()
     {
         if (!Console.KeyAvailable)

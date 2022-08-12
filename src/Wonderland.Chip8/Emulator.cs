@@ -106,6 +106,11 @@ public class Emulator
     {
         _io.Step();
 
+        if (_cpu.SoundTimer > 0)
+        {
+            _io.Beep();
+        }
+
         if (_io.Pause)
         {
             _pause = !_pause;
