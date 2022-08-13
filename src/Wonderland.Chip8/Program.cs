@@ -1,4 +1,4 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using Wonderland.Chip8;
 
 var romArg = new Argument<string>(

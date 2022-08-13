@@ -1,4 +1,4 @@
-﻿namespace Wonderland.Chip8.ConsoleIO;
+namespace Wonderland.Chip8.ConsoleIO;
 
 public class ConsoleInput : IInputOutput
 {
@@ -34,7 +34,7 @@ public class ConsoleInput : IInputOutput
 
     public byte? GetPressedKey()
     {
-        var keyPressed = Keys.Select((b, i) => new {Index = i, Value = b})
+        var keyPressed = Keys.Select((b, i) => new { Index = i, Value = b })
             .Where(o => o.Value)
             .Select(o => o.Index)
             .ToList();
@@ -92,6 +92,6 @@ public class ConsoleInput : IInputOutput
                 break;
         }
 
-        
+
     }
 }

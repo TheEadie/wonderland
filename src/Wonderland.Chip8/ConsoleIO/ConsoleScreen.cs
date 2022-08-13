@@ -52,10 +52,10 @@ public class ConsoleScreen : IScreen
         Console.WriteLine($"PC: {_cpu.PC:x4} - {_cpu.GetOpCode()}");
         Console.SetCursorPosition(startX + width + 2, startY + 4);
         Console.WriteLine($"I: {_cpu.I:x3}");
-        
+
         Console.SetCursorPosition(startX + width + 2, startY + 5);
         Console.WriteLine($"DT: {_cpu.DelayTimer:x2}");
-        
+
         Console.SetCursorPosition(startX + width + 2, startY + 6);
         Console.WriteLine($"ST: {_cpu.SoundTimer:x2}");
 

@@ -124,7 +124,7 @@ public class Emulator
                 _cpu.Step60Hz();
                 _debugStepsSinceLastStep60Hz = 0;
             }
-            
+
             _cpu.Step();
             _debugStepsSinceLastStep60Hz++;
         }

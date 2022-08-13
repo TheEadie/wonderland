@@ -57,7 +57,7 @@ public class Cpu
             {0xE0, X00E0_ClearScreen},
             {0XEE, X00EE_ReturnFromSubroutine}
         };
-        
+
         _opCodes8 = new Dictionary<byte, Action<Instruction>>
         {
             {0x0, X8xy0_Set},
@@ -70,13 +70,13 @@ public class Cpu
             {0x6, X8xy6_ShiftRight},
             {0xE, X8xyE_ShiftLeft}
         };
-        
+
         _opCodesE = new Dictionary<byte, Action<Instruction>>
         {
             {0x9E, XEx9E_CheckForKey},
             {0xA1, XExA1_CheckForNotKey}
         };
-        
+
         _opCodesF = new Dictionary<byte, Action<Instruction>>
         {
             {0x55, XFx55_StoreMemory},
@@ -90,7 +90,7 @@ public class Cpu
             {0x29, XFx29_SetIToFontChar}
         };
     }
-    
+
     public void Step()
     {
         var opCode = _memory[PC] << 8;
@@ -116,7 +116,7 @@ public class Cpu
         if (DelayTimer > 0) DelayTimer--;
         if (SoundTimer > 0) SoundTimer--;
     }
-    
+
     private void X0(Instruction instruction)
     {
         if (!_opCodes0.ContainsKey(instruction.NN))
@@ -138,7 +138,7 @@ public class Cpu
     {
         PC = instruction.NNN;
     }
-    
+
     private void X2NNN_CallSubroutine(Instruction instruction)
     {
         Stack.Push(PC);
@@ -152,7 +152,7 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void X4xNN_NotEqual(Instruction instruction)
     {
         if (V[instruction.X] != instruction.NN)
@@ -160,7 +160,7 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void X5xyN_Equal(Instruction instruction)
     {
         if (V[instruction.X] == V[instruction.Y])
@@ -168,17 +168,17 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void X6xNN_Set(Instruction instruction)
     {
         V[instruction.X] = instruction.NN;
     }
-    
+
     private void X7xNN_Add(Instruction instruction)
     {
         V[instruction.X] += instruction.NN;
     }
-    
+
     private void X8(Instruction instruction)
     {
         if (!_opCodes8.ContainsKey(instruction.N))
@@ -190,17 +190,17 @@ public class Cpu
     {
         V[instruction.X] = V[instruction.Y];
     }
-    
+
     private void X8xy1_Or(Instruction instruction)
     {
         V[instruction.X] |= V[instruction.Y];
     }
-    
+
     private void X8xy2_And(Instruction instruction)
     {
         V[instruction.X] &= V[instruction.Y];
     }
-    
+
     private void X8xy3_Xor(Instruction instruction)
     {
         V[instruction.X] ^= V[instruction.Y];
@@ -209,30 +209,30 @@ public class Cpu
     private void X8xy4_Add(Instruction instruction)
     {
         var add = V[instruction.X] + V[instruction.Y];
-        V[instruction.X] = (byte) add;
-        V[0xF] = (byte) (add > 255 ? 1 : 0);
+        V[instruction.X] = (byte)add;
+        V[0xF] = (byte)(add > 255 ? 1 : 0);
     }
-    
+
     private void X8xy5_Subtract(Instruction instruction)
     {
         var sub = V[instruction.X] - V[instruction.Y];
         V[instruction.X] = (byte)sub;
-        V[0xF] = (byte) (sub > 0 ? 1 : 0);
+        V[0xF] = (byte)(sub > 0 ? 1 : 0);
     }
-    
+
     private void X8xy7_Subtract(Instruction instruction)
     {
         var sub = V[instruction.Y] - V[instruction.X];
         V[instruction.X] = (byte)sub;
-        V[0xF] = (byte) (sub > 0 ? 1 : 0);
+        V[0xF] = (byte)(sub > 0 ? 1 : 0);
     }
-    
+
     private void X8xy6_ShiftRight(Instruction instruction)
     {
         V[0xF] = (byte)(V[instruction.X] & 1);
         V[instruction.X] >>= 1;
     }
-    
+
     private void X8xyE_ShiftLeft(Instruction instruction)
     {
         V[0xF] = (byte)((V[instruction.X] >> 7) & 1);
@@ -246,24 +246,24 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void XANNN_SetI(Instruction instruction)
     {
         I = instruction.NNN;
     }
-    
+
     private void XBNNN_Jump(Instruction instruction)
     {
         PC = (ushort)(V[0x0] + instruction.NNN);
     }
-    
+
     private void XCxNN_Random(Instruction instruction)
     {
         var random = new Random();
         var num = random.Next(256);
         V[instruction.X] = (byte)(num & instruction.NN);
     }
-    
+
     private void XDxyN_DrawSprite(Instruction instruction)
     {
         var end = I + instruction.N;
@@ -288,7 +288,7 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void XExA1_CheckForNotKey(Instruction instruction)
     {
         if (!_io.Keys[V[instruction.X]])
@@ -296,19 +296,19 @@ public class Cpu
             PC += 2;
         }
     }
-    
+
     private void XF(Instruction instruction)
     {
         if (!_opCodesF.ContainsKey(instruction.NN))
             throw new NotImplementedException($"Unknown OpCode: {instruction.OpCode:x4}");
         _opCodesF[instruction.NN](instruction);
     }
-    
+
     private void XFx29_SetIToFontChar(Instruction instruction)
     {
         I = (ushort)(V[instruction.X] + 0x50);
     }
-    
+
     private void XFx33_BinaryCodedDecimalConversion(Instruction instruction)
     {
         var value = V[instruction.X];
@@ -316,7 +316,7 @@ public class Cpu
         _memory[I + 1] = (byte)(value / 10 % 10);
         _memory[I + 2] = (byte)(value % 10);
     }
-    
+
     private void XFx55_StoreMemory(Instruction instruction)
     {
         V[0..(instruction.X + 1)].CopyTo(_memory, I);
@@ -331,22 +331,22 @@ public class Cpu
     {
         I += V[instruction.X];
     }
-    
+
     private void XFx07_GetDelayTimer(Instruction instruction)
     {
         V[instruction.X] = DelayTimer;
     }
-    
+
     private void XFx15_SetDelayTimer(Instruction instruction)
     {
         DelayTimer = V[instruction.X];
     }
-    
+
     private void XFx18_SetSoundTimer(Instruction instruction)
     {
         SoundTimer = V[instruction.X];
     }
-    
+
     private void XFx0A_WaitForInput(Instruction instruction)
     {
         var pressedKey = _io.GetPressedKey();

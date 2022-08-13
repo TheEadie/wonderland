@@ -1,4 +1,4 @@
-﻿namespace Wonderland.Chip8;
+namespace Wonderland.Chip8;
 
 public interface IInputOutput
 {
