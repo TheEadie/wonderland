@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace Wonderland.Chip8.ConsoleIO;
 
 public class ConsoleScreen : IScreen
@@ -31,53 +33,72 @@ public class ConsoleScreen : IScreen
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
 
-        var startX = (Console.WindowWidth / 2) - (width / 2) - 10;
+        var canvas = new Canvas(width, height);
+        canvas.PixelWidth = 2;
+        canvas.Scale = false;
         var startY = (Console.WindowHeight / 2) - (height / 2);
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                Console.SetCursorPosition(startX + x, startY + y);
-                Console.Write(vRam[x, y] ? '■' : ' ');
+                canvas.SetPixel(x, y, vRam[x, y] ? Color.Green : Color.Black);
             }
         }
 
-        Console.SetCursorPosition(startX + width + 2, startY);
-        Console.WriteLine($"FPS: {_fps}  ");
-        Console.SetCursorPosition(startX + width + 2, startY + 1);
-        Console.WriteLine($"Instructions: {_instructionsPerSecond}  ");
+        var game = new Panel(canvas);
 
-        Console.SetCursorPosition(startX + width + 2, startY + 3);
-        Console.WriteLine($"PC: {_cpu.PC:x4} - {_cpu.GetOpCode()}");
-        Console.SetCursorPosition(startX + width + 2, startY + 4);
-        Console.WriteLine($"I: {_cpu.I:x3}");
+        var cpu = new Table().HideHeaders().Centered();
+        cpu.AddColumn("");
+        cpu.AddColumn("").Alignment(Justify.Right);
 
-        Console.SetCursorPosition(startX + width + 2, startY + 5);
-        Console.WriteLine($"DT: {_cpu.DelayTimer:x2}");
+        cpu.AddRow("FPS", $"{_fps}");
+        cpu.AddRow("IPS", $"{_instructionsPerSecond}");
+        cpu.AddEmptyRow();
+        cpu.AddRow("PC", $"{_cpu.PC:x4}");
+        cpu.AddRow("I", $"{_cpu.I:x3}");
+        cpu.AddRow("DT", $"{_cpu.DelayTimer:x2}");
+        cpu.AddRow("ST", $"{_cpu.SoundTimer:x2}");
 
-        Console.SetCursorPosition(startX + width + 2, startY + 6);
-        Console.WriteLine($"ST: {_cpu.SoundTimer:x2}");
-
+        var reg = new Table().HideHeaders().Centered();
+        reg.AddColumn("");
+        reg.AddColumn("");
         for (var i = 0; i < 16; i++)
         {
-            Console.SetCursorPosition(startX + width + 2, startY + 8 + i);
-            Console.WriteLine($"V{i:x}: {_cpu.V[i]:x2}");
+            reg.AddRow($"V{i:x}", $"{_cpu.V[i]:x2}");
         }
 
+        var stack = new Table().HideHeaders().Centered();
+        stack.AddColumn("");
+        stack.AddColumn("");
         var s = 0;
         foreach (var stackVal in _cpu.Stack)
         {
-            Console.SetCursorPosition(startX + width + 12, startY + 8 + s);
-            Console.WriteLine($"S{s:x}: {stackVal:x2}");
+            stack.AddRow($"S{s:x}", $"{stackVal:x3}");
             s++;
         }
+        for (var i = s; i < 16; i++)
+        {
+            stack.AddRow($"S{i:x}", "   ");
+        }
 
-        var keyPressed = _io.GetPressedKey();
-        var keyPressedDisplay = (keyPressed != null) ? keyPressed.Value.ToString("x") : " ";
-        Console.SetCursorPosition(startX + width + 2, startY + 25);
-        Console.WriteLine($"Key: {keyPressedDisplay}");
+        cpu.Columns[1].Alignment(Justify.Right);
+        reg.Columns[1].Alignment(Justify.Right);
+        stack.Columns[1].Alignment(Justify.Right);
 
+        var debug = new Table().HideHeaders().Centered().Border(TableBorder.None);
+        debug.AddColumn(new TableColumn("CPU"));
+        debug.AddColumn(new TableColumn("Reg"));
+        debug.AddColumn(new TableColumn("Stack"));
+        debug.AddRow(cpu, reg, stack);
+
+        var table = new Table().Centered().HideHeaders().Border(TableBorder.None);
+        table.AddColumn(new TableColumn("Wonderland - CHIP-8"));
+        table.AddColumn(new TableColumn("Debug"));
+        table.AddRow(game, debug);
+
+        AnsiConsole.Cursor.SetPosition(0, 0);
+        AnsiConsole.Write(table);
     }
 
     public void UpdateStatus(int fps, int instructionsPerSecond)
