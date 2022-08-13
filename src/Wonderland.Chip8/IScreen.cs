@@ -4,5 +4,5 @@ public interface IScreen
 {
     void Init();
     void DrawFrame();
-    void UpdateStats(int fps, int instructionsPerSecond);
+    void UpdateStatus(int fps, int instructionsPerSecond);
 }

@@ -73,7 +73,7 @@ public class Emulator
         {
             void EverySecond()
             {
-                _screen.UpdateStats(_actualFps, _actualClockSpeed);
+                _screen.UpdateStatus(_actualFps, _actualClockSpeed);
                 _actualFps = 0;
                 _actualClockSpeed = 0;
             }

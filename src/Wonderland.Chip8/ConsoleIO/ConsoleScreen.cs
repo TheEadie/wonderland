@@ -80,7 +80,7 @@ public class ConsoleScreen : IScreen
 
     }
 
-    public void UpdateStats(int fps, int instructionsPerSecond)
+    public void UpdateStatus(int fps, int instructionsPerSecond)
     {
         _fps = fps;
         _instructionsPerSecond = instructionsPerSecond;
