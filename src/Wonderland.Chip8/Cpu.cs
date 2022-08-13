@@ -93,17 +93,7 @@ public class Cpu
 
     public void Step()
     {
-        var opCode = _memory[PC] << 8;
-        opCode += _memory[PC + 1];
-
-        var nextMemory = new Instruction(
-            (ushort)opCode,
-            (byte)((opCode >> 12) & 0x000F),
-            (byte)((opCode >> 8) & 0x000F),
-            (byte)((opCode >> 4) & 0x000F),
-            (byte)(opCode & 0x000F),
-            (byte)(opCode & 0x00FF),
-            (ushort)(opCode & 0x0FFF));
+        var nextMemory = GetOpCode(PC);
         PC += 2;
 
         if (!_opCodes.ContainsKey(nextMemory.Type))
@@ -111,10 +101,33 @@ public class Cpu
         _opCodes[nextMemory.Type](nextMemory);
     }
 
+    private Instruction GetOpCode(ushort pc)
+    {
+        var opCode = _memory[pc] << 8;
+        opCode += _memory[pc + 1];
+
+        return new Instruction(
+            (ushort)opCode,
+            (byte)((opCode >> 12) & 0x000F),
+            (byte)((opCode >> 8) & 0x000F),
+            (byte)((opCode >> 4) & 0x000F),
+            (byte)(opCode & 0x000F),
+            (byte)(opCode & 0x00FF),
+            (ushort)(opCode & 0x0FFF));
+    }
+
     public void Step60Hz()
     {
         if (DelayTimer > 0) DelayTimer--;
         if (SoundTimer > 0) SoundTimer--;
+    }
+
+    internal IEnumerable<Instruction> Peek()
+    {
+        for (var i = -4; i < 10; i++)
+        {
+            yield return GetOpCode((ushort)(PC + 2 * i));
+        }
     }
 
     private void X0(Instruction instruction)

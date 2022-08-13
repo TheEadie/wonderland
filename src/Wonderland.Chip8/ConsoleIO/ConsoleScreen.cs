@@ -84,11 +84,27 @@ public class ConsoleScreen : IScreen
         reg.Columns[1].Alignment(Justify.Right);
         stack.Columns[1].Alignment(Justify.Right);
 
+        var cpuinfo = new Table().HideHeaders().Centered().Border(TableBorder.None);
+        cpuinfo.AddColumn(new TableColumn("CPU"));
+        cpuinfo.AddColumn(new TableColumn("Reg"));
+        cpuinfo.AddColumn(new TableColumn("Stack"));
+        cpuinfo.AddRow(cpu, reg, stack);
+
+        var program = new Table().HideHeaders().Centered();
+        program.AddColumn("Next");
+        program.AddColumn("Location");
+        program.AddColumn("Instruction");
+        var o = 0;
+        foreach (var instruction in _cpu.Peek())
+        {
+            program.AddRow((o == 4) ? "PC ->" : "", $"{_cpu.PC + 2 * (o - 4):x4}", $"{instruction.OpCode:x4}");
+            o++;
+        }
+
         var debug = new Table().HideHeaders().Centered().Border(TableBorder.None);
-        debug.AddColumn(new TableColumn("CPU"));
-        debug.AddColumn(new TableColumn("Reg"));
-        debug.AddColumn(new TableColumn("Stack"));
-        debug.AddRow(cpu, reg, stack);
+        debug.AddColumn(new TableColumn(""));
+        debug.AddRow(cpuinfo);
+        debug.AddRow(program);
 
         var table = new Table().Centered().HideHeaders().Border(TableBorder.None);
         table.AddColumn(new TableColumn("Wonderland - CHIP-8"));
