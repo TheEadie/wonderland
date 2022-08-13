@@ -22,9 +22,8 @@ public class ConsoleScreen : IScreen
 
     public void Init()
     {
-        Console.Clear();
-        Console.CursorVisible = false;
-        Console.ForegroundColor = ConsoleColor.Green;
+        AnsiConsole.Clear();
+        AnsiConsole.Cursor.Hide();
     }
 
     public void DrawFrame()
@@ -36,7 +35,6 @@ public class ConsoleScreen : IScreen
         var canvas = new Canvas(width, height);
         canvas.PixelWidth = 2;
         canvas.Scale = false;
-        var startY = (Console.WindowHeight / 2) - (height / 2);
 
         for (var y = 0; y < height; y++)
         {
@@ -97,7 +95,9 @@ public class ConsoleScreen : IScreen
         table.AddColumn(new TableColumn("Debug"));
         table.AddRow(game, debug);
 
+        var title = new Panel("Wonderland - CHIP-8").Expand();
         AnsiConsole.Cursor.SetPosition(0, 0);
+        AnsiConsole.Write(title);
         AnsiConsole.Write(table);
     }
 
