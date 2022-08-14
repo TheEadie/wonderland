@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Wonderland.Chip8.ConsoleIO;
+using Wonderland.Chip8.IO;
 
 namespace Wonderland.Chip8;
 
@@ -23,10 +24,10 @@ public class Emulator
     public Emulator(int clockSpeed = 1000)
     {
         _memory = new byte[4096];
-        _io = new ConsoleInput();
+        _io = new SfmlInput();
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu, _io);
-        _screen = new ConsoleScreen(_gpu, _cpu, _io);
+        _screen = new SfmlScreen(_gpu);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
