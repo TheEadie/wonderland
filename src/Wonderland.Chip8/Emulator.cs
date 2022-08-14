@@ -27,7 +27,7 @@ public class Emulator
         _io = new SfmlInput();
         _gpu = new Gpu();
         _cpu = new Cpu(_memory, _gpu, _io);
-        _screen = new SfmlScreen(_gpu);
+        _screen = new SfmlScreen(_gpu, _cpu);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
         _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
