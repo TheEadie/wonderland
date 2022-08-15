@@ -1,10 +1,12 @@
 using System.Text;
+using SFML.Graphics;
+using SFML.System;
 
 namespace Wonderland.Chip8.IO;
 
 public class SfmlScreen : IScreen
 {
-    private SFML.Graphics.RenderWindow? _window;
+    private RenderWindow? _window;
     private readonly Gpu _gpu;
     private readonly Cpu _cpu;
 
@@ -19,32 +21,38 @@ public class SfmlScreen : IScreen
 
     public void Init()
     {
-        _window = new SFML.Graphics.RenderWindow(new SFML.Window.VideoMode(800, 320), "Wonderland");
+        _window = new RenderWindow(new SFML.Window.VideoMode(800, 350), "Wonderland");
         _window.Clear();
     }
 
     public void DrawFrame()
     {
         _window.Clear();
+        
+        DrawSection(new Vector2f(2,2), new Vector2f(640, 320), "Game");
+
         var vRam = _gpu.GetVRam();
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
 
-        var sfmlArray = new SFML.Graphics.Color[width, height];
+        var sfmlArray = new Color[width, height];
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                sfmlArray[x, y] = vRam[x, y] ? SFML.Graphics.Color.Green : SFML.Graphics.Color.Black;
+                sfmlArray[x, y] = vRam[x, y] ? Color.Green : Color.Black;
             }
         }
 
-        var image = new SFML.Graphics.Image(sfmlArray);
-        var texture = new SFML.Graphics.Texture(image);
-        var sprite = new SFML.Graphics.Sprite(texture);
-        sprite.Scale = new SFML.System.Vector2f(10, 10);
+        var image = new Image(sfmlArray);
+        var texture = new Texture(image);
+        var sprite = new Sprite(texture);
+        sprite.Position = new Vector2f(3, 27);
+        sprite.Scale = new Vector2f(10, 10);
         _window.Draw(sprite);
+        
+        DrawSection(new Vector2f(644,2), new Vector2f(100, 320), "Debug");
 
         var stringBuilder = new StringBuilder();
 
@@ -56,16 +64,40 @@ public class SfmlScreen : IScreen
         stringBuilder.Append("DT: ").AppendLine(_cpu.DelayTimer.ToString("x2"));
         stringBuilder.Append("ST: ").AppendLine(_cpu.SoundTimer.ToString("x2"));
 
-        var text = new SFML.Graphics.Text();
-        text.Font = new SFML.Graphics.Font("resources/JetBrainsMonoNL-Regular.ttf");
+        var text = new Text();
+        text.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
         text.DisplayedString = stringBuilder.ToString();
-        text.CharacterSize = 18;
-        text.FillColor = SFML.Graphics.Color.Green;
-        text.Position = new SFML.System.Vector2f(640, 0);
+        text.CharacterSize = 14;
+        text.FillColor = Color.Green;
+        text.Position = new Vector2f(648, 27);
 
         _window.Draw(text);
 
         _window.Display();
+    }
+
+    private void DrawSection(Vector2f position, Vector2f size, string title)
+    {
+        var gameAreaHeader = new RectangleShape(new Vector2f(size.X, 24));
+        gameAreaHeader.OutlineThickness = 2;
+        gameAreaHeader.FillColor = Color.Black;
+        gameAreaHeader.Position = position;
+        _window.Draw(gameAreaHeader);
+
+        var gameHeaderText = new Text();
+        gameHeaderText.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
+        gameHeaderText.DisplayedString = title;
+        gameHeaderText.CharacterSize = 14;
+        gameHeaderText.FillColor = Color.Green;
+        gameHeaderText.Position = position + new Vector2f(8, 4);
+
+        _window.Draw(gameHeaderText);
+
+        var gameArea = new RectangleShape(size);
+        gameArea.OutlineThickness = 2;
+        gameArea.FillColor = Color.Black;
+        gameArea.Position = position + new Vector2f(0, 26);
+        _window.Draw(gameArea);
     }
 
     public void UpdateStatus(int fps, int instructionsPerSecond)
