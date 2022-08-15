@@ -57,7 +57,7 @@ public class SfmlScreen : IScreen
         stringBuilder.Append("ST: ").AppendLine(_cpu.SoundTimer.ToString("x2"));
 
         var text = new SFML.Graphics.Text();
-        text.Font = new SFML.Graphics.Font("/home/eadie/code/font.ttf");
+        text.Font = new SFML.Graphics.Font("resources/JetBrainsMonoNL-Regular.ttf");
         text.DisplayedString = stringBuilder.ToString();
         text.CharacterSize = 18;
         text.FillColor = SFML.Graphics.Color.Green;
