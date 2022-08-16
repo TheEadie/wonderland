@@ -137,9 +137,27 @@ public class SfmlScreen : IScreen
         _window.Draw(_text);
 
         var memory = _cpu.GetGraphicsMemory();
-        var sfmlArray = new Color[8, 8];
+        for (var i = 0; i < memory.Count(); i++)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3"));
 
-        for (var y = 0; y < 8; y++)
+            _text.DisplayedString = stringBuilder.ToString();
+            _text.FillColor = (i - 4 == 0) ? _textHighlight : (i % 2) == 0 ? _textColour : _textHeading;
+            _text.Position = new Vector2f(161 + 14, 418 + (i * 18));
+            _window.Draw(_text);
+        }
+
+        var headerSection = new RectangleShape(new Vector2f(88, 18 * 14 + 8));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _background;
+        headerSection.Position = new Vector2f(216, 414);
+        _window.Draw(headerSection);
+
+        var sfmlArray = new Color[8, memory.Count()];
+
+        for (var y = 0; y < memory.Count(); y++)
         {
             for (var x = 0; x < 8; x++)
             {
@@ -150,8 +168,8 @@ public class SfmlScreen : IScreen
         var image = new Image(sfmlArray);
         var texture = new Texture(image);
         var sprite = new Sprite(texture);
-        sprite.Position = new Vector2f(200, 418);
-        sprite.Scale = new Vector2f(10, 10);
+        sprite.Position = new Vector2f(220, 418);
+        sprite.Scale = new Vector2f(10, 18);
         _window.Draw(sprite);
     }
 

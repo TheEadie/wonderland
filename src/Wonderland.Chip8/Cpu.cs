@@ -132,8 +132,9 @@ public class Cpu
 
     internal IEnumerable<byte> GetGraphicsMemory()
     {
-        for (int i = 0; i < 8; i++)
+        for (var i = -4; i < 10; i++)
         {
+            if ((I + i) < 0 || (I + i) > 0xFFF) continue;
             yield return _memory[I + i];
         }
     }
