@@ -130,6 +130,14 @@ public class Cpu
         }
     }
 
+    internal IEnumerable<byte> GetGraphicsMemory()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            yield return _memory[I + i];
+        }
+    }
+
     private void X0(Instruction instruction)
     {
         if (!_opCodes0.ContainsKey(instruction.NN))

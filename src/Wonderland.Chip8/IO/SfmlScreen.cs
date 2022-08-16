@@ -14,12 +14,22 @@ public class SfmlScreen : IScreen
     private int _fps;
     private int _instructionsPerSecond;
 
+    private readonly Text _text;
+
+    private readonly Color _background = new(114, 131, 116);
+    private readonly Color _backgroundDark = new(83, 97, 84);
+    private readonly Color _textColour = new(255, 255, 255);
+    private readonly Color _textHeading = new(204, 204, 204);
+    private readonly Color _borderInternal = new(170, 170, 170);
+
     public SfmlScreen(Gpu gpu, Cpu cpu)
     {
         _gpu = gpu;
         _cpu = cpu;
         
-        _window = new RenderWindow(new VideoMode(642, 350), "Wonderland", Styles.Close);
+        _text = new Text();
+        
+        _window = new RenderWindow(new VideoMode(642, 722), "Wonderland", Styles.Close);
         _window.Closed += (obj, e) => { _window.Close(); };
         _window.KeyPressed +=
             (sender, e) =>
@@ -37,6 +47,9 @@ public class SfmlScreen : IScreen
     public void Init()
     {
         _window.Clear();
+        
+        _text.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
+        _text.CharacterSize = 14;
     }
 
     public void DrawFrame()
@@ -44,8 +57,24 @@ public class SfmlScreen : IScreen
         _window.DispatchEvents();
         _window.Clear();
         
-        DrawSection(new Vector2f(2,2), new Vector2f(640, 320), "Game");
+        DrawSection(new Vector2f(1,1), new Vector2f(640, 320), "Wonderland CHIP-8");
+        DrawSection(new Vector2f(1,348), new Vector2f(159, 320), "CPU");
+        DrawSection(new Vector2f(161,348), new Vector2f(159, 320), "Graphics");
+        DrawSection(new Vector2f(321,348), new Vector2f(320, 320), "Instructions");
+        DrawFooterIPS(new Vector2f(1, 695), new Vector2f(159, 0));
+        DrawFooterFPS(new Vector2f(161, 695), new Vector2f(159, 0));
+        DrawFooterButtons(new Vector2f(321, 695), new Vector2f(320, 0));
 
+        DrawGame();
+        
+        DrawDebugRegisters();
+        DrawDebugGraphics();
+
+        _window.Display();
+    }
+
+    private void DrawGame()
+    {
         var vRam = _gpu.GetVRam();
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
@@ -63,56 +92,120 @@ public class SfmlScreen : IScreen
         var image = new Image(sfmlArray);
         var texture = new Texture(image);
         var sprite = new Sprite(texture);
-        sprite.Position = new Vector2f(3, 27);
+        sprite.Position = new Vector2f(1, 27);
         sprite.Scale = new Vector2f(10, 10);
         _window.Draw(sprite);
+    }
+
+    private void DrawDebugRegisters()
+    {
+        for (var i = 0; i < 16; i++)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append("V")
+                .Append(i.ToString("x"))
+                .Append(": ")
+                .Append(_cpu.V[i].ToString("x2"));
+
+            if (_cpu.Stack.Count - 1 >= i)
+            {
+                stringBuilder.Append("  S")
+                    .Append(i.ToString("x"))
+                    .Append(": ")
+                    .Append(_cpu.Stack.ElementAt(i).ToString("x3"));
+            }
+
+            _text.DisplayedString = stringBuilder.ToString();
+            _text.FillColor = (i % 2) == 0 ? _textColour : _textHeading;
+            _text.Position = new Vector2f(14, 382 + (i * 18));
+            _window.Draw(_text);
+        }
+
+        _text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
+        _text.FillColor = _textColour;
+        _text.Position = new Vector2f(14, 382 + (16 * 18));
+        _window.Draw(_text);
+    }
+    
+    private void DrawDebugGraphics()
+    {
+        _text.DisplayedString = $"I: {_cpu.I:x3}";
+        _text.FillColor = _textColour;
+        _text.Position = new Vector2f(161+14, 382);
+        _window.Draw(_text);
         
-        DrawSection(new Vector2f(644,2), new Vector2f(100, 320), "Debug");
-
-        var stringBuilder = new StringBuilder();
-
-        stringBuilder.Append("FPS: ").Append(_fps).AppendLine();
-        stringBuilder.Append("IPS: ").Append(_instructionsPerSecond).AppendLine();
-        stringBuilder.AppendLine();
-        stringBuilder.Append("PC: ").AppendLine(_cpu.PC.ToString("x4"));
-        stringBuilder.Append("I: ").AppendLine(_cpu.I.ToString("x3"));
-        stringBuilder.Append("DT: ").AppendLine(_cpu.DelayTimer.ToString("x2"));
-        stringBuilder.Append("ST: ").AppendLine(_cpu.SoundTimer.ToString("x2"));
-
-        var text = new Text();
-        text.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
-        text.DisplayedString = stringBuilder.ToString();
-        text.CharacterSize = 14;
-        text.FillColor = Color.White;
-        text.Position = new Vector2f(648, 27);
-
-        _window.Draw(text);
-
-        _window.Display();
+        for (var i = 0; i < 8; i++)
+        {
+            _text.DisplayedString = $"{(_cpu.I + i):x3}";
+            _text.FillColor = (i % 2) == 0 ? _textColour : _textHeading;
+            _text.Position = new Vector2f(161+14, 418 + (i * 18));
+            _window.Draw(_text);
+        }
     }
 
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
-        var gameAreaHeader = new RectangleShape(new Vector2f(size.X, 24));
-        gameAreaHeader.OutlineThickness = 2;
-        gameAreaHeader.FillColor = Color.Black;
-        gameAreaHeader.Position = position;
-        _window.Draw(gameAreaHeader);
+        var headerSection = new RectangleShape(new Vector2f(size.X, 26));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _backgroundDark;
+        headerSection.Position = position;
+        _window.Draw(headerSection);
 
-        var gameHeaderText = new Text();
-        gameHeaderText.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
-        gameHeaderText.DisplayedString = title;
-        gameHeaderText.CharacterSize = 14;
-        gameHeaderText.FillColor = Color.White;
-        gameHeaderText.Position = position + new Vector2f(8, 4);
+        _text.DisplayedString = title;
+        _text.FillColor = _textHeading;
+        _text.Position = position + new Vector2f(12, 4);
 
-        _window.Draw(gameHeaderText);
+        _window.Draw(_text);
 
-        var gameArea = new RectangleShape(size);
-        gameArea.OutlineThickness = 2;
-        gameArea.FillColor = Color.Black;
-        gameArea.Position = position + new Vector2f(0, 26);
-        _window.Draw(gameArea);
+        var sectionBody = new RectangleShape(size);
+        sectionBody.OutlineThickness = 1;
+        sectionBody.OutlineColor = _borderInternal;
+        sectionBody.FillColor = _background;
+        sectionBody.Position = position + new Vector2f(0, 26);
+        _window.Draw(sectionBody);
+    }
+    
+    private void DrawFooterIPS(Vector2f position, Vector2f size)
+    {
+        var headerSection = new RectangleShape(new Vector2f(size.X, 26));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _backgroundDark;
+        headerSection.Position = position;
+        _window.Draw(headerSection);
+
+        _text.DisplayedString = $"IPS: {_instructionsPerSecond}";
+        _text.FillColor = _textHeading;
+        _text.Position = position + new Vector2f(12, 4);
+
+        _window.Draw(_text);
+    }
+    
+    private void DrawFooterFPS(Vector2f position, Vector2f size)
+    {
+        var headerSection = new RectangleShape(new Vector2f(size.X, 26));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _backgroundDark;
+        headerSection.Position = position;
+        _window.Draw(headerSection);
+
+        _text.DisplayedString = $"FPS: {_fps}";
+        _text.FillColor = _textHeading;
+        _text.Position = position + new Vector2f(12, 4);
+
+        _window.Draw(_text);
+    }
+    
+    private void DrawFooterButtons(Vector2f position, Vector2f size)
+    {
+        var headerSection = new RectangleShape(new Vector2f(size.X, 26));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _backgroundDark;
+        headerSection.Position = position;
+        _window.Draw(headerSection);
     }
 
     public void UpdateStatus(int fps, int instructionsPerSecond)

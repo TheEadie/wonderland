@@ -134,7 +134,7 @@ public class Emulator
     private static TimeSpan RunOnTimer(TimeSpan now, TimeSpan lastRun, TimeSpan interval, Action toRun)
     {
         var elapsed = now - lastRun;
-        while (elapsed >= interval)
+        if (elapsed >= interval)
         {
             toRun();
 
