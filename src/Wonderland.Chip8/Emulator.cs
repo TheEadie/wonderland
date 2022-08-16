@@ -70,7 +70,7 @@ public class Emulator
         var prevtime60Hz = TimeSpan.Zero;
         _screen.Init();
 
-        while (!cancellationToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested && _screen.IsOpen())
         {
             void EverySecond()
             {

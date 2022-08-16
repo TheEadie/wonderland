@@ -26,6 +26,8 @@ public class ConsoleScreen : IScreen
         AnsiConsole.Cursor.Hide();
     }
 
+    public bool IsOpen() => true;
+
     public void DrawFrame()
     {
         var vRam = _gpu.GetVRam();

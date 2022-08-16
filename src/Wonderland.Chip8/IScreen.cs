@@ -5,4 +5,5 @@ public interface IScreen
     void Init();
     void DrawFrame();
     void UpdateStatus(int fps, int instructionsPerSecond);
+    bool IsOpen();
 }

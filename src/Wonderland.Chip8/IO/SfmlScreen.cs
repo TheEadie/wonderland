@@ -1,6 +1,7 @@
 using System.Text;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 
 namespace Wonderland.Chip8.IO;
 
@@ -19,14 +20,27 @@ public class SfmlScreen : IScreen
         _cpu = cpu;
     }
 
+    public bool IsOpen() => _window.IsOpen;
+
     public void Init()
     {
-        _window = new RenderWindow(new SFML.Window.VideoMode(800, 350), "Wonderland");
+        _window = new RenderWindow(new VideoMode(642, 350), "Wonderland", Styles.Close);
+        _window.Closed += (obj, e) => { _window.Close(); };
+        _window.KeyPressed +=
+            (sender, e) =>
+            {
+                var window = (Window)sender;
+                if (e.Code == Keyboard.Key.Escape)
+                {
+                    window.Close();
+                }
+            };
         _window.Clear();
     }
 
     public void DrawFrame()
     {
+        _window.DispatchEvents();
         _window.Clear();
         
         DrawSection(new Vector2f(2,2), new Vector2f(640, 320), "Game");
@@ -41,7 +55,7 @@ public class SfmlScreen : IScreen
         {
             for (var x = 0; x < width; x++)
             {
-                sfmlArray[x, y] = vRam[x, y] ? Color.Green : Color.Black;
+                sfmlArray[x, y] = vRam[x, y] ? Color.White : Color.Black;
             }
         }
 
@@ -68,7 +82,7 @@ public class SfmlScreen : IScreen
         text.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
         text.DisplayedString = stringBuilder.ToString();
         text.CharacterSize = 14;
-        text.FillColor = Color.Green;
+        text.FillColor = Color.White;
         text.Position = new Vector2f(648, 27);
 
         _window.Draw(text);
@@ -88,7 +102,7 @@ public class SfmlScreen : IScreen
         gameHeaderText.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
         gameHeaderText.DisplayedString = title;
         gameHeaderText.CharacterSize = 14;
-        gameHeaderText.FillColor = Color.Green;
+        gameHeaderText.FillColor = Color.White;
         gameHeaderText.Position = position + new Vector2f(8, 4);
 
         _window.Draw(gameHeaderText);
