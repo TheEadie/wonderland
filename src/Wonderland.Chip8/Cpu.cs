@@ -124,7 +124,7 @@ public class Cpu
 
     internal IEnumerable<Instruction> Peek()
     {
-        for (var i = -4; i < 10; i++)
+        for (var i = -4; i < 12; i++)
         {
             yield return GetOpCode((ushort)(PC + 2 * i));
         }
@@ -132,7 +132,7 @@ public class Cpu
 
     internal IEnumerable<byte> GetGraphicsMemory()
     {
-        for (var i = -4; i < 10; i++)
+        for (var i = -4; i < 12; i++)
         {
             if ((I + i) < 0 || (I + i) > 0xFFF) continue;
             yield return _memory[I + i];

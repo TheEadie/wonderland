@@ -30,7 +30,7 @@ public class SfmlScreen : IScreen
 
         _text = new Text();
 
-        _window = new RenderWindow(new VideoMode(642, 722), "Wonderland", Styles.Close);
+        _window = new RenderWindow(new VideoMode(642, 758), "Wonderland", Styles.Close);
         _window.Closed += (obj, e) => { _window.Close(); };
         _window.KeyPressed +=
             (sender, e) =>
@@ -59,12 +59,12 @@ public class SfmlScreen : IScreen
         _window.Clear();
 
         DrawSection(new Vector2f(1, 1), new Vector2f(640, 320), "Wonderland CHIP-8");
-        DrawSection(new Vector2f(1, 348), new Vector2f(159, 320), "CPU");
-        DrawSection(new Vector2f(161, 348), new Vector2f(159, 320), "Graphics");
-        DrawSection(new Vector2f(321, 348), new Vector2f(320, 320), "Instructions");
-        DrawFooterIPS(new Vector2f(1, 695), new Vector2f(159, 0));
-        DrawFooterFPS(new Vector2f(161, 695), new Vector2f(159, 0));
-        DrawFooterButtons(new Vector2f(321, 695), new Vector2f(320, 0));
+        DrawSection(new Vector2f(1, 348), new Vector2f(159, 356), "CPU");
+        DrawSection(new Vector2f(161, 348), new Vector2f(159, 356), "Graphics");
+        DrawSection(new Vector2f(321, 348), new Vector2f(320, 356), "Instructions");
+        DrawFooterIPS(new Vector2f(1, 731), new Vector2f(159, 0));
+        DrawFooterFPS(new Vector2f(161, 731), new Vector2f(159, 0));
+        DrawFooterButtons(new Vector2f(321, 731), new Vector2f(320, 0));
 
         DrawGame();
 
@@ -101,6 +101,11 @@ public class SfmlScreen : IScreen
 
     private void DrawDebugRegisters()
     {
+        _text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
+        _text.FillColor = _textColour;
+        _text.Position = new Vector2f(14, 382);
+        _window.Draw(_text);
+
         for (var i = 0; i < 16; i++)
         {
             var stringBuilder = new StringBuilder();
@@ -119,14 +124,9 @@ public class SfmlScreen : IScreen
 
             _text.DisplayedString = stringBuilder.ToString();
             _text.FillColor = (i % 2) == 0 ? _textColour : _textHeading;
-            _text.Position = new Vector2f(14, 382 + (i * 18));
+            _text.Position = new Vector2f(14, 382 + 36 + (i * 18));
             _window.Draw(_text);
         }
-
-        _text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
-        _text.FillColor = _textColour;
-        _text.Position = new Vector2f(14, 382 + (16 * 18));
-        _window.Draw(_text);
     }
 
     private void DrawDebugGraphics()
@@ -148,12 +148,12 @@ public class SfmlScreen : IScreen
             _window.Draw(_text);
         }
 
-        var headerSection = new RectangleShape(new Vector2f(88, 18 * 14 + 8));
-        headerSection.OutlineThickness = 1;
-        headerSection.OutlineColor = _borderInternal;
-        headerSection.FillColor = _background;
-        headerSection.Position = new Vector2f(216, 414);
-        _window.Draw(headerSection);
+        var graphicsBorder = new RectangleShape(new Vector2f(88, 18 * memory.Count() + 8));
+        graphicsBorder.OutlineThickness = 1;
+        graphicsBorder.OutlineColor = _borderInternal;
+        graphicsBorder.FillColor = _background;
+        graphicsBorder.Position = new Vector2f(216, 414);
+        _window.Draw(graphicsBorder);
 
         var sfmlArray = new Color[8, memory.Count()];
 
@@ -171,6 +171,12 @@ public class SfmlScreen : IScreen
         sprite.Position = new Vector2f(220, 418);
         sprite.Scale = new Vector2f(10, 18);
         _window.Draw(sprite);
+
+        var line = new RectangleShape(new Vector2f(88, 1));
+        line.FillColor = _textHighlight;
+        line.OutlineThickness = 0;
+        line.Position = new Vector2f(216, 414 + 18 * 4 + 3);
+        _window.Draw(line);
     }
 
     private void DrawDebugInstructions()
