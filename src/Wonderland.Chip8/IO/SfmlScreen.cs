@@ -7,7 +7,7 @@ namespace Wonderland.Chip8.IO;
 
 public class SfmlScreen : IScreen
 {
-    private RenderWindow? _window;
+    private readonly RenderWindow _window;
     private readonly Gpu _gpu;
     private readonly Cpu _cpu;
 
@@ -18,23 +18,24 @@ public class SfmlScreen : IScreen
     {
         _gpu = gpu;
         _cpu = cpu;
+        
+        _window = new RenderWindow(new VideoMode(642, 350), "Wonderland", Styles.Close);
+        _window.Closed += (obj, e) => { _window.Close(); };
+        _window.KeyPressed +=
+            (sender, e) =>
+            {
+                var window = (Window)sender!;
+                if (e.Code == Keyboard.Key.Escape)
+                {
+                    window.Close();
+                }
+            };
     }
 
     public bool IsOpen() => _window.IsOpen;
 
     public void Init()
     {
-        _window = new RenderWindow(new VideoMode(642, 350), "Wonderland", Styles.Close);
-        _window.Closed += (obj, e) => { _window.Close(); };
-        _window.KeyPressed +=
-            (sender, e) =>
-            {
-                var window = (Window)sender;
-                if (e.Code == Keyboard.Key.Escape)
-                {
-                    window.Close();
-                }
-            };
         _window.Clear();
     }
 
