@@ -9,6 +9,7 @@ public class SfmlInput : IInputOutput
     public bool StepForward { get; private set; }
 
     private readonly Dictionary<Keyboard.Key, byte> _lookup;
+    private int _cooldown;
 
     public SfmlInput()
     {
@@ -51,11 +52,19 @@ public class SfmlInput : IInputOutput
 
     public void Step()
     {
-        Pause = Keyboard.IsKeyPressed(Keyboard.Key.P);
-        StepForward = Keyboard.IsKeyPressed(Keyboard.Key.N);
+        if (_cooldown > 0) _cooldown--;
+        var pPressed = Keyboard.IsKeyPressed(Keyboard.Key.P);
+        Pause = pPressed && _cooldown == 0;
+        var nPressed = Keyboard.IsKeyPressed(Keyboard.Key.N);
+        StepForward = nPressed && _cooldown == 0;
         foreach (var key in _lookup.Keys)
         {
             Keys[_lookup[key]] = Keyboard.IsKeyPressed(key);
+        }
+
+        if ((pPressed || nPressed) && _cooldown == 0)
+        {
+            _cooldown = 10;
         }
     }
 }
