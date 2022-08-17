@@ -140,7 +140,7 @@ public class SfmlScreen : IScreen
         for (var i = 0; i < memory.Count(); i++)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3"));
+            stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3")).Append(':');
 
             _text.DisplayedString = stringBuilder.ToString();
             _text.FillColor = (i - 4 == 0) ? _textHighlight : (i % 2) == 0 ? _textColour : _textHeading;
@@ -181,7 +181,7 @@ public class SfmlScreen : IScreen
 
     private void DrawDebugInstructions()
     {
-        _text.DisplayedString = $"PC: {_cpu.PC:x4}";
+        _text.DisplayedString = $"PC: {_cpu.PC:x3}";
         _text.FillColor = _textColour;
         _text.Position = new Vector2f(321 + 14, 382);
         _window.Draw(_text);
@@ -194,9 +194,9 @@ public class SfmlScreen : IScreen
             
             var opCodeDescription = opCode.Description(instruction);
             stringBuilder.Append((_cpu.PC + 2 * (i - 4)).ToString("x3"))
-                .Append("   ")
+                .Append(":  ")
                 .Append(instruction.OpCode.ToString("x4"))
-                .Append("   ")
+                .Append("    ")
                 .Append(scope > 0 ? "  " : "")
                 .Append(opCodeDescription);
 
