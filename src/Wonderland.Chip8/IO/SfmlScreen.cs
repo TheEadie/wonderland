@@ -16,10 +16,10 @@ public class SfmlScreen : IScreen
 
     private readonly Text _text;
 
-    private readonly Color _background = new(114, 131, 116);
-    private readonly Color _backgroundDark = new(83, 97, 84);
+    private readonly Color _background = new(50, 50, 50);
+    private readonly Color _backgroundDark = new(80, 100, 80);
     private readonly Color _textColour = new(255, 255, 255);
-    private readonly Color _textHeading = new(204, 204, 204);
+    private readonly Color _textAlt = new(204, 204, 204);
     private readonly Color _textHighlight = new(253, 184, 51);
     private readonly Color _borderInternal = new(170, 170, 170);
 
@@ -123,7 +123,7 @@ public class SfmlScreen : IScreen
             }
 
             _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i % 2) == 0 ? _textColour : _textHeading;
+            _text.FillColor = (i % 2) == 0 ? _textColour : _textAlt;
             _text.Position = new Vector2f(14, 382 + 36 + (i * 18));
             _window.Draw(_text);
         }
@@ -143,7 +143,7 @@ public class SfmlScreen : IScreen
             stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3")).Append(':');
 
             _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i - 4 == 0) ? _textHighlight : (i % 2) == 0 ? _textColour : _textHeading;
+            _text.FillColor = (i - 4 == 0) ? _textHighlight : (i % 2) == 0 ? _textColour : _textAlt;
             _text.Position = new Vector2f(161 + 14, 418 + (i * 18));
             _window.Draw(_text);
         }
@@ -210,7 +210,7 @@ public class SfmlScreen : IScreen
             }
 
             _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i == 4) ? _textHighlight : (i % 2) == 0 ? _textColour : _textHeading;
+            _text.FillColor = (i == 4) ? _textHighlight : (i % 2) == 0 ? _textColour : _textAlt;
             _text.Position = new Vector2f(321 + 14, 418 + (i * 18));
             _window.Draw(_text);
             i++;
@@ -227,7 +227,7 @@ public class SfmlScreen : IScreen
         _window.Draw(headerSection);
 
         _text.DisplayedString = title;
-        _text.FillColor = _textHeading;
+        _text.FillColor = _textColour;
         _text.Position = position + new Vector2f(12, 4);
 
         _window.Draw(_text);
@@ -250,7 +250,7 @@ public class SfmlScreen : IScreen
         _window.Draw(headerSection);
 
         _text.DisplayedString = $"IPS: {_instructionsPerSecond}";
-        _text.FillColor = _textHeading;
+        _text.FillColor = _textColour;
         _text.Position = position + new Vector2f(12, 4);
 
         _window.Draw(_text);
@@ -266,7 +266,7 @@ public class SfmlScreen : IScreen
         _window.Draw(headerSection);
 
         _text.DisplayedString = $"FPS: {_fps}";
-        _text.FillColor = _textHeading;
+        _text.FillColor = _textColour;
         _text.Position = position + new Vector2f(12, 4);
 
         _window.Draw(_text);
