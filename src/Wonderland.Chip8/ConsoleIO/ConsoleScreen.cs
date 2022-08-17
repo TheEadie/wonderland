@@ -97,7 +97,7 @@ public class ConsoleScreen : IScreen
         program.AddColumn("Location");
         program.AddColumn("Instruction");
         var o = 0;
-        foreach (var instruction in _cpu.Peek())
+        foreach (var (instruction, _) in _cpu.Peek())
         {
             program.AddRow((o == 4) ? "PC ->" : "", $"{_cpu.PC + 2 * (o - 4):x4}", $"{instruction.OpCode:x4}");
             o++;

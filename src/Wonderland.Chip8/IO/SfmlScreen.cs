@@ -187,14 +187,27 @@ public class SfmlScreen : IScreen
         _window.Draw(_text);
 
         var i = 0;
-        foreach (var instruction in _cpu.Peek())
+        var scope = 0;
+        foreach (var (instruction, opCode) in _cpu.Peek())
         {
             var stringBuilder = new StringBuilder();
+            
+            var opCodeDescription = opCode.Description(instruction);
             stringBuilder.Append((_cpu.PC + 2 * (i - 4)).ToString("x3"))
                 .Append("   ")
                 .Append(instruction.OpCode.ToString("x4"))
                 .Append("   ")
-                .Append("etc");
+                .Append(scope > 0 ? "  " : "")
+                .Append(opCodeDescription);
+
+            if (opCodeDescription.StartsWith("IF "))
+            {
+                scope++;
+            }
+            else
+            {
+                if (scope > 0) scope--;
+            }
 
             _text.DisplayedString = stringBuilder.ToString();
             _text.FillColor = (i == 4) ? _textHighlight : (i % 2) == 0 ? _textColour : _textHeading;
