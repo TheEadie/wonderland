@@ -121,13 +121,15 @@ public class Cpu
             })},
             {0x6, new OpCode(i => $"V{i.X:x} /= 2; VF = LSB", i =>
             {
-                V[0xF] = (byte)(V[i.X] & 1);
+                var temp = (byte)(V[i.X] & 1);
                 V[i.X] >>= 1;
+                V[0xF] = temp;
             })},
             {0xE, new OpCode(i => $"V{i.X:x} *= 2; VF = MSB", i =>
             {
-                V[0xF] = (byte)((V[i.X] >> 7) & 1);
+                var temp = (byte)((V[i.X] >> 7) & 1);
                 V[i.X] <<= 1;
+                V[0xF] = temp;
             })}
         };
 
