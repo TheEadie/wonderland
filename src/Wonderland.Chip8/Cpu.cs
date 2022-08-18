@@ -78,7 +78,7 @@ public class Cpu
                 var num = random.Next(256);
                 V[i.X] = (byte)(num & i.NN);
             })},
-            {0xD, new OpCode(i => $"DRAW ({i.X}, {i.Y}) x{i.N}", i =>
+            {0xD, new OpCode(i => $"DRAW (V{i.X:x}, V{i.Y:x}) x{i.N}", i =>
             {
                 var end = I + i.N;
                 var sprite = _memory[I..end];
@@ -153,8 +153,8 @@ public class Cpu
 
         _opCodesF = new Dictionary<byte, OpCode>
         {
-            {0x55, new OpCode(i => $"SAVE V0-V{i.X:x} -> I", i => V[0..(i.X + 1)].CopyTo(_memory, I))},
-            {0x65, new OpCode(i => $"LOAD I -> V0-V{i.X:x}", i => _memory[I..(I + i.X + 1)].CopyTo(V, 0))},
+            {0x55, new OpCode(i => $"I..I+{i.X} = V0..V{i.X:x}", i => V[0..(i.X + 1)].CopyTo(_memory, I))},
+            {0x65, new OpCode(i => $"V0..V{i.X:x} = I..I+{i.X}", i => _memory[I..(I + i.X + 1)].CopyTo(V, 0))},
             {0x07, new OpCode(i => $"V{i.X:x} = DT", i => V[i.X] = DelayTimer)},
             {0x15, new OpCode(i => $"DT = V{i.X:x}", i => DelayTimer = V[i.X])},
             {0x18, new OpCode(i => $"ST = V{i.X:x}", i => SoundTimer = V[i.X])},
@@ -170,7 +170,7 @@ public class Cpu
                     PC -= 2;
                 }
             })},
-            {0x1E, new OpCode(i => $"I = V{i.X:x}", i => I += V[i.X])},
+            {0x1E, new OpCode(i => $"I += V{i.X:x}", i => I += V[i.X])},
             {0x33, new OpCode(i => $"I..I+2 = BCD V{i.X:x}", i =>
             {
                 var value = V[i.X];
