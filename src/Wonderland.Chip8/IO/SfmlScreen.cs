@@ -18,6 +18,7 @@ public class SfmlScreen : IScreen
 
     private readonly Color _background = new(50, 50, 50);
     private readonly Color _backgroundDark = new(80, 100, 80);
+    private readonly Color _inactive = new(59, 68, 60);
     private readonly Color _textColour = new(255, 255, 255);
     private readonly Color _textAlt = new(204, 204, 204);
     private readonly Color _textHighlight = new(253, 184, 51);
@@ -30,7 +31,7 @@ public class SfmlScreen : IScreen
 
         _text = new Text();
 
-        _window = new RenderWindow(new VideoMode(642, 758), "Wonderland", Styles.Close);
+        _window = new RenderWindow(new VideoMode(690, 900), "Wonderland", Styles.Close);
         _window.Closed += (obj, e) => { _window.Close(); };
         _window.KeyPressed +=
             (sender, e) =>
@@ -58,25 +59,53 @@ public class SfmlScreen : IScreen
         _window.DispatchEvents();
         _window.Clear();
 
-        DrawSection(new Vector2f(1, 1), new Vector2f(640, 320), "Wonderland CHIP-8");
-        DrawGame(new Vector2f(1, 27));
+        DrawMainSection(new Vector2f(1, 1), new Vector2f(690, 870), "Wonderland CHIP-8");
+        DrawGame(new Vector2f(25,  62));
+
+        DrawTab(new Vector2f(25, 408), "Info", false);
+        DrawTab(new Vector2f(25 + 68 + 2, 408), "Debug", true);
+        DrawTab(new Vector2f(25 + 68 + 78 + 4, 408), "Settings", false);
+
+        var tabSectionStart = 450;
+        DrawSection(new Vector2f(25 + 321, tabSectionStart), new Vector2f(159, 356), "CPU");
+        DrawDebugRegisters(new Vector2f(25 + 321, tabSectionStart));
         
-        DrawSection(new Vector2f(321, 348), new Vector2f(159, 356), "CPU");
-        DrawDebugRegisters(new Vector2f(321, 348));
+        DrawSection(new Vector2f(25 + 481, tabSectionStart), new Vector2f(160, 356), "Graphics");
+        DrawDebugGraphics(new Vector2f(25 + 481, tabSectionStart));
         
-        DrawSection(new Vector2f(481, 348), new Vector2f(160, 356), "Graphics");
-        DrawDebugGraphics(new Vector2f(481, 348));
+        DrawSection(new Vector2f(25 + 1, tabSectionStart), new Vector2f(320, 356), "Instructions");
+        DrawDebugInstructions(new Vector2f(25 + 1, tabSectionStart));
         
-        DrawSection(new Vector2f(1, 348), new Vector2f(320, 356), "Instructions");
-        DrawDebugInstructions(new Vector2f(1, 348));
-        
-        DrawFooter(new Vector2f(1, 731), new Vector2f(640, 0));
+        DrawFooter(new Vector2f(1, 900-27), new Vector2f(690, 0));
 
         _window.Display();
     }
 
+    private void DrawTab(Vector2f position, string name, bool active)
+    {
+        var border = new RectangleShape(new Vector2f(name.Length * 10 + 28, 42));
+        border.FillColor = active ? _backgroundDark : _inactive;
+        border.Position = position + new Vector2f(1, 0);
+        _window.Draw(border);
+        
+        _text.DisplayedString = name;
+        _text.FillColor = _textColour;
+        _text.CharacterSize = 16;
+        _text.Position = position + new Vector2f(14, 10);
+        _window.Draw(_text);
+        
+        _text.CharacterSize = 14;
+    }
+
     private void DrawGame(Vector2f position)
     {
+        var border = new RectangleShape(new Vector2f(640, 320));
+        border.OutlineThickness = 1;
+        border.OutlineColor = _borderInternal;
+        border.FillColor = _background;
+        border.Position = position + new Vector2f(0, 0);
+        _window.Draw(border);
+        
         var vRam = _gpu.GetVRam();
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
@@ -215,6 +244,32 @@ public class SfmlScreen : IScreen
             _window.Draw(_text);
             i++;
         }
+    }
+    
+    private void DrawMainSection(Vector2f position, Vector2f size, string title)
+    {
+        var headerSection = new RectangleShape(new Vector2f(size.X, 36));
+        headerSection.OutlineThickness = 1;
+        headerSection.OutlineColor = _borderInternal;
+        headerSection.FillColor = _backgroundDark;
+        headerSection.Position = position;
+        _window.Draw(headerSection);
+
+        _text.DisplayedString = title;
+        _text.FillColor = _textColour;
+        _text.CharacterSize = 16;
+        _text.Position = position + new Vector2f(12, 8);
+
+        _window.Draw(_text);
+
+        var sectionBody = new RectangleShape(size);
+        sectionBody.OutlineThickness = 1;
+        sectionBody.OutlineColor = _borderInternal;
+        sectionBody.FillColor = _background;
+        sectionBody.Position = position + new Vector2f(0, 36);
+        _window.Draw(sectionBody);
+        
+        _text.CharacterSize = 14;
     }
 
     private void DrawSection(Vector2f position, Vector2f size, string title)
