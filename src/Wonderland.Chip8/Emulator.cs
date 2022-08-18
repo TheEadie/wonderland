@@ -99,7 +99,7 @@ public class Emulator
                 TimeSpan.FromSeconds(1),
                 EverySecond);
 
-            prevtime60Hz = RunOnTimer(timer.Elapsed, prevtime60Hz,
+            prevtime60Hz = RunOnTimerWithCatchUp(timer.Elapsed, prevtime60Hz,
                 TimeSpan.FromTicks(TimeSpan.TicksPerSecond / _targetFps),
                 EveryFrame);
         }
@@ -135,6 +135,23 @@ public class Emulator
     {
         var elapsed = now - lastRun;
         if (elapsed >= interval)
+        {
+            toRun();
+
+            lastRun += interval;
+        }
+
+        return lastRun;
+    }
+    
+    /// <summary>
+    /// Will run the action toRun() each time the interval has elapsed.
+    /// If an interval is missed it will keep running till it catches up 
+    /// </summary>
+    private static TimeSpan RunOnTimerWithCatchUp(TimeSpan now, TimeSpan lastRun, TimeSpan interval, Action toRun)
+    {
+        var elapsed = now - lastRun;
+        while (elapsed >= interval)
         {
             toRun();
 
