@@ -65,8 +65,11 @@ public class SfmlScreen : IScreen
         DrawTab(new Vector2f(25, 408), "Info", false);
         DrawTab(new Vector2f(25 + 68 + 2, 408), "Debug", true);
         DrawTab(new Vector2f(25 + 68 + 78 + 4, 408), "Settings", false);
+        
+        DrawButton(new Vector2f(690 - 25 - 42, 400), "||", false);
+        DrawButton(new Vector2f(690 - 25 - 42 - 5 - 42, 400), "->", false);
 
-        var tabSectionStart = 450;
+        const int tabSectionStart = 450;
         DrawSection(new Vector2f(25 + 321, tabSectionStart), new Vector2f(159, 356), "CPU");
         DrawDebugRegisters(new Vector2f(25 + 321, tabSectionStart));
         
@@ -92,6 +95,24 @@ public class SfmlScreen : IScreen
         _text.FillColor = _textColour;
         _text.CharacterSize = 16;
         _text.Position = position + new Vector2f(14, 10);
+        _window.Draw(_text);
+        
+        _text.CharacterSize = 14;
+    }
+    
+    private void DrawButton(Vector2f position, string content, bool active)
+    {
+        var border = new RectangleShape(new Vector2f(42, 42));
+        border.OutlineThickness = 1;
+        border.OutlineColor = _textColour;
+        border.FillColor = active ? _backgroundDark : _inactive;
+        border.Position = position + new Vector2f(0, 0);
+        _window.Draw(border);
+        
+        _text.DisplayedString = content;
+        _text.FillColor = _textColour;
+        _text.CharacterSize = 16;
+        _text.Position = position + new Vector2f(12, 10);
         _window.Draw(_text);
         
         _text.CharacterSize = 14;
