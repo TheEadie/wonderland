@@ -24,6 +24,8 @@ public class SfmlScreen : IScreen
     private readonly Color _textHighlight = new(253, 184, 51);
     private readonly Color _borderInternal = new(170, 170, 170);
 
+    private Vector2f _mouse;
+
     public SfmlScreen(Gpu gpu, Cpu cpu)
     {
         _gpu = gpu;
@@ -32,7 +34,7 @@ public class SfmlScreen : IScreen
         _text = new Text();
 
         _window = new RenderWindow(new VideoMode(690, 900), "Wonderland", Styles.Close);
-        _window.Closed += (obj, e) => { _window.Close(); };
+        _window.Closed += (_, _) => { _window.Close(); };
         _window.KeyPressed +=
             (sender, e) =>
             {
@@ -42,6 +44,16 @@ public class SfmlScreen : IScreen
                     window.Close();
                 }
             };
+
+        _window.MouseMoved += (_, e) =>
+        {
+            _mouse = new Vector2f(e.X, e.Y);
+        };
+
+        _window.MouseButtonReleased += (sender, args) =>
+        {
+
+        };
     }
 
     public bool IsOpen() => _window.IsOpen;
@@ -84,10 +96,18 @@ public class SfmlScreen : IScreen
         _window.Display();
     }
 
+    private bool MouseIsInArea(Vector2f start, Vector2f end)
+    {
+        return (start.X < _mouse.X  && _mouse.X < end.X &&
+                start.Y < _mouse.Y && _mouse.Y < end.Y);
+    }
+
     private void DrawTab(Vector2f position, string name, bool active)
     {
-        var border = new RectangleShape(new Vector2f(name.Length * 10 + 28, 42));
-        border.FillColor = active ? _backgroundDark : _inactive;
+        var size = new Vector2f(name.Length * 10 + 28, 42);
+        var border = new RectangleShape(size);
+        var hover = MouseIsInArea(position, position + size);
+        border.FillColor = active || hover ? _backgroundDark : _inactive;
         border.Position = position + new Vector2f(1, 0);
         _window.Draw(border);
         
@@ -99,13 +119,15 @@ public class SfmlScreen : IScreen
         
         _text.CharacterSize = 14;
     }
-    
+
     private void DrawButton(Vector2f position, string content, bool active)
     {
-        var border = new RectangleShape(new Vector2f(42, 42));
+        var size = new Vector2f(42, 42);
+        var border = new RectangleShape(size);
+        var hover = MouseIsInArea(position, position + size);
         border.OutlineThickness = 1;
         border.OutlineColor = _textColour;
-        border.FillColor = active ? _backgroundDark : _inactive;
+        border.FillColor = active || hover ? _backgroundDark : _inactive;
         border.Position = position + new Vector2f(0, 0);
         _window.Draw(border);
         
