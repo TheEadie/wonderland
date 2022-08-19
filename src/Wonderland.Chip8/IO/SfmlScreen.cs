@@ -1,6 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Wonderland.Chip8.IO.Tabs;
 
 namespace Wonderland.Chip8.IO;
 
@@ -17,13 +18,7 @@ public class SfmlScreen : IScreen
     private readonly Button _pauseButton;
     private readonly Button _stepButton;
 
-    private string _activeTab;
-    private readonly Tab _infoTab;
-    private readonly ITabContent _infoTabContents;
-    private readonly Tab _debugTab;
-    private readonly ITabContent _debugTabContents;
-    private readonly Tab _settingsTab;
-    private readonly ITabContent _settingsTabContents;
+    private readonly TabControl _tabControl;
 
     public Queue<EmulatorAction> Actions { get; }
 
@@ -59,13 +54,11 @@ public class SfmlScreen : IScreen
             },
             _window);
 
-        _activeTab = "Debug";
-        _infoTab = new Tab(new Vector2f(25, 407), "Info", (_) => { _activeTab = "Info"; }, _window);
-        _infoTabContents = new InfoTabContents(new Vector2f(25, 450), _window);
-        _debugTab = new Tab(new Vector2f(25 + 68 + 2, 407), "Debug", (_) => { _activeTab = "Debug"; }, _window);
-        _debugTabContents = new DebugTabContent(new Vector2f(25, 450), _window, _cpu, _gpu);
-        _settingsTab = new Tab(new Vector2f(25 + 68 + 78 + 4, 407), "Settings", (_) => { _activeTab = "Settings"; }, _window);
-        _settingsTabContents = new SettingsTabContents(new Vector2f(25, 450), _window);
+
+        _tabControl = new TabControl(new Vector2f(25, 407), _window);
+        _tabControl.Add("Info", new InfoTabContents(new Vector2f(25, 450), _window));
+        _tabControl.Add("Debug", new DebugTabContent(new Vector2f(25, 450), _window, _cpu, _gpu));
+        _tabControl.Add("Settings", new SettingsTabContents(new Vector2f(25, 450), _window));
     }
 
     public bool IsOpen() => _window.IsOpen;
@@ -83,27 +76,8 @@ public class SfmlScreen : IScreen
         DrawMainSection(new Vector2f(1, 1), new Vector2f(690, 870), "Wonderland CHIP-8");
         DrawGame(new Vector2f(25,  62));
 
-        _infoTab.Active = _activeTab == "Info";
-        _infoTab.Draw(_window);
-        if (_infoTab.Active)
-        {
-            _infoTabContents.Draw();
-        }
+        _tabControl.Draw();
         
-        _debugTab.Active = _activeTab == "Debug";
-        _debugTab.Draw(_window);
-        if (_debugTab.Active)
-        {
-            _debugTabContents.Draw();
-        }
-
-        _settingsTab.Active = _activeTab == "Settings";
-        _settingsTab.Draw(_window);
-        if (_settingsTab.Active)
-        {
-            _settingsTabContents.Draw();
-        }
-
         _pauseButton.Active = _paused;
         _pauseButton.Draw(_window);
         _stepButton.Draw(_window);

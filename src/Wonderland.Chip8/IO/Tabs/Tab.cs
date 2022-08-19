@@ -2,26 +2,28 @@
 using SFML.System;
 using SFML.Window;
 
-namespace Wonderland.Chip8.IO;
+namespace Wonderland.Chip8.IO.Tabs;
 
 public class Tab
 {
     private readonly Vector2f _start;
     private readonly Vector2f _end;
     private readonly Vector2f _size;
-    private readonly string _content;
     private readonly Action<Tab> _onClick;
+    private readonly ITabContent _content;
     private bool _hover;
     private bool _clicked;
+    public string Name { get; }
     public bool Active { get; set; }
 
-    public Tab(Vector2f position, string content, Action<Tab> onClick, Window window)
+    public Tab(Vector2f position, string name, Action<Tab> onClick, Window window, ITabContent content)
     {
         _start = position;
-        _size = new Vector2f(content.Length * 10 + 28, 42);
+        _size = new Vector2f(name.Length * 10 + 28, 42);
         _end = position + _size;
-        _content = content;
+        Name = name;
         _onClick = onClick;
+        _content = content;
         window.MouseButtonPressed += OnMouseButtonPressed;
         window.MouseButtonReleased += OnMouseButtonReleased;
         window.MouseMoved += OnMouseMoved;
@@ -61,13 +63,18 @@ public class Tab
         parent.Draw(border);
 
         var text = TextFactory.Create();
-        text.DisplayedString = _content;
+        text.DisplayedString = Name;
         text.FillColor = Colours.TextColour;
         text.CharacterSize = 16;
         text.Position = _start + new Vector2f(14, 10);
         parent.Draw(text);
     
         text.CharacterSize = 14;
+
+        if (Active)
+        {
+            _content.Draw();
+        }
     }
     
     private static bool MouseIsInArea(Vector2f mouse, Vector2f start, Vector2f end)

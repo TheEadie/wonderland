@@ -2,7 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 
-namespace Wonderland.Chip8.IO;
+namespace Wonderland.Chip8.IO.Tabs;
 
 public class DebugTabContent : ITabContent
 {

@@ -1,14 +1,14 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 
-namespace Wonderland.Chip8.IO;
+namespace Wonderland.Chip8.IO.Tabs;
 
-public class SettingsTabContents : ITabContent
+public class InfoTabContents : ITabContent
 {
     private readonly Vector2f _position;
     private readonly RenderTarget _window;
 
-    public SettingsTabContents(Vector2f position, RenderTarget window)
+    public InfoTabContents(Vector2f position, RenderTarget window)
     {
         _position = position;
         _window = window;
@@ -16,10 +16,7 @@ public class SettingsTabContents : ITabContent
     
     public void Draw()
     {
-        DrawSection(_position + new Vector2f(1, 0), new Vector2f(320, 356), "Quirks");
-        DrawContent(_position+ new Vector2f(1, 0));
-        
-        DrawSection(_position + new Vector2f(321, 0), new Vector2f(320, 356), "Colours");
+        DrawSection(_position + new Vector2f(1, 0), new Vector2f(640, 356), "Game Info");
         DrawContent(_position+ new Vector2f(1, 0));
     }
     
