@@ -14,24 +14,20 @@ public class SfmlScreen : IScreen
     private int _fps;
     private int _instructionsPerSecond;
 
-    private readonly Text _text;
-
-    private readonly Color _background = new(50, 50, 50);
-    private readonly Color _backgroundDark = new(80, 100, 80);
-    private readonly Color _inactive = new(59, 68, 60);
-    private readonly Color _textColour = new(255, 255, 255);
-    private readonly Color _textAlt = new(204, 204, 204);
-    private readonly Color _textHighlight = new(253, 184, 51);
-    private readonly Color _borderInternal = new(170, 170, 170);
-
     private Vector2f _mouse;
+    private bool _paused;
+    private readonly Button _pauseButton;
+    private readonly Button _stepButton;
+
+    public Queue<EmulatorAction> Actions { get; }
+
 
     public SfmlScreen(Gpu gpu, Cpu cpu)
     {
         _gpu = gpu;
         _cpu = cpu;
 
-        _text = new Text();
+        Actions = new Queue<EmulatorAction>();
 
         _window = new RenderWindow(new VideoMode(690, 900), "Wonderland", Styles.Close);
         _window.Closed += (_, _) => { _window.Close(); };
@@ -49,11 +45,19 @@ public class SfmlScreen : IScreen
         {
             _mouse = new Vector2f(e.X, e.Y);
         };
-
-        _window.MouseButtonReleased += (sender, args) =>
-        {
-
-        };
+        
+        _pauseButton = new Button(new Vector2f(690 - 25 - 42, 400), "||", 
+            (obj) => { 
+                obj.Active = !obj.Active;
+                Actions.Enqueue(EmulatorAction.Pause);
+                },
+            _window);
+        _stepButton = new Button(new Vector2f(690 - 25 - 42 - 5 - 42, 400), "->",
+            (_) =>
+            {
+                Actions.Enqueue(EmulatorAction.Step);
+            },
+            _window);
     }
 
     public bool IsOpen() => _window.IsOpen;
@@ -61,9 +65,6 @@ public class SfmlScreen : IScreen
     public void Init()
     {
         _window.Clear();
-
-        _text.Font = new Font("resources/JetBrainsMonoNL-Regular.ttf");
-        _text.CharacterSize = 14;
     }
 
     public void DrawFrame()
@@ -77,9 +78,10 @@ public class SfmlScreen : IScreen
         DrawTab(new Vector2f(25, 408), "Info", false);
         DrawTab(new Vector2f(25 + 68 + 2, 408), "Debug", true);
         DrawTab(new Vector2f(25 + 68 + 78 + 4, 408), "Settings", false);
-        
-        DrawButton(new Vector2f(690 - 25 - 42, 400), "||", false);
-        DrawButton(new Vector2f(690 - 25 - 42 - 5 - 42, 400), "->", false);
+
+        _pauseButton.Active = _paused;
+        _pauseButton.Draw(_window, _mouse);
+        _stepButton.Draw(_window, _mouse);
 
         const int tabSectionStart = 450;
         DrawSection(new Vector2f(25 + 321, tabSectionStart), new Vector2f(159, 356), "CPU");
@@ -96,56 +98,39 @@ public class SfmlScreen : IScreen
         _window.Display();
     }
 
-    private bool MouseIsInArea(Vector2f start, Vector2f end)
+    
+
+    private static bool MouseIsInArea(Vector2f mouse, Vector2f start, Vector2f end)
     {
-        return (start.X < _mouse.X  && _mouse.X < end.X &&
-                start.Y < _mouse.Y && _mouse.Y < end.Y);
+        return (start.X < mouse.X  && mouse.X < end.X &&
+                start.Y < mouse.Y && mouse.Y < end.Y);
     }
 
     private void DrawTab(Vector2f position, string name, bool active)
     {
         var size = new Vector2f(name.Length * 10 + 28, 42);
         var border = new RectangleShape(size);
-        var hover = MouseIsInArea(position, position + size);
-        border.FillColor = active || hover ? _backgroundDark : _inactive;
+        var hover = MouseIsInArea(_mouse, position, position + size);
+        border.FillColor = active || hover ? Colours.BackgroundDark : Colours.Inactive;
         border.Position = position + new Vector2f(1, 0);
         _window.Draw(border);
-        
-        _text.DisplayedString = name;
-        _text.FillColor = _textColour;
-        _text.CharacterSize = 16;
-        _text.Position = position + new Vector2f(14, 10);
-        _window.Draw(_text);
-        
-        _text.CharacterSize = 14;
-    }
 
-    private void DrawButton(Vector2f position, string content, bool active)
-    {
-        var size = new Vector2f(42, 42);
-        var border = new RectangleShape(size);
-        var hover = MouseIsInArea(position, position + size);
-        border.OutlineThickness = 1;
-        border.OutlineColor = _textColour;
-        border.FillColor = active || hover ? _backgroundDark : _inactive;
-        border.Position = position + new Vector2f(0, 0);
-        _window.Draw(border);
+        var text = TextFactory.Create();
+        text.DisplayedString = name;
+        text.FillColor = Colours.TextColour;
+        text.CharacterSize = 16;
+        text.Position = position + new Vector2f(14, 10);
+        _window.Draw(text);
         
-        _text.DisplayedString = content;
-        _text.FillColor = _textColour;
-        _text.CharacterSize = 16;
-        _text.Position = position + new Vector2f(12, 10);
-        _window.Draw(_text);
-        
-        _text.CharacterSize = 14;
+        text.CharacterSize = 14;
     }
 
     private void DrawGame(Vector2f position)
     {
         var border = new RectangleShape(new Vector2f(640, 320));
         border.OutlineThickness = 1;
-        border.OutlineColor = _borderInternal;
-        border.FillColor = _background;
+        border.OutlineColor = Colours.BorderInternal;
+        border.FillColor = Colours.Background;
         border.Position = position + new Vector2f(0, 0);
         _window.Draw(border);
         
@@ -173,10 +158,11 @@ public class SfmlScreen : IScreen
 
     private void DrawDebugRegisters(Vector2f position)
     {
-        _text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
-        _text.FillColor = _textColour;
-        _text.Position = position + new Vector2f(14, 34);
-        _window.Draw(_text);
+        var text = TextFactory.Create();
+        text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
+        text.FillColor = Colours.TextColour;
+        text.Position = position + new Vector2f(14, 34);
+        _window.Draw(text);
 
         for (var i = 0; i < 16; i++)
         {
@@ -194,42 +180,43 @@ public class SfmlScreen : IScreen
                     .Append(_cpu.Stack.ElementAt(i).ToString("x3"));
             }
 
-            _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i % 2) == 0 ? _textColour : _textAlt;
-            _text.Position = position + new Vector2f(14, 70 + (i * 18));
-            _window.Draw(_text);
+            text.DisplayedString = stringBuilder.ToString();
+            text.FillColor = (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.Position = position + new Vector2f(14, 70 + (i * 18));
+            _window.Draw(text);
         }
     }
 
     private void DrawDebugGraphics(Vector2f position)
     {
-        _text.DisplayedString = $"I: {_cpu.I:x3}";
-        _text.FillColor = _textColour;
-        _text.Position = position + new Vector2f(14, 34);
-        _window.Draw(_text);
+        var text = TextFactory.Create();
+        text.DisplayedString = $"I: {_cpu.I:x3}";
+        text.FillColor = Colours.TextColour;
+        text.Position = position + new Vector2f(14, 34);
+        _window.Draw(text);
 
-        var memory = _cpu.GetGraphicsMemory();
-        for (var i = 0; i < memory.Count(); i++)
+        var memory = _cpu.GetGraphicsMemory().ToList();
+        for (var i = 0; i < memory.Count; i++)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3")).Append(':');
 
-            _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i - 4 == 0) ? _textHighlight : (i % 2) == 0 ? _textColour : _textAlt;
-            _text.Position = position + new Vector2f(14, 70 + (i * 18));
-            _window.Draw(_text);
+            text.DisplayedString = stringBuilder.ToString();
+            text.FillColor = (i - 4 == 0) ? Colours.TextHighlight : (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.Position = position + new Vector2f(14, 70 + (i * 18));
+            _window.Draw(text);
         }
 
-        var graphicsBorder = new RectangleShape(new Vector2f(88, 18 * memory.Count() + 8));
+        var graphicsBorder = new RectangleShape(new Vector2f(88, 18 * memory.Count + 8));
         graphicsBorder.OutlineThickness = 1;
-        graphicsBorder.OutlineColor = _borderInternal;
-        graphicsBorder.FillColor = _background;
+        graphicsBorder.OutlineColor = Colours.BorderInternal;
+        graphicsBorder.FillColor = Colours.Background;
         graphicsBorder.Position = position + new Vector2f(55, 66);
         _window.Draw(graphicsBorder);
 
-        var sfmlArray = new Color[8, memory.Count()];
+        var sfmlArray = new Color[8, memory.Count];
 
-        for (var y = 0; y < memory.Count(); y++)
+        for (var y = 0; y < memory.Count; y++)
         {
             for (var x = 0; x < 8; x++)
             {
@@ -245,7 +232,7 @@ public class SfmlScreen : IScreen
         _window.Draw(sprite);
 
         var line = new RectangleShape(new Vector2f(88, 1));
-        line.FillColor = _textHighlight;
+        line.FillColor = Colours.TextHighlight;
         line.OutlineThickness = 0;
         line.Position = position + new Vector2f(55, 70 + 18 * 4);
         _window.Draw(line);
@@ -253,10 +240,11 @@ public class SfmlScreen : IScreen
 
     private void DrawDebugInstructions(Vector2f position)
     {
-        _text.DisplayedString = $"PC: {_cpu.PC:x3}";
-        _text.FillColor = _textColour;
-        _text.Position = position + new Vector2f(14, 34);
-        _window.Draw(_text);
+        var text = TextFactory.Create();
+        text.DisplayedString = $"PC: {_cpu.PC:x3}";
+        text.FillColor = Colours.TextColour;
+        text.Position = position + new Vector2f(14, 34);
+        _window.Draw(text);
 
         var i = 0;
         var scope = 0;
@@ -281,59 +269,61 @@ public class SfmlScreen : IScreen
                 if (scope > 0) scope--;
             }
 
-            _text.DisplayedString = stringBuilder.ToString();
-            _text.FillColor = (i == 4) ? _textHighlight : (i % 2) == 0 ? _textColour : _textAlt;
-            _text.Position = position + new Vector2f(14, 70 + (i * 18));
-            _window.Draw(_text);
+            text.DisplayedString = stringBuilder.ToString();
+            text.FillColor = (i == 4) ? Colours.TextHighlight : (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.Position = position + new Vector2f(14, 70 + (i * 18));
+            _window.Draw(text);
             i++;
         }
     }
-    
+
     private void DrawMainSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 36));
         headerSection.OutlineThickness = 1;
-        headerSection.OutlineColor = _borderInternal;
-        headerSection.FillColor = _backgroundDark;
+        headerSection.OutlineColor = Colours.BorderInternal;
+        headerSection.FillColor = Colours.BackgroundDark;
         headerSection.Position = position;
         _window.Draw(headerSection);
 
-        _text.DisplayedString = title;
-        _text.FillColor = _textColour;
-        _text.CharacterSize = 16;
-        _text.Position = position + new Vector2f(12, 8);
+        var text = TextFactory.Create();
+        text.DisplayedString = title;
+        text.FillColor = Colours.TextColour;
+        text.CharacterSize = 16;
+        text.Position = position + new Vector2f(12, 8);
 
-        _window.Draw(_text);
+        _window.Draw(text);
 
         var sectionBody = new RectangleShape(size);
         sectionBody.OutlineThickness = 1;
-        sectionBody.OutlineColor = _borderInternal;
-        sectionBody.FillColor = _background;
+        sectionBody.OutlineColor = Colours.BorderInternal;
+        sectionBody.FillColor = Colours.Background;
         sectionBody.Position = position + new Vector2f(0, 36);
         _window.Draw(sectionBody);
         
-        _text.CharacterSize = 14;
+        text.CharacterSize = 14;
     }
 
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
         headerSection.OutlineThickness = 1;
-        headerSection.OutlineColor = _borderInternal;
-        headerSection.FillColor = _backgroundDark;
+        headerSection.OutlineColor = Colours.BorderInternal;
+        headerSection.FillColor = Colours.BackgroundDark;
         headerSection.Position = position;
         _window.Draw(headerSection);
 
-        _text.DisplayedString = title;
-        _text.FillColor = _textColour;
-        _text.Position = position + new Vector2f(12, 4);
+        var text = TextFactory.Create();
+        text.DisplayedString = title;
+        text.FillColor = Colours.TextColour;
+        text.Position = position + new Vector2f(12, 4);
 
-        _window.Draw(_text);
+        _window.Draw(text);
 
         var sectionBody = new RectangleShape(size);
         sectionBody.OutlineThickness = 1;
-        sectionBody.OutlineColor = _borderInternal;
-        sectionBody.FillColor = _background;
+        sectionBody.OutlineColor = Colours.BorderInternal;
+        sectionBody.FillColor = Colours.Background;
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
@@ -342,21 +332,28 @@ public class SfmlScreen : IScreen
     {
         var section = new RectangleShape(new Vector2f(size.X, 26));
         section.OutlineThickness = 1;
-        section.OutlineColor = _borderInternal;
-        section.FillColor = _backgroundDark;
+        section.OutlineColor = Colours.BorderInternal;
+        section.FillColor = Colours.BackgroundDark;
         section.Position = position;
         _window.Draw(section);
 
-        _text.DisplayedString = $"IPS: {_instructionsPerSecond}    FPS: {_fps}";
-        _text.FillColor = _textAlt;
-        _text.Position = position + size - new Vector2f(_text.DisplayedString.Length * 8 + 14, -4);
+        var text = TextFactory.Create();
+        text.DisplayedString = $"IPS: {_instructionsPerSecond}    FPS: {_fps}";
+        text.FillColor = Colours.TextAlt;
+        text.Position = position + size - new Vector2f(text.DisplayedString.Length * 8 + 14, -4);
 
-        _window.Draw(_text);
+        _window.Draw(text);
     }
 
     public void UpdateStatus(int fps, int instructionsPerSecond)
     {
         _fps = fps;
         _instructionsPerSecond = instructionsPerSecond;
+        
+    }
+
+    public void UpdateButtonStates(bool pause)
+    {
+        _paused = pause;
     }
 }

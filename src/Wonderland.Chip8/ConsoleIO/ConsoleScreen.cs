@@ -10,6 +10,8 @@ public class ConsoleScreen : IScreen
     private int _fps;
     private int _instructionsPerSecond;
 
+    public Queue<EmulatorAction> Actions { get; }
+
     public ConsoleScreen(Gpu gpu, Cpu cpu, IInputOutput io)
     {
         _gpu = gpu;
@@ -18,6 +20,7 @@ public class ConsoleScreen : IScreen
 
         _fps = 0;
         _instructionsPerSecond = 0;
+        Actions = new Queue<EmulatorAction>();
     }
 
     public void Init()
@@ -123,5 +126,9 @@ public class ConsoleScreen : IScreen
     {
         _fps = fps;
         _instructionsPerSecond = instructionsPerSecond;
+    }
+
+    public void UpdateButtonStates(bool pause)
+    {
     }
 }

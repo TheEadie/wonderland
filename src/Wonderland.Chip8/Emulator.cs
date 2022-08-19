@@ -82,6 +82,7 @@ public class Emulator
             void EveryFrame()
             {
                 ProcessInput();
+                _screen.UpdateButtonStates(_pause);
                 _screen.DrawFrame();
                 _actualFps++;
 
@@ -109,16 +110,23 @@ public class Emulator
     {
         _io.Step();
 
+
+        EmulatorAction? nextAction = null;
+        if (_screen.Actions.Count > 0)
+        {
+            nextAction = _screen.Actions.Dequeue();
+        }
+
         if (_cpu.SoundTimer > 0)
         {
             _io.Beep();
         }
 
-        if (_io.Pause)
+        if (_io.Pause || nextAction == EmulatorAction.Pause)
         {
             _pause = !_pause;
         }
-        if (_io.StepForward)
+        if (_io.StepForward || nextAction == EmulatorAction.Step)
         {
             if (_debugStepsSinceLastStep60Hz >= _stepsPerFrame)
             {
