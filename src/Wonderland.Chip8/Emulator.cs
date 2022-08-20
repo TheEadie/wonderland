@@ -151,7 +151,7 @@ public class Emulator
 
         return lastRun;
     }
-    
+
     /// <summary>
     /// Will run the action toRun() each time the interval has elapsed.
     /// If an interval is missed it will keep running till it catches up 
