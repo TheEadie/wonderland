@@ -22,12 +22,12 @@ public class Cpu
     private readonly Dictionary<byte, OpCode> _opCodesF;
     private bool _displayInterupt;
 
-    public bool Quirk_VfReset { get; set; }
-    public bool Quirk_Memory { get; set; }
-    public bool Quirk_DisplayWait { get; set; }
-    public bool Quirk_Clipping { get; set; }
-    public bool Quirk_Shifting { get; set; }
-    public bool Quirk_Jumping { get; set; }
+    public bool QuirkVfReset { get; set; }
+    public bool QuirkMemory { get; set; }
+    public bool QuirkDisplayWait { get; set; }
+    public bool QuirkClipping { get; set; }
+    public bool QuirkShifting { get; set; }
+    public bool QuirkJumping { get; set; }
 
     public Cpu(byte[] memory, Gpu gpu, IInputOutput io)
     {
@@ -40,84 +40,103 @@ public class Cpu
         V = new byte[16];
         Stack = new Stack<ushort>();
 
-        Quirk_VfReset = true;
-        Quirk_Memory = true;
-        Quirk_DisplayWait = true;
-        Quirk_Clipping = true;
-        Quirk_Shifting = false;
-        Quirk_Jumping = false;
+        // CHIP-8 defaults
+        QuirkVfReset = true;
+        QuirkMemory = true;
+        QuirkDisplayWait = true;
+        QuirkClipping = true;
+        QuirkShifting = false;
+        QuirkJumping = false;
 
         _opCodes = new Dictionary<byte, OpCode>
         {
             {0x1, new OpCode(i => $"GOTO {i.NNN:x3}", i => PC = i.NNN)},
-            {0x2, new OpCode(i => $"CALL {i.NNN:x3}", i =>
             {
-                Stack.Push(PC);
-                PC = i.NNN;
-            })},
-            {0x3, new OpCode(i => $"IF V{i.X:x} != {i.NN:x2}", i =>
-            {
-                if (V[i.X] == i.NN)
+                0x2, new OpCode(i => $"CALL {i.NNN:x3}", i =>
                 {
-                    PC += 2;
-                }
-            })},
-            {0x4, new OpCode(i => $"IF V{i.X:x} == {i.NN:x2}", i =>
+                    Stack.Push(PC);
+                    PC = i.NNN;
+                })
+            },
             {
-                if (V[i.X] != i.NN)
+                0x3, new OpCode(i => $"IF V{i.X:x} != {i.NN:x2}", i =>
                 {
-                    PC += 2;
-                }
-            })},
-            {0x5, new OpCode(i => $"IF V{i.X:x} != V{i.Y:x}", i =>
+                    if (V[i.X] == i.NN)
+                    {
+                        PC += 2;
+                    }
+                })
+            },
             {
-                if (V[i.X] == V[i.Y])
+                0x4, new OpCode(i => $"IF V{i.X:x} == {i.NN:x2}", i =>
                 {
-                    PC += 2;
-                }
-            })},
+                    if (V[i.X] != i.NN)
+                    {
+                        PC += 2;
+                    }
+                })
+            },
+            {
+                0x5, new OpCode(i => $"IF V{i.X:x} != V{i.Y:x}", i =>
+                {
+                    if (V[i.X] == V[i.Y])
+                    {
+                        PC += 2;
+                    }
+                })
+            },
             {0x6, new OpCode(i => $"V{i.X:x} = {i.NN:x2}", i => V[i.X] = i.NN)},
             {0x7, new OpCode(i => $"V{i.X:x} += {i.NN:x2}", i => V[i.X] += i.NN)},
-            {0x9, new OpCode(i => $"IF V{i.X:x} == V{i.Y:X}", i =>
             {
-                if (V[i.X] != V[i.Y])
+                0x9, new OpCode(i => $"IF V{i.X:x} == V{i.Y:X}", i =>
                 {
-                    PC += 2;
-                }
-            })},
+                    if (V[i.X] != V[i.Y])
+                    {
+                        PC += 2;
+                    }
+                })
+            },
             {0xA, new OpCode(i => $"I = {i.NNN:x3}", i => I = i.NNN)},
-            {0xB, new OpCode(i => $"GOTO V0 + {i.NNN:x2}", i => {
-                if (Quirk_Jumping)
-                {
-                    PC = (ushort)(V[i.X] + i.NNN);
-                }
-                else
-                {
-                    PC = (ushort)(V[0x0] + i.NNN);
-                }
-            })},
-            {0xC, new OpCode(i => $"V{i.X} = RANDOM(0 - {i.NN:x2})", i =>
             {
-                var random = new Random();
-                var num = random.Next(256);
-                V[i.X] = (byte)(num & i.NN);
-            })},
-            {0xD, new OpCode(i => $"DRAW (V{i.X:x}, V{i.Y:x}) x{i.N}", i =>
-            {
-                // Wait for display refresh
-                if (!_displayInterupt && Quirk_DisplayWait)
+                0xB, new OpCode(i => $"GOTO V0 + {i.NNN:x2}", i =>
                 {
-                    PC -=2;
-                    return;
-                }
-                var end = I + i.N;
-                var sprite = _memory[I..end];
-                var x = V[i.X];
-                var y = V[i.Y];
-                var turnedOff = _gpu.Draw(x, y, sprite, Quirk_Clipping);
-                V[0xF] = turnedOff ? (byte)1 : (byte)0;
-                _displayInterupt = false;
-            })},
+                    if (QuirkJumping)
+                    {
+                        PC = (ushort) (V[i.X] + i.NNN);
+                    }
+                    else
+                    {
+                        PC = (ushort) (V[0x0] + i.NNN);
+                    }
+                })
+            },
+            {
+                0xC, new OpCode(i => $"V{i.X} = RANDOM(0 - {i.NN:x2})", i =>
+                {
+                    var random = new Random();
+                    var num = random.Next(256);
+                    V[i.X] = (byte) (num & i.NN);
+                })
+            },
+            {
+                0xD, new OpCode(i => $"DRAW (V{i.X:x}, V{i.Y:x}) x{i.N}", i =>
+                {
+                    // Wait for display refresh
+                    if (!_displayInterupt && QuirkDisplayWait)
+                    {
+                        PC -= 2;
+                        return;
+                    }
+
+                    var end = I + i.N;
+                    var sprite = _memory[I..end];
+                    var x = V[i.X];
+                    var y = V[i.Y];
+                    var turnedOff = _gpu.Draw(x, y, sprite, QuirkClipping);
+                    V[0xF] = turnedOff ? (byte) 1 : (byte) 0;
+                    _displayInterupt = false;
+                })
+            },
         };
 
         _opCodes0 = new Dictionary<byte, OpCode>
@@ -129,107 +148,151 @@ public class Cpu
         _opCodes8 = new Dictionary<byte, OpCode>
         {
             {0x0, new OpCode(i => $"V{i.X:x} = V{i.Y:x}", i => V[i.X] = V[i.Y])},
-            {0x1, new OpCode(i => $"V{i.X:x} |= V{i.Y:x}", i => { V[i.X] |= V[i.Y]; if (Quirk_VfReset) V[0xF] = 0;})},
-            {0x2, new OpCode(i => $"V{i.X:x} &= V{i.Y:x}", i => { V[i.X] &= V[i.Y]; if (Quirk_VfReset) V[0xF] = 0;})},
-            {0x3, new OpCode(i => $"V{i.X:x} ^= V{i.Y:x}", i => { V[i.X] ^= V[i.Y]; if (Quirk_VfReset) V[0xF] = 0;})},
-            {0x4, new OpCode(i => $"V{i.X:x} += V{i.Y:x}; Vf = CARRY", i =>
             {
-                var add = V[i.X] + V[i.Y];
-                V[i.X] = (byte)add;
-                V[0xF] = (byte)(add > 255 ? 1 : 0);
-            })},
-            {0x5, new OpCode(i => $"V{i.X:x} -= V{i.Y:x}; Vf = CARRY", i =>
-            {
-                var sub = V[i.X] - V[i.Y];
-                V[i.X] = (byte)sub;
-                V[0xF] = (byte)(sub > 0 ? 1 : 0);
-            })},
-            {0x7, new OpCode(i => $"V{i.X:x} = V{i.Y:x} - V{i.Y:x}; Vf = CARRY", i =>
-            {
-                var sub = V[i.Y] - V[i.X];
-                V[i.X] = (byte)sub;
-                V[0xF] = (byte)(sub > 0 ? 1 : 0);
-            })},
-            {0x6, new OpCode(i => $"V{i.X:x} /= 2; VF = LSB", i =>
-            {
-                if (!Quirk_Shifting)
+                0x1, new OpCode(i => $"V{i.X:x} |= V{i.Y:x}", i =>
                 {
-                    V[i.X] = V[i.Y];
-                }
-                var temp = (byte)(V[i.X] & 1);
-                V[i.X] >>= 1;
-                V[0xF] = temp;
-            })},
-            {0xE, new OpCode(i => $"V{i.X:x} *= 2; VF = MSB", i =>
+                    V[i.X] |= V[i.Y];
+                    if (QuirkVfReset) V[0xF] = 0;
+                })
+            },
             {
-                if (!Quirk_Shifting)
+                0x2, new OpCode(i => $"V{i.X:x} &= V{i.Y:x}", i =>
                 {
-                    V[i.X] = V[i.Y];
-                }
-                var temp = (byte)((V[i.X] >> 7) & 1);
-                V[i.X] <<= 1;
-                V[0xF] = temp;
-            })}
+                    V[i.X] &= V[i.Y];
+                    if (QuirkVfReset) V[0xF] = 0;
+                })
+            },
+            {
+                0x3, new OpCode(i => $"V{i.X:x} ^= V{i.Y:x}", i =>
+                {
+                    V[i.X] ^= V[i.Y];
+                    if (QuirkVfReset) V[0xF] = 0;
+                })
+            },
+            {
+                0x4, new OpCode(i => $"V{i.X:x} += V{i.Y:x}; Vf = CARRY", i =>
+                {
+                    var add = V[i.X] + V[i.Y];
+                    V[i.X] = (byte) add;
+                    V[0xF] = (byte) (add > 255 ? 1 : 0);
+                })
+            },
+            {
+                0x5, new OpCode(i => $"V{i.X:x} -= V{i.Y:x}; Vf = CARRY", i =>
+                {
+                    var sub = V[i.X] - V[i.Y];
+                    V[i.X] = (byte) sub;
+                    V[0xF] = (byte) (sub > 0 ? 1 : 0);
+                })
+            },
+            {
+                0x7, new OpCode(i => $"V{i.X:x} = V{i.Y:x} - V{i.Y:x}; Vf = CARRY", i =>
+                {
+                    var sub = V[i.Y] - V[i.X];
+                    V[i.X] = (byte) sub;
+                    V[0xF] = (byte) (sub > 0 ? 1 : 0);
+                })
+            },
+            {
+                0x6, new OpCode(i => $"V{i.X:x} /= 2; VF = LSB", i =>
+                {
+                    if (!QuirkShifting)
+                    {
+                        V[i.X] = V[i.Y];
+                    }
+
+                    var temp = (byte) (V[i.X] & 1);
+                    V[i.X] >>= 1;
+                    V[0xF] = temp;
+                })
+            },
+            {
+                0xE, new OpCode(i => $"V{i.X:x} *= 2; VF = MSB", i =>
+                {
+                    if (!QuirkShifting)
+                    {
+                        V[i.X] = V[i.Y];
+                    }
+
+                    var temp = (byte) ((V[i.X] >> 7) & 1);
+                    V[i.X] <<= 1;
+                    V[0xF] = temp;
+                })
+            }
         };
 
         _opCodesE = new Dictionary<byte, OpCode>
         {
-            {0x9E, new OpCode(i => $"IF !KEY V{i.X:x} PRESSED", i =>
             {
-                if (_io.Keys[V[i.X]])
+                0x9E, new OpCode(i => $"IF !KEY V{i.X:x} PRESSED", i =>
                 {
-                    PC += 2;
-                }
-            })},
-            {0xA1, new OpCode(i => $"IF KEY V{i.X:x} PRESSED", i =>
+                    if (_io.Keys[V[i.X]])
+                    {
+                        PC += 2;
+                    }
+                })
+            },
             {
-                if (!_io.Keys[V[i.X]])
+                0xA1, new OpCode(i => $"IF KEY V{i.X:x} PRESSED", i =>
                 {
-                    PC += 2;
-                }
-            })}
+                    if (!_io.Keys[V[i.X]])
+                    {
+                        PC += 2;
+                    }
+                })
+            }
         };
 
         _opCodesF = new Dictionary<byte, OpCode>
         {
-            {0x55, new OpCode(i => $"I..I+{i.X} = V0..V{i.X:x}", i => {
-                V[0..(i.X + 1)].CopyTo(_memory, I);
-                if (Quirk_Memory)
+            {
+                0x55, new OpCode(i => $"I..I+{i.X} = V0..V{i.X:x}", i =>
                 {
-                    I += (ushort)(i.X + 1);
-                }
-            })},
-            {0x65, new OpCode(i => $"V0..V{i.X:x} = I..I+{i.X}", i => {
-                _memory[I..(I + i.X + 1)].CopyTo(V, 0);
-                if (Quirk_Memory)
+                    V[0..(i.X + 1)].CopyTo(_memory, I);
+                    if (QuirkMemory)
+                    {
+                        I += (ushort) (i.X + 1);
+                    }
+                })
+            },
+            {
+                0x65, new OpCode(i => $"V0..V{i.X:x} = I..I+{i.X}", i =>
                 {
-                    I += (ushort)(i.X + 1);
-                }
-            })},
+                    _memory[I..(I + i.X + 1)].CopyTo(V, 0);
+                    if (QuirkMemory)
+                    {
+                        I += (ushort) (i.X + 1);
+                    }
+                })
+            },
             {0x07, new OpCode(i => $"V{i.X:x} = DT", i => V[i.X] = DelayTimer)},
             {0x15, new OpCode(i => $"DT = V{i.X:x}", i => DelayTimer = V[i.X])},
             {0x18, new OpCode(i => $"ST = V{i.X:x}", i => SoundTimer = V[i.X])},
-            {0x0A, new OpCode(i => $"WAIT FOR KEY; V{i.X:x} = KEY", i =>
             {
-                var pressedKey = _io.GetPressedKey();
-                if (pressedKey is not null)
+                0x0A, new OpCode(i => $"WAIT FOR KEY; V{i.X:x} = KEY", i =>
                 {
-                    V[i.X] = pressedKey.Value;
-                }
-                else
-                {
-                    PC -= 2;
-                }
-            })},
+                    var pressedKey = _io.GetPressedKey();
+                    if (pressedKey is not null)
+                    {
+                        V[i.X] = pressedKey.Value;
+                    }
+                    else
+                    {
+                        PC -= 2;
+                    }
+                })
+            },
             {0x1E, new OpCode(i => $"I += V{i.X:x}", i => I += V[i.X])},
-            {0x33, new OpCode(i => $"I..I+2 = BCD V{i.X:x}", i =>
             {
-                var value = V[i.X];
-                _memory[I] = (byte)(value / 100);
-                _memory[I + 1] = (byte)(value / 10 % 10);
-                _memory[I + 2] = (byte)(value % 10);
-            })},
-            {0x29, new OpCode(i => $"I = FONT {i.X:x}", i => I = (ushort)(V[i.X] + 0x50))}
+                0x33, new OpCode(i => $"I..I+2 = BCD V{i.X:x}", i =>
+                {
+                    var value = V[i.X];
+                    _memory[I] = (byte) (value / 100);
+                    _memory[I + 1] = (byte) (value / 10 % 10);
+                    _memory[I + 2] = (byte) (value % 10);
+                })
+            },
+            {0x29, new OpCode(i => $"I = FONT {i.X:x}", i => I = (ushort) (V[i.X] + 0x50))}
         };
     }
 
@@ -247,13 +310,13 @@ public class Cpu
         opCode += _memory[pc + 1];
 
         return new Instruction(
-            (ushort)opCode,
-            (byte)((opCode >> 12) & 0x000F),
-            (byte)((opCode >> 8) & 0x000F),
-            (byte)((opCode >> 4) & 0x000F),
-            (byte)(opCode & 0x000F),
-            (byte)(opCode & 0x00FF),
-            (ushort)(opCode & 0x0FFF));
+            (ushort) opCode,
+            (byte) ((opCode >> 12) & 0x000F),
+            (byte) ((opCode >> 8) & 0x000F),
+            (byte) ((opCode >> 4) & 0x000F),
+            (byte) (opCode & 0x000F),
+            (byte) (opCode & 0x00FF),
+            (ushort) (opCode & 0x0FFF));
     }
 
     private OpCode Decode(Instruction instruction)
@@ -282,7 +345,7 @@ public class Cpu
     {
         for (var i = -4; i < 12; i++)
         {
-            var instruction = Fetch((ushort)(PC + 2 * i));
+            var instruction = Fetch((ushort) (PC + 2 * i));
             var opCode = Decode(instruction);
             yield return (instruction, opCode);
         }

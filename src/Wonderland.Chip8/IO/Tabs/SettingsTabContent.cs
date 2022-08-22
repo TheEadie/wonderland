@@ -1,28 +1,57 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using Wonderland.Chip8.IO.Toggles;
 
 namespace Wonderland.Chip8.IO.Tabs;
 
 public class SettingsTabContents : ITabContent
 {
     private readonly Vector2f _position;
-    private readonly RenderTarget _window;
+    private readonly RenderWindow _window;
+    private readonly Cpu _cpu;
 
-    public SettingsTabContents(Vector2f position, RenderTarget window)
+    private readonly Toggle _shiftQuirkToggle;
+    private readonly Toggle _loadStoreQuirksToggle;
+    private readonly Toggle _jumpQuirkToggle;
+    private readonly Toggle _logicQuirkToggle;
+    private readonly Toggle _displayWaitToggle;
+    private readonly Toggle _displayWrapToggle;
+
+    public SettingsTabContents(Vector2f position, RenderWindow window, Cpu cpu)
     {
         _position = position;
         _window = window;
+        _cpu = cpu;
+
+        _shiftQuirkToggle = new Toggle(position + new Vector2f(200, 36), _cpu.QuirkShifting,
+            _ => _cpu.QuirkShifting = !_cpu.QuirkShifting,
+            window);
+        _loadStoreQuirksToggle = new Toggle(position + new Vector2f(200, 36 + 36), _cpu.QuirkMemory,
+            _ => _cpu.QuirkMemory = !_cpu.QuirkMemory,
+            window);
+        _jumpQuirkToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 2)), _cpu.QuirkJumping,
+            _ => _cpu.QuirkJumping = !_cpu.QuirkJumping,
+            window);
+        _logicQuirkToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 3)), _cpu.QuirkVfReset,
+            _ => _cpu.QuirkVfReset = !_cpu.QuirkVfReset,
+            window);
+        _displayWaitToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 4)), _cpu.QuirkDisplayWait,
+            _ => _cpu.QuirkDisplayWait = !_cpu.QuirkDisplayWait,
+            window);
+        _displayWrapToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 5)), _cpu.QuirkClipping,
+            _ => _cpu.QuirkClipping = !_cpu.QuirkClipping,
+            window);
     }
-    
+
     public void Draw()
     {
         DrawSection(_position + new Vector2f(1, 0), new Vector2f(320, 356), "Quirks");
-        DrawContent(_position+ new Vector2f(1, 0));
-        
+        DrawQuirks(_position + new Vector2f(1, 0));
+
         DrawSection(_position + new Vector2f(321, 0), new Vector2f(320, 356), "Colours");
-        DrawContent(_position+ new Vector2f(1, 0));
+        DrawContent(_position + new Vector2f(1, 0));
     }
-    
+
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
@@ -46,7 +75,36 @@ public class SettingsTabContents : ITabContent
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
-    
+
+    private void DrawQuirks(Vector2f position)
+    {
+        var text = TextFactory.Create();
+        text.CharacterSize = 14;
+        text.DisplayedString =
+            $"Shift Quirk\n\n" +
+            $"Load Store Quirk\n\n" +
+            $"Jump Quirk\n\n" +
+            $"Logic Quirks\n\n" +
+            $"Display Wait\n\n" +
+            $"Display Clipping\n\n";
+        text.FillColor = Colours.TextColour;
+        text.Position = position + new Vector2f(14, 38);
+        _window.Draw(text);
+
+        _shiftQuirkToggle.Value = _cpu.QuirkShifting;
+        _shiftQuirkToggle.Draw(_window);
+        _loadStoreQuirksToggle.Value = _cpu.QuirkMemory;
+        _loadStoreQuirksToggle.Draw(_window);
+        _jumpQuirkToggle.Value = _cpu.QuirkJumping;
+        _jumpQuirkToggle.Draw(_window);
+        _logicQuirkToggle.Value = _cpu.QuirkVfReset;
+        _logicQuirkToggle.Draw(_window);
+        _displayWaitToggle.Value = _cpu.QuirkDisplayWait;
+        _displayWaitToggle.Draw(_window);
+        _displayWrapToggle.Value = _cpu.QuirkClipping;
+        _displayWrapToggle.Draw(_window);
+    }
+
     private void DrawContent(Vector2f position)
     {
         var text = TextFactory.Create();

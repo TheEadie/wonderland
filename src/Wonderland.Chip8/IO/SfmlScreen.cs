@@ -34,31 +34,29 @@ public class SfmlScreen : IScreen
         _window.KeyPressed +=
             (sender, e) =>
             {
-                var window = (Window)sender!;
+                var window = (Window) sender!;
                 if (e.Code == Keyboard.Key.Escape)
                 {
                     window.Close();
                 }
             };
 
-        _pauseButton = new Button(new Vector2f(690 - 25 - 42, 400), "||", 
-            (obj) => { 
+        _pauseButton = new Button(new Vector2f(690 - 25 - 42, 400), "||",
+            (obj) =>
+            {
                 obj.Active = !obj.Active;
                 Actions.Enqueue(EmulatorAction.Pause);
-                },
+            },
             _window);
         _stepButton = new Button(new Vector2f(690 - 25 - 42 - 5 - 42, 400), "->",
-            (_) =>
-            {
-                Actions.Enqueue(EmulatorAction.Step);
-            },
+            (_) => { Actions.Enqueue(EmulatorAction.Step); },
             _window);
 
 
         _tabControl = new TabControl(new Vector2f(25, 407), _window);
         _tabControl.Add("Info", new InfoTabContents(new Vector2f(25, 450), _window));
         _tabControl.Add("Debug", new DebugTabContent(new Vector2f(25, 450), _window, _cpu, _gpu));
-        _tabControl.Add("Settings", new SettingsTabContents(new Vector2f(25, 450), _window));
+        _tabControl.Add("Settings", new SettingsTabContents(new Vector2f(25, 450), _window, _cpu));
     }
 
     public bool IsOpen() => _window.IsOpen;
@@ -74,19 +72,19 @@ public class SfmlScreen : IScreen
         _window.Clear();
 
         DrawMainSection(new Vector2f(1, 1), new Vector2f(690, 870), "Wonderland CHIP-8");
-        DrawGame(new Vector2f(25,  62));
+        DrawGame(new Vector2f(25, 62));
 
         _tabControl.Draw();
-        
+
         _pauseButton.Active = _paused;
         _pauseButton.Draw(_window);
         _stepButton.Draw(_window);
 
-        DrawFooter(new Vector2f(1, 900-27), new Vector2f(690, 0));
+        DrawFooter(new Vector2f(1, 900 - 27), new Vector2f(690, 0));
 
         _window.Display();
     }
-    
+
     private void DrawGame(Vector2f position)
     {
         var border = new RectangleShape(new Vector2f(640, 320));
@@ -95,7 +93,7 @@ public class SfmlScreen : IScreen
         border.FillColor = Colours.Background;
         border.Position = position + new Vector2f(0, 0);
         _window.Draw(border);
-        
+
         var vRam = _gpu.GetVRam();
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
@@ -141,7 +139,7 @@ public class SfmlScreen : IScreen
         sectionBody.FillColor = Colours.Background;
         sectionBody.Position = position + new Vector2f(0, 36);
         _window.Draw(sectionBody);
-        
+
         text.CharacterSize = 14;
     }
 
@@ -166,7 +164,6 @@ public class SfmlScreen : IScreen
     {
         _fps = fps;
         _instructionsPerSecond = instructionsPerSecond;
-        
     }
 
     public void UpdateButtonStates(bool pause)
