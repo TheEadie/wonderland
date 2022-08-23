@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Wonderland.Chip8.ConsoleIO;
 using Wonderland.Chip8.IO;
 
 namespace Wonderland.Chip8;
@@ -30,7 +29,7 @@ public class Emulator
         _screen = new SfmlScreen(_gpu, _cpu);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
-        _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
+        _stepsPerFrame = (double) _targetClockSpeed / _targetFps;
 
         _pause = false;
     }
@@ -54,7 +53,7 @@ public class Emulator
             0xF0, 0x80, 0x80, 0x80, 0xF0, // C
             0xE0, 0x90, 0x90, 0x90, 0xE0, // D
             0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-            0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+            0xF0, 0x80, 0xF0, 0x80, 0x80 // F
         };
 
         font.CopyTo(_memory, 0x50);
@@ -126,6 +125,7 @@ public class Emulator
         {
             _pause = !_pause;
         }
+
         if (_io.StepForward || nextAction == EmulatorAction.Step)
         {
             if (_debugStepsSinceLastStep60Hz >= _stepsPerFrame)
