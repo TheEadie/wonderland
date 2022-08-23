@@ -48,6 +48,14 @@ public class Cpu
         QuirkShifting = false;
         QuirkJumping = false;
 
+        // SCHIP 1.1 defaults 
+        QuirkVfReset = false;
+        QuirkMemory = false;
+        QuirkDisplayWait = false;
+        QuirkWrapOverflow = false;
+        QuirkShifting = true;
+        QuirkJumping = true;
+
         _opCodes = new Dictionary<byte, OpCode>
         {
             {0x1, new OpCode(i => $"GOTO {i.NNN:x3}", i => PC = i.NNN)},
