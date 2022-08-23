@@ -28,6 +28,71 @@ public class Gpu
         }
     }
 
+    public void ScrollRight()
+    {
+        const int pixels = 4;
+        var width = _vRam.GetLength(0);
+
+        for (var x = width - 1; x >= pixels; x--)
+        {
+            for (var y = 0; y < _vRam.GetLength(1); y++)
+            {
+                _vRam[x, y] = _vRam[x - pixels, y];
+            }
+        }
+
+        for (var x = pixels - 1; x >= 0; x--)
+        {
+            for (var y = 0; y < _vRam.GetLength(1); y++)
+            {
+                _vRam[x, y] = false;
+            }
+        }
+    }
+
+    public void ScrollLeft()
+    {
+        const int pixels = 4;
+        var width = _vRam.GetLength(0);
+
+        for (var x = 0; x < width - pixels; x++)
+        {
+            for (var y = 0; y < _vRam.GetLength(1); y++)
+            {
+                _vRam[x, y] = _vRam[x + pixels, y];
+            }
+        }
+
+        for (var x = width - pixels; x < width; x++)
+        {
+            for (var y = 0; y < _vRam.GetLength(1); y++)
+            {
+                _vRam[x, y] = false;
+            }
+        }
+    }
+
+    public void ScrollDown(int pixels)
+    {
+        var height = _vRam.GetLength(1);
+
+        for (var x = 0; x < _vRam.GetLength(0); x++)
+        {
+            for (var y = height - 1; y >= pixels; y--)
+            {
+                _vRam[x, y] = _vRam[x - pixels, y];
+            }
+        }
+
+        for (var x = 0; x < _vRam.GetLength(0); x++)
+        {
+            for (var y = pixels - 1; y >= 0; y--)
+            {
+                _vRam[x, y] = false;
+            }
+        }
+    }
+
     public bool Draw(int xStart, int yStart, byte[] bytes, bool wrap)
     {
         if (HighResolutionMode)

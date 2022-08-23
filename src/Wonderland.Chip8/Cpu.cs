@@ -141,9 +141,20 @@ public class Cpu
 
         _opCodes0 = new Dictionary<byte, OpCode>
         {
+            {0x00, new OpCode(_ => "HALT", _ => { })},
             {0xE0, new OpCode(_ => "CLEAR", _ => _gpu.Clear())},
-            {0XEE, new OpCode(_ => "RETURN", _ => PC = Stack.Pop())}
+            {0XEE, new OpCode(_ => "RETURN", _ => PC = Stack.Pop())},
+            {0XFD, new OpCode(_ => "EXIT", _ => throw new TaskCanceledException())},
+            {0XFB, new OpCode(_ => "SCROLL RIGHT", _ => _gpu.ScrollRight())},
+            {0XFC, new OpCode(_ => "SCROLL LEFT", _ => _gpu.ScrollLeft())},
+            {0XFE, new OpCode(_ => "LOW-RES MODE (64x32)", _ => _gpu.HighResolutionMode = false)},
+            {0XFF, new OpCode(_ => "HI-RES MODE (128x64)", _ => _gpu.HighResolutionMode = true)}
         };
+
+        for (var n = 0; n < 16; n++)
+        {
+            _opCodes0.Add((byte) (0xC0 + n), new OpCode(i => $"SCROLL DOWN {i.N}", i => _gpu.ScrollDown(i.N)));
+        }
 
         _opCodes8 = new Dictionary<byte, OpCode>
         {
