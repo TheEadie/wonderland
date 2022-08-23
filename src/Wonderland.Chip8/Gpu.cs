@@ -80,7 +80,7 @@ public class Gpu
         {
             for (var y = height - 1; y >= pixels; y--)
             {
-                _vRam[x, y] = _vRam[x - pixels, y];
+                _vRam[x, y] = _vRam[x, y - pixels];
             }
         }
 
