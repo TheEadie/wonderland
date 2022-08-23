@@ -25,7 +25,7 @@ public class Cpu
     public bool QuirkVfReset { get; set; }
     public bool QuirkMemory { get; set; }
     public bool QuirkDisplayWait { get; set; }
-    public bool QuirkClipping { get; set; }
+    public bool QuirkWrapOverflow { get; set; }
     public bool QuirkShifting { get; set; }
     public bool QuirkJumping { get; set; }
 
@@ -44,7 +44,7 @@ public class Cpu
         QuirkVfReset = true;
         QuirkMemory = true;
         QuirkDisplayWait = true;
-        QuirkClipping = true;
+        QuirkWrapOverflow = false;
         QuirkShifting = false;
         QuirkJumping = false;
 
@@ -132,7 +132,7 @@ public class Cpu
                     var sprite = _memory[I..end];
                     var x = V[i.X];
                     var y = V[i.Y];
-                    var turnedOff = _gpu.Draw(x, y, sprite, QuirkClipping);
+                    var turnedOff = _gpu.Draw(x, y, sprite, QuirkWrapOverflow);
                     V[0xF] = turnedOff ? (byte) 1 : (byte) 0;
                     _displayInterupt = false;
                 })

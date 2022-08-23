@@ -25,29 +25,29 @@ public class Gpu
         }
     }
 
-    public bool Draw(int x, int yStart, byte[] bytes, bool clip)
+    public bool Draw(int x, int yStart, byte[] bytes, bool wrap)
     {
         var turnedOff = false;
         x %= 64;
         yStart %= 32;
         for (var y = 0; y < bytes.Length; y++)
         {
-            turnedOff |= SetRam(x, yStart + y, (bytes[y] >> 7 & 0b0000001) == 1, clip);
-            turnedOff |= SetRam(x + 1, yStart + y, (bytes[y] >> 6 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 2, yStart + y, (bytes[y] >> 5 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 3, yStart + y, (bytes[y] >> 4 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 4, yStart + y, (bytes[y] >> 3 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 5, yStart + y, (bytes[y] >> 2 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 6, yStart + y, (bytes[y] >> 1 & 0b00000001) == 1, clip);
-            turnedOff |= SetRam(x + 7, yStart + y, (bytes[y] & 0b00000001) == 1, clip);
+            turnedOff |= SetRam(x, yStart + y, (bytes[y] >> 7 & 0b0000001) == 1, wrap);
+            turnedOff |= SetRam(x + 1, yStart + y, (bytes[y] >> 6 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 2, yStart + y, (bytes[y] >> 5 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 3, yStart + y, (bytes[y] >> 4 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 4, yStart + y, (bytes[y] >> 3 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 5, yStart + y, (bytes[y] >> 2 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 6, yStart + y, (bytes[y] >> 1 & 0b00000001) == 1, wrap);
+            turnedOff |= SetRam(x + 7, yStart + y, (bytes[y] & 0b00000001) == 1, wrap);
         }
 
         return turnedOff;
     }
 
-    private bool SetRam(int x, int y, bool value, bool clip)
+    private bool SetRam(int x, int y, bool value, bool wrap)
     {
-        if (!clip)
+        if (wrap)
         {
             x %= 64;
             y %= 32;
@@ -76,8 +76,8 @@ public class Gpu
             {
                 Console.Write(_vRam[x, y] || y == 0 ? 'X' : ' ');
             }
+
             Console.Write(Environment.NewLine);
         }
     }
-
 }

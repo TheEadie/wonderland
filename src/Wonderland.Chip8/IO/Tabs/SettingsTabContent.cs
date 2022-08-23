@@ -38,8 +38,8 @@ public class SettingsTabContents : ITabContent
         _displayWaitToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 4)), _cpu.QuirkDisplayWait,
             _ => _cpu.QuirkDisplayWait = !_cpu.QuirkDisplayWait,
             window);
-        _displayWrapToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 5)), _cpu.QuirkClipping,
-            _ => _cpu.QuirkClipping = !_cpu.QuirkClipping,
+        _displayWrapToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 5)), _cpu.QuirkWrapOverflow,
+            _ => _cpu.QuirkWrapOverflow = !_cpu.QuirkWrapOverflow,
             window);
     }
 
@@ -86,7 +86,7 @@ public class SettingsTabContents : ITabContent
             $"Jump Quirk\n\n" +
             $"Logic Quirks\n\n" +
             $"Display Wait\n\n" +
-            $"Display Clipping\n\n";
+            $"Display Wrap Overflow\n\n";
         text.FillColor = Colours.TextColour;
         text.Position = position + new Vector2f(14, 38);
         _window.Draw(text);
@@ -101,7 +101,7 @@ public class SettingsTabContents : ITabContent
         _logicQuirkToggle.Draw(_window);
         _displayWaitToggle.Value = _cpu.QuirkDisplayWait;
         _displayWaitToggle.Draw(_window);
-        _displayWrapToggle.Value = _cpu.QuirkClipping;
+        _displayWrapToggle.Value = _cpu.QuirkWrapOverflow;
         _displayWrapToggle.Draw(_window);
     }
 
