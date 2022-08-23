@@ -128,11 +128,12 @@ public class Cpu
                         return;
                     }
 
-                    var end = I + i.N;
+                    var end = i.N == 0 ? I + 32 : I + i.N;
+                    var width = i.N == 0 ? 2 : 1;
                     var sprite = _memory[I..end];
                     var x = V[i.X];
                     var y = V[i.Y];
-                    var turnedOff = _gpu.Draw(x, y, sprite, QuirkWrapOverflow);
+                    var turnedOff = _gpu.DrawSprite(x, y, sprite, width, QuirkWrapOverflow);
                     V[0xF] = turnedOff ? (byte) 1 : (byte) 0;
                     _displayInterupt = false;
                 })
@@ -153,7 +154,7 @@ public class Cpu
 
         for (var n = 0; n < 16; n++)
         {
-            _opCodes0.Add((byte) (0xC0 + n), new OpCode(i => $"SCROLL DOWN {i.N}", i => _gpu.ScrollDown(i.N)));
+            _opCodes0.Add((byte)(0xC0 + n), new OpCode(i => $"SCROLL DOWN {i.N}", i => _gpu.ScrollDown(i.N)));
         }
 
         _opCodes8 = new Dictionary<byte, OpCode>
@@ -321,13 +322,13 @@ public class Cpu
         opCode += _memory[pc + 1];
 
         return new Instruction(
-            (ushort) opCode,
-            (byte) ((opCode >> 12) & 0x000F),
-            (byte) ((opCode >> 8) & 0x000F),
-            (byte) ((opCode >> 4) & 0x000F),
-            (byte) (opCode & 0x000F),
-            (byte) (opCode & 0x00FF),
-            (ushort) (opCode & 0x0FFF));
+            (ushort)opCode,
+            (byte)((opCode >> 12) & 0x000F),
+            (byte)((opCode >> 8) & 0x000F),
+            (byte)((opCode >> 4) & 0x000F),
+            (byte)(opCode & 0x000F),
+            (byte)(opCode & 0x00FF),
+            (ushort)(opCode & 0x0FFF));
     }
 
     private OpCode Decode(Instruction instruction)
@@ -356,7 +357,7 @@ public class Cpu
     {
         for (var i = -4; i < 12; i++)
         {
-            var instruction = Fetch((ushort) (PC + 2 * i));
+            var instruction = Fetch((ushort)(PC + 2 * i));
             var opCode = Decode(instruction);
             yield return (instruction, opCode);
         }

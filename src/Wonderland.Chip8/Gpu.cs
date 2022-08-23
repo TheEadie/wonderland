@@ -93,7 +93,7 @@ public class Gpu
         }
     }
 
-    public bool Draw(int xStart, int yStart, byte[] bytes, bool wrap)
+    public bool DrawSprite(int xStart, int yStart, byte[] bytes, int width, bool wrap)
     {
         if (HighResolutionMode)
         {
@@ -106,13 +106,18 @@ public class Gpu
             yStart %= _vRam.GetLength(1) / 2;
         }
 
+        var spriteHeight = bytes.Length / width;
+        var spriteWidth = 8 * width;
+
+        var index = -1;
         var turnedOff = false;
 
-        for (var y = 0; y < bytes.Length; y++)
+        for (var y = 0; y < spriteHeight; y++)
         {
-            for (var x = 0; x < 8; x++)
+            for (var x = 0; x < spriteWidth; x++)
             {
-                turnedOff |= SetRam(xStart + x, yStart + y, (bytes[y] >> (7 - x) & 0b0000001) == 1, wrap);
+                if (x % 8 == 0) { index++; }
+                turnedOff |= SetRam(xStart + x, yStart + y, (bytes[index] >> (7 - x % 8) & 0b0000001) == 1, wrap);
             }
         }
 

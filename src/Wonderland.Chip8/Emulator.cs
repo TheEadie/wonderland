@@ -29,9 +29,9 @@ public class Emulator
         _screen = new SfmlScreen(_gpu, _cpu);
         _targetClockSpeed = clockSpeed;
         _targetFps = 60;
-        _stepsPerFrame = (double) _targetClockSpeed / _targetFps;
+        _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
 
-        _pause = false;
+        _pause = true;
     }
 
     public void Load(string pathToRom)
