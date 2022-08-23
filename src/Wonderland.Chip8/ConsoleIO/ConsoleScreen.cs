@@ -80,6 +80,7 @@ public class ConsoleScreen : IScreen
             stack.AddRow($"S{s:x}", $"{stackVal:x3}");
             s++;
         }
+
         for (var i = s; i < 16; i++)
         {
             stack.AddRow($"S{i:x}", "   ");

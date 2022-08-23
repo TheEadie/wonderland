@@ -112,7 +112,7 @@ public class SfmlScreen : IScreen
         var texture = new Texture(image);
         var sprite = new Sprite(texture);
         sprite.Position = position;
-        sprite.Scale = new Vector2f(10, 10);
+        sprite.Scale = new Vector2f(5, 5);
         _window.Draw(sprite);
     }
 

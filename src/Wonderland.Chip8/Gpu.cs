@@ -4,9 +4,12 @@ public class Gpu
 {
     private readonly bool[,] _vRam;
 
+    public bool HighResolutionMode { get; set; }
+
     public Gpu()
     {
-        _vRam = new bool[64, 32];
+        _vRam = new bool[128, 64];
+        HighResolutionMode = false;
     }
 
     public bool[,] GetVRam()
@@ -25,21 +28,27 @@ public class Gpu
         }
     }
 
-    public bool Draw(int x, int yStart, byte[] bytes, bool wrap)
+    public bool Draw(int xStart, int yStart, byte[] bytes, bool wrap)
     {
+        if (HighResolutionMode)
+        {
+            xStart %= _vRam.GetLength(0);
+            yStart %= _vRam.GetLength(1);
+        }
+        else
+        {
+            xStart %= _vRam.GetLength(0) / 2;
+            yStart %= _vRam.GetLength(1) / 2;
+        }
+
         var turnedOff = false;
-        x %= 64;
-        yStart %= 32;
+
         for (var y = 0; y < bytes.Length; y++)
         {
-            turnedOff |= SetRam(x, yStart + y, (bytes[y] >> 7 & 0b0000001) == 1, wrap);
-            turnedOff |= SetRam(x + 1, yStart + y, (bytes[y] >> 6 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 2, yStart + y, (bytes[y] >> 5 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 3, yStart + y, (bytes[y] >> 4 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 4, yStart + y, (bytes[y] >> 3 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 5, yStart + y, (bytes[y] >> 2 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 6, yStart + y, (bytes[y] >> 1 & 0b00000001) == 1, wrap);
-            turnedOff |= SetRam(x + 7, yStart + y, (bytes[y] & 0b00000001) == 1, wrap);
+            for (var x = 0; x < 8; x++)
+            {
+                turnedOff |= SetRam(xStart + x, yStart + y, (bytes[y] >> (7 - x) & 0b0000001) == 1, wrap);
+            }
         }
 
         return turnedOff;
@@ -47,21 +56,35 @@ public class Gpu
 
     private bool SetRam(int x, int y, bool value, bool wrap)
     {
-        if (wrap)
+        var width = _vRam.GetLength(0);
+        var height = _vRam.GetLength(1);
+
+        if (!HighResolutionMode)
         {
-            x %= 64;
-            y %= 32;
+            x *= 2;
+            y *= 2;
         }
 
-        if (x < 0 || y < 0 ||
-            x >= _vRam.GetLength(0) ||
-            y >= _vRam.GetLength(1))
+        if (wrap)
+        {
+            x %= width;
+            y %= height;
+        }
+
+        if (x < 0 || y < 0 || x >= width || y >= height)
         {
             return false;
         }
 
         var original = _vRam[x, y];
         _vRam[x, y] ^= value;
+
+        if (!HighResolutionMode)
+        {
+            _vRam[x, y + 1] ^= value;
+            _vRam[x + 1, y] ^= value;
+            _vRam[x + 1, y + 1] ^= value;
+        }
 
         return original & !_vRam[x, y];
     }
