@@ -34,7 +34,7 @@ public class SfmlScreen : IScreen
         _window.KeyPressed +=
             (sender, e) =>
             {
-                var window = (Window) sender!;
+                var window = (Window)sender!;
                 if (e.Code == Keyboard.Key.Escape)
                 {
                     window.Close();

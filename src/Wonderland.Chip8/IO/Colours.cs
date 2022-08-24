@@ -1,4 +1,4 @@
-﻿using SFML.Graphics;
+using SFML.Graphics;
 
 namespace Wonderland.Chip8.IO;
 

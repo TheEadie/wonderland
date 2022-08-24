@@ -1,4 +1,4 @@
-﻿using SFML.Graphics;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Wonderland.Chip8.IO.Tabs;
@@ -13,13 +13,13 @@ public class InfoTabContents : ITabContent
         _position = position;
         _window = window;
     }
-    
+
     public void Draw()
     {
         DrawSection(_position + new Vector2f(1, 0), new Vector2f(640, 356), "Game Info");
-        DrawContent(_position+ new Vector2f(1, 0));
+        DrawContent(_position + new Vector2f(1, 0));
     }
-    
+
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
@@ -43,7 +43,7 @@ public class InfoTabContents : ITabContent
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
-    
+
     private void DrawContent(Vector2f position)
     {
         var text = TextFactory.Create();

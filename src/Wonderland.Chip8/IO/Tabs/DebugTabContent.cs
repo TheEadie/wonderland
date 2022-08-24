@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using SFML.Graphics;
 using SFML.System;
 
@@ -18,19 +18,19 @@ public class DebugTabContent : ITabContent
         _cpu = cpu;
         _gpu = gpu;
     }
-    
+
     public void Draw()
     {
         DrawSection(_position + new Vector2f(1, 0), new Vector2f(320, 356), "Instructions");
-        DrawDebugInstructions(_position+ new Vector2f(1, 0));
-        
+        DrawDebugInstructions(_position + new Vector2f(1, 0));
+
         DrawSection(_position + new Vector2f(321, 0), new Vector2f(159, 356), "CPU");
         DrawDebugRegisters(_position + new Vector2f(321, 0));
-        
+
         DrawSection(_position + new Vector2f(481, 0), new Vector2f(160, 356), "Graphics");
         DrawDebugGraphics(_position + new Vector2f(481, 0));
     }
-    
+
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
@@ -54,7 +54,7 @@ public class DebugTabContent : ITabContent
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
-    
+
     private void DrawDebugRegisters(Vector2f position)
     {
         var text = TextFactory.Create();
@@ -150,7 +150,7 @@ public class DebugTabContent : ITabContent
         foreach (var (instruction, opCode) in _cpu.Peek())
         {
             var stringBuilder = new StringBuilder();
-            
+
             var opCodeDescription = opCode.Description(instruction);
             stringBuilder.Append((_cpu.PC + 2 * (i - 4)).ToString("x3"))
                 .Append(":  ")

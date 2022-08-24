@@ -1,4 +1,4 @@
-﻿using SFML.Graphics;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
@@ -67,13 +67,13 @@ public class Button
         text.CharacterSize = 16;
         text.Position = _start + new Vector2f(12, 10);
         parent.Draw(text);
-    
+
         text.CharacterSize = 14;
     }
-    
+
     private static bool MouseIsInArea(Vector2f mouse, Vector2f start, Vector2f end)
     {
-        return (start.X < mouse.X  && mouse.X < end.X &&
+        return (start.X < mouse.X && mouse.X < end.X &&
                 start.Y < mouse.Y && mouse.Y < end.Y);
     }
 }

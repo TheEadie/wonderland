@@ -312,7 +312,8 @@ public class Cpu
                     _memory[I + 2] = (byte) (value % 10);
                 })
             },
-            {0x29, new OpCode(i => $"I = FONT {i.X:x}", i => I = (ushort) (V[i.X] + 0x50))}
+            {0x29, new OpCode(i => $"I = FONT {i.X:x}", i => I = (ushort) (V[i.X] * 5 + 0x50))},
+            {0x30, new OpCode(i => $"I = LARGE FONT {i.X:x}", i => I = (ushort) (V[i.X] * 10 + 0x100))}
         };
     }
 

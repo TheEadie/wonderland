@@ -1,4 +1,4 @@
-﻿using SFML.Graphics;
+using SFML.Graphics;
 using SFML.System;
 using Wonderland.Chip8.IO.Toggles;
 
