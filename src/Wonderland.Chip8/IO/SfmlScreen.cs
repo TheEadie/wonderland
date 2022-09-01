@@ -34,7 +34,7 @@ public class SfmlScreen : IScreen
         _window.KeyPressed +=
             (sender, e) =>
             {
-                var window = (Window)sender!;
+                var window = (Window) sender!;
                 if (e.Code == Keyboard.Key.Escape)
                 {
                     window.Close();
@@ -98,13 +98,28 @@ public class SfmlScreen : IScreen
         var width = vRam.GetLength(0);
         var height = vRam.GetLength(1);
 
-        var sfmlArray = new Color[width, height];
+        const int scale = 5;
+
+        var sfmlArray = new Color[(width) * scale, (height) * scale];
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                sfmlArray[x, y] = vRam[x, y] ? Color.White : Color.Black;
+                for (var i = 0; i < scale; i++)
+                {
+                    for (var j = 0; j < scale; j++)
+                    {
+                        if (i is scale - 1 || j is scale - 1)
+                        {
+                            sfmlArray[x * scale + i, y * scale + j] = Colours.Background;
+                        }
+                        else
+                        {
+                            sfmlArray[x * scale + i, y * scale + j] = vRam[x, y] ? Color.White : Color.Black;
+                        }
+                    }
+                }
             }
         }
 
@@ -112,7 +127,6 @@ public class SfmlScreen : IScreen
         var texture = new Texture(image);
         var sprite = new Sprite(texture);
         sprite.Position = position;
-        sprite.Scale = new Vector2f(5, 5);
         _window.Draw(sprite);
     }
 
