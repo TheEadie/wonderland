@@ -59,7 +59,20 @@ public class Tab
     {
         var border = new RectangleShape(_size);
         border.OutlineThickness = 0;
-        border.FillColor = Active || _hover || _clicked ? Colours.Active : Colours.Inactive;
+
+        if (_clicked)
+        {
+            border.FillColor = Colours.HoverActive;
+        }
+        else if (_hover)
+        {
+            border.FillColor = Active ? Colours.HoverActive : Colours.Hover;
+        }
+        else
+        {
+            border.FillColor = Active ? Colours.Active : Colours.Inactive;
+        }
+
         border.Position = _start;
         parent.Draw(border);
 
