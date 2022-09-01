@@ -1,7 +1,9 @@
 using SFML.Graphics;
 using SFML.System;
+using Wonderland.Chip8.IO.Tabs;
+using Wonderland.Chip8.IO.Text;
 
-namespace Wonderland.Chip8.IO.Tabs;
+namespace Wonderland.Chip8.IO;
 
 public class InfoTabContents : ITabContent
 {
@@ -23,23 +25,19 @@ public class InfoTabContents : ITabContent
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
-        headerSection.OutlineThickness = 1;
-        headerSection.OutlineColor = Colours.BorderInternal;
-        headerSection.FillColor = Colours.BackgroundDark;
+        headerSection.FillColor = Colours.BackgroundHeader;
         headerSection.Position = position;
         _window.Draw(headerSection);
 
         var text = TextFactory.Create();
         text.DisplayedString = title;
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(12, 4);
 
         _window.Draw(text);
 
         var sectionBody = new RectangleShape(size);
-        sectionBody.OutlineThickness = 1;
-        sectionBody.OutlineColor = Colours.BorderInternal;
-        sectionBody.FillColor = Colours.Background;
+        sectionBody.FillColor = Colours.BackgroundLevel2;
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
@@ -48,7 +46,7 @@ public class InfoTabContents : ITabContent
     {
         var text = TextFactory.Create();
         text.DisplayedString = $"";
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(14, 34);
         _window.Draw(text);
     }

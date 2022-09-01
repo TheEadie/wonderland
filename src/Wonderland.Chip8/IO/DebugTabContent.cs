@@ -1,8 +1,10 @@
 using System.Text;
 using SFML.Graphics;
 using SFML.System;
+using Wonderland.Chip8.IO.Tabs;
+using Wonderland.Chip8.IO.Text;
 
-namespace Wonderland.Chip8.IO.Tabs;
+namespace Wonderland.Chip8.IO;
 
 public class DebugTabContent : ITabContent
 {
@@ -34,23 +36,19 @@ public class DebugTabContent : ITabContent
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
         var headerSection = new RectangleShape(new Vector2f(size.X, 26));
-        headerSection.OutlineThickness = 1;
-        headerSection.OutlineColor = Colours.BorderInternal;
-        headerSection.FillColor = Colours.BackgroundDark;
+        headerSection.FillColor = Colours.BackgroundHeader;
         headerSection.Position = position;
         _window.Draw(headerSection);
 
         var text = TextFactory.Create();
         text.DisplayedString = title;
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(12, 4);
 
         _window.Draw(text);
 
         var sectionBody = new RectangleShape(size);
-        sectionBody.OutlineThickness = 1;
-        sectionBody.OutlineColor = Colours.BorderInternal;
-        sectionBody.FillColor = Colours.Background;
+        sectionBody.FillColor = Colours.BackgroundLevel2;
         sectionBody.Position = position + new Vector2f(0, 26);
         _window.Draw(sectionBody);
     }
@@ -59,7 +57,7 @@ public class DebugTabContent : ITabContent
     {
         var text = TextFactory.Create();
         text.DisplayedString = $"DT: {_cpu.DelayTimer:x2}  ST:  {_cpu.SoundTimer:x2}";
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(14, 34);
         _window.Draw(text);
 
@@ -80,7 +78,7 @@ public class DebugTabContent : ITabContent
             }
 
             text.DisplayedString = stringBuilder.ToString();
-            text.FillColor = (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.FillColor = (i % 2) == 0 ? Colours.TextPrimary : Colours.TextSecondary;
             text.Position = position + new Vector2f(14, 70 + (i * 18));
             _window.Draw(text);
         }
@@ -90,7 +88,7 @@ public class DebugTabContent : ITabContent
     {
         var text = TextFactory.Create();
         text.DisplayedString = $"I: {_cpu.I:x3}";
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(14, 34);
         _window.Draw(text);
 
@@ -101,15 +99,14 @@ public class DebugTabContent : ITabContent
             stringBuilder.Append((_cpu.I + (i - 4)).ToString("x3")).Append(':');
 
             text.DisplayedString = stringBuilder.ToString();
-            text.FillColor = (i - 4 == 0) ? Colours.TextHighlight : (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.FillColor = (i - 4 == 0) ? Colours.TextHighlight :
+                (i % 2) == 0 ? Colours.TextPrimary : Colours.TextSecondary;
             text.Position = position + new Vector2f(14, 70 + (i * 18));
             _window.Draw(text);
         }
 
         var graphicsBorder = new RectangleShape(new Vector2f(88, 18 * memory.Count + 8));
-        graphicsBorder.OutlineThickness = 1;
-        graphicsBorder.OutlineColor = Colours.BorderInternal;
-        graphicsBorder.FillColor = Colours.Background;
+        graphicsBorder.FillColor = Colours.BackgroundLevel2;
         graphicsBorder.Position = position + new Vector2f(55, 66);
         _window.Draw(graphicsBorder);
 
@@ -141,7 +138,7 @@ public class DebugTabContent : ITabContent
     {
         var text = TextFactory.Create();
         text.DisplayedString = $"PC: {_cpu.PC:x3}";
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(14, 34);
         _window.Draw(text);
 
@@ -169,7 +166,8 @@ public class DebugTabContent : ITabContent
             }
 
             text.DisplayedString = stringBuilder.ToString();
-            text.FillColor = (i == 4) ? Colours.TextHighlight : (i % 2) == 0 ? Colours.TextColour : Colours.TextAlt;
+            text.FillColor = (i == 4) ? Colours.TextHighlight :
+                (i % 2) == 0 ? Colours.TextPrimary : Colours.TextSecondary;
             text.Position = position + new Vector2f(14, 70 + (i * 18));
             _window.Draw(text);
             i++;

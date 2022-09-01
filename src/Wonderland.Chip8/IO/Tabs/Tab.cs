@@ -1,6 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Wonderland.Chip8.IO.Text;
 
 namespace Wonderland.Chip8.IO.Tabs;
 
@@ -58,13 +59,13 @@ public class Tab
     {
         var border = new RectangleShape(_size);
         border.OutlineThickness = 0;
-        border.FillColor = Active || _hover || _clicked ? Colours.BackgroundDark : Colours.Inactive;
+        border.FillColor = Active || _hover || _clicked ? Colours.Active : Colours.Inactive;
         border.Position = _start;
         parent.Draw(border);
 
         var text = TextFactory.Create();
         text.DisplayedString = Name;
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.CharacterSize = 16;
         text.Position = _start + new Vector2f(14, 10);
         parent.Draw(text);

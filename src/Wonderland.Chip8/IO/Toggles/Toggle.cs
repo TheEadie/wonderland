@@ -1,6 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Wonderland.Chip8.IO.Text;
 
 namespace Wonderland.Chip8.IO.Toggles;
 
@@ -56,18 +57,34 @@ public class Toggle
         var middle = _size.X / 2;
         var border = new RectangleShape(new Vector2f(middle, _size.Y));
         border.OutlineThickness = 0;
-        border.FillColor = Value ? Colours.BackgroundDark : Colours.Inactive;
+        if (_hover || _clicked)
+        {
+            border.FillColor = Value ? Colours.HoverActive : Colours.Hover;
+        }
+        else
+        {
+            border.FillColor = Value ? Colours.Active : Colours.Inactive;
+        }
+
         border.Position = _start;
         parent.Draw(border);
 
         var text = TextFactory.Create();
         text.DisplayedString = "On";
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.CharacterSize = 16;
         text.Position = _start + new Vector2f(16, 2);
         parent.Draw(text);
 
-        border.FillColor = !Value ? Colours.BackgroundDark : Colours.Inactive;
+        if (_hover || _clicked)
+        {
+            border.FillColor = !Value ? Colours.HoverActive : Colours.Hover;
+        }
+        else
+        {
+            border.FillColor = !Value ? Colours.Active : Colours.Inactive;
+        }
+
         border.Position = _start + new Vector2f(middle, 0);
         parent.Draw(border);
 

@@ -1,8 +1,9 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Wonderland.Chip8.IO.Text;
 
-namespace Wonderland.Chip8.IO;
+namespace Wonderland.Chip8.IO.Buttons;
 
 public class Button
 {
@@ -38,8 +39,11 @@ public class Button
         var mouse = new Vector2f(e.X, e.Y);
         if (MouseIsInArea(mouse, _start, _end))
         {
-            _clicked = false;
             _onClick(this);
+
+            // Hack to ensure that onClick has chance to update the Active state before a redraw
+            Thread.Sleep(30);
+            _clicked = false;
         }
     }
 
@@ -55,15 +59,26 @@ public class Button
     public void Draw(RenderTarget parent)
     {
         var border = new RectangleShape(_size);
-        border.OutlineThickness = 1;
-        border.OutlineColor = Colours.TextColour;
-        border.FillColor = Active || _hover || _clicked ? Colours.BackgroundDark : Colours.Inactive;
+
+        if (_clicked)
+        {
+            border.FillColor = Colours.HoverActive;
+        }
+        else if (_hover)
+        {
+            border.FillColor = Active ? Colours.HoverActive : Colours.Hover;
+        }
+        else
+        {
+            border.FillColor = Active ? Colours.Active : Colours.Inactive;
+        }
+
         border.Position = _start;
         parent.Draw(border);
 
         var text = TextFactory.Create();
         text.DisplayedString = _content;
-        text.FillColor = Colours.TextColour;
+        text.FillColor = Colours.TextPrimary;
         text.CharacterSize = 16;
         text.Position = _start + new Vector2f(12, 10);
         parent.Draw(text);
