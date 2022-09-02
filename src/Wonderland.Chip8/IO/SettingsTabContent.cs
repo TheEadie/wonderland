@@ -25,52 +25,53 @@ public class SettingsTabContents : ITabContent
         _window = window;
         _cpu = cpu;
 
-        _shiftQuirkToggle = new Toggle(position + new Vector2f(200, 36), _cpu.QuirkShifting,
+        _shiftQuirkToggle = new Toggle(position + new Vector2f(240, 58), _cpu.QuirkShifting,
             _ => _cpu.QuirkShifting = !_cpu.QuirkShifting,
             window);
-        _loadStoreQuirksToggle = new Toggle(position + new Vector2f(200, 36 + 36), _cpu.QuirkMemory,
+        _loadStoreQuirksToggle = new Toggle(position + new Vector2f(240, 58 + 36), _cpu.QuirkMemory,
             _ => _cpu.QuirkMemory = !_cpu.QuirkMemory,
             window);
-        _jumpQuirkToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 2)), _cpu.QuirkJumping,
+        _jumpQuirkToggle = new Toggle(position + new Vector2f(240, 58 + (36 * 2)), _cpu.QuirkJumping,
             _ => _cpu.QuirkJumping = !_cpu.QuirkJumping,
             window);
-        _logicQuirkToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 3)), _cpu.QuirkVfReset,
+        _logicQuirkToggle = new Toggle(position + new Vector2f(240, 58 + (36 * 3)), _cpu.QuirkVfReset,
             _ => _cpu.QuirkVfReset = !_cpu.QuirkVfReset,
             window);
-        _displayWaitToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 4)), _cpu.QuirkDisplayWait,
+        _displayWaitToggle = new Toggle(position + new Vector2f(240, 58 + (36 * 4)), _cpu.QuirkDisplayWait,
             _ => _cpu.QuirkDisplayWait = !_cpu.QuirkDisplayWait,
             window);
-        _displayWrapToggle = new Toggle(position + new Vector2f(200, 36 + (36 * 5)), _cpu.QuirkWrapOverflow,
+        _displayWrapToggle = new Toggle(position + new Vector2f(240, 58 + (36 * 5)), _cpu.QuirkWrapOverflow,
             _ => _cpu.QuirkWrapOverflow = !_cpu.QuirkWrapOverflow,
             window);
     }
 
     public void Draw()
     {
-        DrawSection(_position + new Vector2f(1, 0), new Vector2f(320, 356), "Quirks");
-        DrawQuirks(_position + new Vector2f(1, 0));
+        DrawSection(_position + new Vector2f(0, 0), new Vector2f(345, 356), "Quirks");
+        DrawQuirks(_position + new Vector2f(0, 0));
 
-        DrawSection(_position + new Vector2f(321, 0), new Vector2f(320, 356), "Colours");
-        DrawContent(_position + new Vector2f(1, 0));
+        DrawSection(_position + new Vector2f(345, 0), new Vector2f(345, 356), "Colours");
+        DrawContent(_position + new Vector2f(0, 0));
     }
 
     private void DrawSection(Vector2f position, Vector2f size, string title)
     {
-        var headerSection = new RectangleShape(new Vector2f(size.X, 26));
+        var headerSection = new RectangleShape(new Vector2f(size.X, 36));
         headerSection.FillColor = Colours.BackgroundHeader;
         headerSection.Position = position;
         _window.Draw(headerSection);
 
         var text = TextFactory.Create();
         text.DisplayedString = title;
+        text.CharacterSize = 14;
         text.FillColor = Colours.TextPrimary;
-        text.Position = position + new Vector2f(12, 4);
+        text.Position = position + new Vector2f(24, 8);
 
         _window.Draw(text);
 
         var sectionBody = new RectangleShape(size);
         sectionBody.FillColor = Colours.BackgroundLevel2;
-        sectionBody.Position = position + new Vector2f(0, 26);
+        sectionBody.Position = position + new Vector2f(0, 36);
         _window.Draw(sectionBody);
     }
 
@@ -86,7 +87,7 @@ public class SettingsTabContents : ITabContent
             $"Display Wait\n\n" +
             $"Display Wrap Overflow\n\n";
         text.FillColor = Colours.TextPrimary;
-        text.Position = position + new Vector2f(14, 38);
+        text.Position = position + new Vector2f(24, 36 + 24);
         _window.Draw(text);
 
         _shiftQuirkToggle.Value = _cpu.QuirkShifting;

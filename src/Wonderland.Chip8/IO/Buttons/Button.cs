@@ -19,7 +19,7 @@ public class Button
     public Button(Vector2f position, string content, Action<Button> onClick, Window window)
     {
         _start = position;
-        _size = new Vector2f(42, 42);
+        _size = new Vector2f(48, 48);
         _end = position + _size;
         _content = content;
         _onClick = onClick;
@@ -80,7 +80,7 @@ public class Button
         text.DisplayedString = _content;
         text.FillColor = Colours.TextPrimary;
         text.CharacterSize = 16;
-        text.Position = _start + new Vector2f(12, 10);
+        text.Position = _start + new Vector2f(15, 13);
         parent.Draw(text);
 
         text.CharacterSize = 14;
