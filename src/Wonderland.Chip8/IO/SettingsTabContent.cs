@@ -51,7 +51,7 @@ public class SettingsTabContents : ITabContent
         DrawQuirks(_position + new Vector2f(0, 0));
 
         DrawSection(_position + new Vector2f(345, 0), new Vector2f(345, 356), "Colours");
-        DrawContent(_position + new Vector2f(0, 0));
+        DrawColours(_position + new Vector2f(345, 0));
     }
 
     private void DrawSection(Vector2f position, Vector2f size, string title)
@@ -63,7 +63,7 @@ public class SettingsTabContents : ITabContent
 
         var text = TextFactory.Create();
         text.DisplayedString = title;
-        text.CharacterSize = 14;
+        text.CharacterSize = 16;
         text.FillColor = Colours.TextPrimary;
         text.Position = position + new Vector2f(24, 8);
 
@@ -73,6 +73,8 @@ public class SettingsTabContents : ITabContent
         sectionBody.FillColor = Colours.BackgroundLevel2;
         sectionBody.Position = position + new Vector2f(0, 36);
         _window.Draw(sectionBody);
+
+        text.CharacterSize = 14;
     }
 
     private void DrawQuirks(Vector2f position)
@@ -104,12 +106,33 @@ public class SettingsTabContents : ITabContent
         _displayWrapToggle.Draw(_window);
     }
 
-    private void DrawContent(Vector2f position)
+    private void DrawColours(Vector2f position)
     {
+        var textbox = new RectangleShape(new Vector2f(90, 24));
+        textbox.FillColor = Colours.Inactive;
+        textbox.Position = position + new Vector2f(200, 36 + 22);
+        _window.Draw(textbox);
+
+        textbox.Position = position + new Vector2f(200, 36 + 22 + 24 + 11);
+        _window.Draw(textbox);
+
+
+        var box = new RectangleShape(new Vector2f(24, 24));
+        box.FillColor = Color.Black;
+        box.Position = position + new Vector2f(300, 36 + 22);
+        _window.Draw(box);
+
+        box.FillColor = Color.White;
+        box.Position = position + new Vector2f(300, 36 + 22 + 24 + 11);
+        _window.Draw(box);
+
         var text = TextFactory.Create();
-        text.DisplayedString = $"";
+        text.CharacterSize = 14;
+        text.DisplayedString =
+            $"Background              #000000\n\n" +
+            $"Foreground              #FFFFFF\n\n";
         text.FillColor = Colours.TextPrimary;
-        text.Position = position + new Vector2f(14, 34);
+        text.Position = position + new Vector2f(24, 36 + 24);
         _window.Draw(text);
     }
 }
