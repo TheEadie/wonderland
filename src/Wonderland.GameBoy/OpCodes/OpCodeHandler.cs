@@ -17,10 +17,13 @@ public class OpCodeHandler
         {
             {
                 0x00, new OpCode(0x00, "NOP", 1, 4,
-                    Array.Empty<Action<Registers, Mmu>>())
+                    new Action<Registers, Mmu>[]
+                    {
+                        (_, _) => { }
+                    })
             },
             {
-                0x01, new OpCode(0x01, "LD BC, ${0:X4}", 3, 12,
+                0x01, new OpCode(0x01, "LD BC, u16", 3, 12,
                     new Action<Registers, Mmu>[]
                     {
                         (r, m) => { _tempState = m.GetMemory(r.PC++); },
@@ -29,6 +32,33 @@ public class OpCodeHandler
                             var msb = m.GetMemory(r.PC++);
                             r.BC = Bits.CreateU16(msb, _tempState);
                         },
+                    })
+            },
+            {
+                0x02, new OpCode(0x02, "LD (BC), A", 1, 8,
+                    new Action<Registers, Mmu>[]
+                    {
+                        (r, m) => { m.WriteMemory(r.BC, r.A); }
+                    })
+            },
+            {
+                0x03, new OpCode(0x03, "INC BC", 1, 4,
+                    new Action<Registers, Mmu>[]
+                    {
+                        (r, _) => { r.BC++; }
+                    })
+            },
+            {
+                0x04, new OpCode(0x04, "INC B", 1, 4,
+                    new Action<Registers, Mmu>[]
+                    {
+                        (r, _) =>
+                        {
+                            r.FlagH = (r.BC & 0b_0000_1111) == 0b_0000_1111;
+                            r.BC++;
+                            r.FlagZ = r.BC == 0;
+                            r.FlagN = false;
+                        }
                     })
             }
         };
