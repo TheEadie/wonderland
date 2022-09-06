@@ -1,4 +1,5 @@
-﻿using u8 = System.Byte;
+﻿using Wonderland.GameBoy.OpCodes;
+using u8 = System.Byte;
 using u16 = System.UInt16;
 
 // ReSharper disable BuiltInTypeReferenceStyle
@@ -7,47 +8,36 @@ namespace Wonderland.GameBoy;
 
 public class Cpu
 {
-    public Registers Registers { get; }
+    private readonly Registers _registers;
+    private readonly Mmu _mmu;
 
-    private Dictionary<u8, OpCode> _opCodes;
-    private readonly u8[] _memory;
-
-    // Temp state for OpCodes
-    private u8 _lsb;
-    private u8 _msb;
+    private readonly OpCodeHandler _opCodeHandler;
+    private OpCode _currentOpCode;
+    private int _currentOpCodeMachineCycle;
 
     public Cpu()
     {
-        Registers = new Registers();
-        _memory = new u8[65_535];
-        _opCodes = new Dictionary<u8, OpCode>
+        _registers = new Registers();
+        _mmu = new Mmu();
+
+        _opCodeHandler = new OpCodeHandler();
+        _currentOpCode = new OpCode(0x00, "NULL", 0, 0, Array.Empty<Action<Registers, Mmu>>());
+    }
+
+    public void Step()
+    {
+        if (_currentOpCodeMachineCycle == _currentOpCode.MachineCycles)
         {
-            {
-                0x00, new OpCode(0x00, "NOP", 1, 4,
-                    Array.Empty<Action>())
-            },
-            {
-                0x01, new OpCode(0x01, "LD BC, ${0:X4}", 3, 12,
-                    new Action[]
-                    {
-                        () => { _lsb = GetMemory(Registers.PC++); },
-                        () =>
-                        {
-                            _msb = GetMemory(Registers.PC++);
-                            Registers.BC = Bits.CreateU16(_msb, _lsb);
-                        },
-                    })
-            }
-        };
+            _currentOpCode = FetchAndDecode();
+            _currentOpCodeMachineCycle = 0;
+        }
+
+        _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu);
+        _currentOpCodeMachineCycle++;
     }
 
-    public u8 GetMemory(u16 location)
+    private OpCode FetchAndDecode()
     {
-        return _memory[location];
-    }
-
-    public void WriteMemory(u16 location, u8 value)
-    {
-        _memory[location] = value;
+        return _opCodeHandler.Lookup(_mmu.GetMemory(_registers.PC));
     }
 }
