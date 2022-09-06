@@ -10,6 +10,7 @@ public class Cpu
 {
     private readonly Registers _registers;
     private readonly Mmu _mmu;
+    private readonly InterruptManager _interruptManager;
 
     private readonly OpCodeHandler _opCodeHandler;
     private OpCode _currentOpCode;
@@ -19,25 +20,30 @@ public class Cpu
     {
         _registers = new Registers();
         _mmu = new Mmu();
+        _interruptManager = new InterruptManager();
 
         _opCodeHandler = new OpCodeHandler();
-        _currentOpCode = new OpCode(0x00, "NULL", 0, 0, Array.Empty<Action<Registers, Mmu>>());
+        _currentOpCode = new OpCode(0x00, "NULL", 0, 0, Array.Empty<Func<Registers, Mmu, InterruptManager, bool>>());
     }
 
     public void Step()
     {
-        if (_currentOpCodeMachineCycle == _currentOpCode.MachineCycles)
+        _interruptManager.Step();
+
+        var opCodeComplete = RunNextSubInstruction();
+        if (opCodeComplete)
         {
             _currentOpCode = FetchAndDecode();
             _currentOpCodeMachineCycle = 0;
         }
-
-        _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu);
-        _currentOpCodeMachineCycle++;
+        else
+        {
+            _currentOpCodeMachineCycle++;
+        }
     }
 
-    private OpCode FetchAndDecode()
-    {
-        return _opCodeHandler.Lookup(_mmu.GetMemory(_registers.PC));
-    }
+    private bool RunNextSubInstruction() =>
+        _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu, _interruptManager);
+
+    private OpCode FetchAndDecode() => _opCodeHandler.Lookup(_mmu.GetMemory(_registers.PC++));
 }
