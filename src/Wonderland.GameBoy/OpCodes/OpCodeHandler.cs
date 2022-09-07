@@ -743,6 +743,95 @@ public class OpCodeHandler
 
             #endregion
 
+            #region (HL)=r
+
+            {
+                0x77, new OpCode(0x77, "LD (HL), A", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.A);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x70, new OpCode(0x70, "LD (HL), B", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.B);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x71, new OpCode(0x71, "LD (HL), C", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.C);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x72, new OpCode(0x72, "LD (HL), D", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.D);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x73, new OpCode(0x73, "LD (HL), E", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.E);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x74, new OpCode(0x74, "LD (HL), H", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.H);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x75, new OpCode(0x75, "LD (HL), L", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.L);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             // 16-bit Load Instructions
