@@ -17,6 +17,547 @@ public class OpCodeHandler
     {
         _opCodes = new Dictionary<u8, OpCode>
         {
+            // 8-bit Load Instructions
+            {
+                0x7F, new OpCode(0x7F, "LD A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x78, new OpCode(0x40, "LD A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x79, new OpCode(0x79, "LD A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x7A, new OpCode(0x7A, "LD A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x7B, new OpCode(0x7B, "LD A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x7C, new OpCode(0x7C, "LD A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x7D, new OpCode(0x7D, "LD A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x47, new OpCode(0x47, "LD B, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x40, new OpCode(0x40, "LD B, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x41, new OpCode(0x41, "LD B, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x42, new OpCode(0x42, "LD B, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x43, new OpCode(0x43, "LD B, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x44, new OpCode(0x43, "LD B, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x45, new OpCode(0x45, "LD B, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x4F, new OpCode(0x4F, "LD C, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x48, new OpCode(0x48, "LD C, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x49, new OpCode(0x49, "LD C, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x4A, new OpCode(0x4A, "LD C, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x4B, new OpCode(0x4B, "LD C, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.B = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x4C, new OpCode(0x4C, "LD C, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x4D, new OpCode(0x4D, "LD C, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.C = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x57, new OpCode(0x57, "LD D, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x50, new OpCode(0x50, "LD D, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x51, new OpCode(0x51, "LD D, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x52, new OpCode(0x52, "LD D, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x53, new OpCode(0x53, "LD D, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x54, new OpCode(0x54, "LD D, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x55, new OpCode(0x55, "LD D, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.D = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x5F, new OpCode(0x5F, "LD E, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x58, new OpCode(0x58, "LD E, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x59, new OpCode(0x59, "LD E, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x5A, new OpCode(0x5A, "LD E, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x5B, new OpCode(0x5B, "LD E, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x5C, new OpCode(0x5C, "LD E, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x5D, new OpCode(0x5D, "LD E, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.E = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x67, new OpCode(0x67, "LD H, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x60, new OpCode(0x60, "LD H, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x61, new OpCode(0x61, "LD H, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x62, new OpCode(0x62, "LD H, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x63, new OpCode(0x63, "LD H, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x64, new OpCode(0x64, "LD H, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x65, new OpCode(0x65, "LD H, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.H = r.L;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x6F, new OpCode(0x6F, "LD L, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.A;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x68, new OpCode(0x68, "LD L, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.B;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x69, new OpCode(0x69, "LD L, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.C;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x6A, new OpCode(0x6A, "LD L, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.D;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x6B, new OpCode(0x6B, "LD L, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.E;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x6C, new OpCode(0x6C, "LD L, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.H;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x6D, new OpCode(0x6D, "LD L, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.L = r.L;
+                            return true;
+                        }
+                    })
+            },
+
             // 16-bit Load Instructions
             {
                 0x01, new OpCode(0x01, "LD BC, u16", 3, 12,
