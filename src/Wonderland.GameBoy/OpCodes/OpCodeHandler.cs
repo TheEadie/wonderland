@@ -18,6 +18,11 @@ public class OpCodeHandler
         _opCodes = new Dictionary<u8, OpCode>
         {
             // 8-bit Load Instructions
+
+            #region 8-bit load
+
+            #region r=r
+
             {
                 0x7F, new OpCode(0x7F, "LD A, A", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
@@ -558,7 +563,103 @@ public class OpCodeHandler
                     })
             },
 
+            #endregion
+
+            #region r=n
+
+            {
+                0x3E, new OpCode(0x3E, "LD A, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x06, new OpCode(0x06, "LD B, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.B = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x0E, new OpCode(0x0E, "LD C, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.C = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x16, new OpCode(0x16, "LD D, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.D = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x1E, new OpCode(0x1E, "LD E, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.E = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x26, new OpCode(0x26, "LD H, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.H = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x2E, new OpCode(0x2E, "LD L, u8", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.L = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #endregion
+
             // 16-bit Load Instructions
+
+            #region 16-bit load
+
             {
                 0x01, new OpCode(0x01, "LD BC, u16", 3, 12,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
@@ -812,7 +913,12 @@ public class OpCodeHandler
                     })
             },
 
+            #endregion
+
             // CPU Control Instructions
+
+            #region CPU Control
+
             {
                 0xCF, new OpCode(0xCF, "CCF", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
@@ -875,7 +981,7 @@ public class OpCodeHandler
                 0xFB, new OpCode(0xFB, "EI", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
                     {
-                        (r, _, i) =>
+                        (_, _, i) =>
                         {
                             i.EnableInterruptsWithDelay();
                             return true;
@@ -883,6 +989,7 @@ public class OpCodeHandler
                     })
             },
 
+            #endregion
 
             {
                 0x02, new OpCode(0x02, "LD (BC), A", 1, 8,
