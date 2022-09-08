@@ -1405,6 +1405,119 @@ public class OpCodeHandler
 
             #endregion
 
+
+            // 8-bit Arithmetic / Logic Instructions
+
+            #region 8-bit Arithmetic/Logic
+
+            #region ADD
+
+            {
+                0x8F, new OpCode(0x8F, "ADD A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x80, new OpCode(0x80, "ADD A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x81, new OpCode(0x81, "ADD A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x82, new OpCode(0x82, "ADD A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x83, new OpCode(0x83, "ADD A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x84, new OpCode(0x84, "ADD A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x85, new OpCode(0x85, "ADD A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Add(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x86, new OpCode(0x86, "ADD A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Add(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xC6, new OpCode(0xC6, "ADD A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Add(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #endregion
+
             {
                 0x03, new OpCode(0x03, "INC BC", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
@@ -1431,6 +1544,16 @@ public class OpCodeHandler
                     })
             }
         };
+    }
+
+    private static void Add(Registers r, u8 value)
+    {
+        var result = r.A + value;
+        r.FlagZ = (result & 0b_1111_1111) == 0;
+        r.FlagN = false;
+        r.FlagH = (r.A & 0b_0000_1111) + (value & 0b_0000_1111) > 0b_0000_1111;
+        r.FlagC = result > 0b_1111_1111;
+        r.A = (u8) (result);
     }
 
     public OpCode Lookup(u8 value)
