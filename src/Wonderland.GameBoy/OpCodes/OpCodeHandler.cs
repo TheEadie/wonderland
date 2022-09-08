@@ -1413,7 +1413,7 @@ public class OpCodeHandler
             #region ADD
 
             {
-                0x8F, new OpCode(0x8F, "ADD A, A", 1, 4,
+                0x87, new OpCode(0x87, "ADD A, A", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
                     {
                         (r, _, _) =>
@@ -1516,6 +1516,112 @@ public class OpCodeHandler
 
             #endregion
 
+            #region ADD with Carry
+
+            {
+                0x8F, new OpCode(0x8F, "ADC A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x88, new OpCode(0x88, "ADC A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x89, new OpCode(0x89, "ADC A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x8A, new OpCode(0x8A, "ADC A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x8B, new OpCode(0x8B, "ADC A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x8C, new OpCode(0x8C, "ADC A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x8D, new OpCode(0x8D, "ADC A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            AddWithCarry(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x8E, new OpCode(0x8E, "ADC A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            AddWithCarry(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xCE, new OpCode(0xCE, "ADC A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            AddWithCarry(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             {
@@ -1552,6 +1658,17 @@ public class OpCodeHandler
         r.FlagZ = (result & 0b_1111_1111) == 0;
         r.FlagN = false;
         r.FlagH = (r.A & 0b_0000_1111) + (value & 0b_0000_1111) > 0b_0000_1111;
+        r.FlagC = result > 0b_1111_1111;
+        r.A = (u8) (result);
+    }
+
+    private static void AddWithCarry(Registers r, u8 value)
+    {
+        var c = (r.FlagC ? 1 : 0);
+        var result = r.A + value + c;
+        r.FlagZ = (result & 0b_1111_1111) == 0;
+        r.FlagN = false;
+        r.FlagH = (r.A & 0b_0000_1111) + (value & 0b_0000_1111) + c > 0b_0000_1111;
         r.FlagC = result > 0b_1111_1111;
         r.A = (u8) (result);
     }
