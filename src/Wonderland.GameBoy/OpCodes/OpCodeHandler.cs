@@ -832,6 +832,242 @@ public class OpCodeHandler
 
             #endregion
 
+            #region other
+
+            {
+                0x36, new OpCode(0x36, "LD (HL), u8", 2, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, _lsb);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x0A, new OpCode(0x0A, "LD A, (BC)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(r.BC);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x1A, new OpCode(0x1A, "LD A, (DE)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(r.DE);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xFA, new OpCode(0xFA, "LD A, (u16)", 3, 16,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            _msb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(Bits.CreateU16(_msb, _lsb));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x02, new OpCode(0x02, "LD (BC), A", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.BC, r.A);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x12, new OpCode(0x12, "LD (DE), A", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.DE, r.A);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xEA, new OpCode(0xEA, "LD (u16), A", 3, 16,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            _msb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(Bits.CreateU16(_msb, _lsb), r.A);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xF0, new OpCode(0xF0, "LD A, (FF00+u8)", 2, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(Bits.CreateU16(0xFF, _lsb));
+                            return false;
+                        },
+                        (_, _, _) => true,
+                    })
+            },
+            {
+                0xE0, new OpCode(0xE0, "LD (FF00+u8), A", 2, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(Bits.CreateU16(0xFF, _lsb), r.A);
+                            return false;
+                        },
+                        (_, _, _) => true,
+                    })
+            },
+            {
+                0xF2, new OpCode(0xF2, "LD A, (FF00+C)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(Bits.CreateU16(0xFF, r.C));
+                            return false;
+                        },
+                        (_, _, _) => true,
+                    })
+            },
+            {
+                0xE2, new OpCode(0xE2, "LD (FF00+C), A", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(Bits.CreateU16(0xFF, r.C), r.A);
+                            return false;
+                        },
+                        (_, _, _) => true,
+                    })
+            },
+            {
+                0x22, new OpCode(0x22, "LD (HL+), A", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.A);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            r.HL++;
+                            return true;
+                        },
+                    })
+            },
+            {
+                0x2A, new OpCode(0x2A, "LD A, (HL+)", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(r.HL);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            r.HL++;
+                            return true;
+                        },
+                    })
+            },
+            {
+                0x32, new OpCode(0x32, "LD (HL-), A", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            m.WriteMemory(r.HL, r.A);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            r.HL--;
+                            return true;
+                        },
+                    })
+            },
+            {
+                0x3A, new OpCode(0x3A, "LD A, (HL-)", 2, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            r.A = m.GetMemory(r.HL);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            r.HL--;
+                            return true;
+                        },
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             // 16-bit Load Instructions
@@ -1169,18 +1405,6 @@ public class OpCodeHandler
 
             #endregion
 
-            {
-                0x02, new OpCode(0x02, "LD (BC), A", 1, 8,
-                    new Func<Registers, Mmu, InterruptManager, bool>[]
-                    {
-                        (r, m, _) =>
-                        {
-                            m.WriteMemory(r.BC, r.A);
-                            return false;
-                        },
-                        (_, _, _) => true
-                    })
-            },
             {
                 0x03, new OpCode(0x03, "INC BC", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
