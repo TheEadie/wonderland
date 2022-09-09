@@ -1860,6 +1860,28 @@ public class OpCodeHandler
                             return true;
                         }
                     })
+            },
+            {
+                0xC3, new OpCode(0xC3, "JP u16", 3, 16,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            _msb = m.GetMemory(r.PC++);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            r.PC = Bits.CreateU16(_msb, _lsb);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
             }
         };
     }
