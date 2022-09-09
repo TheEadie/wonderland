@@ -16,14 +16,19 @@ public class Cpu
     private OpCode _currentOpCode;
     private int _currentOpCodeMachineCycle;
 
-    public Cpu()
+    public Cpu(Mmu mmu)
     {
-        _registers = new Registers();
-        _mmu = new Mmu();
-        _interruptManager = new InterruptManager();
+        _mmu = mmu;
 
+        _registers = new Registers();
+        _interruptManager = new InterruptManager();
         _opCodeHandler = new OpCodeHandler();
-        _currentOpCode = new OpCode(0x00, "NULL", 0, 0, Array.Empty<Func<Registers, Mmu, InterruptManager, bool>>());
+        _currentOpCode = new OpCode(0x00, "NULL", 1, 4,
+            new Func<Registers, Mmu, InterruptManager, bool>[]
+            {
+                (_, _, _) => true
+            });
+        _registers.PC = 0x100;
     }
 
     public void Step()

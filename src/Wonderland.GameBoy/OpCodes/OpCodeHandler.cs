@@ -1908,6 +1908,8 @@ public class OpCodeHandler
 
     public OpCode Lookup(u8 value)
     {
+        if (!_opCodes.ContainsKey(value))
+            throw new NotImplementedException($"Unknown Opcode: {value:X2}");
         return _opCodes[value];
     }
 }

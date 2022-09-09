@@ -14,6 +14,12 @@ public class Mmu
         _memory = new u8[65_535];
     }
 
+    public void LoadCart(string filePath)
+    {
+        var rom = File.ReadAllBytes(filePath);
+        rom[..0x3FFF].CopyTo(_memory, 0);
+    }
+
     public u8 GetMemory(u16 location)
     {
         return _memory[location];
@@ -21,6 +27,11 @@ public class Mmu
 
     public void WriteMemory(u16 location, u8 value)
     {
+        if (location == 0xFF01)
+        {
+            Console.WriteLine(value.ToString("x2"));
+        }
+
         _memory[location] = value;
     }
 }
