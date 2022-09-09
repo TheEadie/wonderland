@@ -1622,6 +1622,218 @@ public class OpCodeHandler
 
             #endregion
 
+            #region SUB
+
+            {
+                0x97, new OpCode(0x97, "SUB A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x90, new OpCode(0x90, "SUB A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x91, new OpCode(0x91, "SUB A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x92, new OpCode(0x92, "SUB A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x93, new OpCode(0x93, "SUB A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x94, new OpCode(0x94, "SUB A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x95, new OpCode(0x95, "SUB A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Sub(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x96, new OpCode(0x96, "SUB A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Sub(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xD6, new OpCode(0xD6, "SUB A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Sub(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #region SUB with Carry
+
+            {
+                0x9F, new OpCode(0x9F, "SBC A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x98, new OpCode(0x98, "SBC A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x99, new OpCode(0x99, "SBC A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x9A, new OpCode(0x9A, "SBC A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x9B, new OpCode(0x9B, "SBC A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x9C, new OpCode(0x9C, "SBC A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x9D, new OpCode(0x9D, "SBC A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            SubWithCarry(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x9E, new OpCode(0x9E, "SBC A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            SubWithCarry(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xDE, new OpCode(0xDE, "SBC A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            SubWithCarry(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             {
@@ -1650,6 +1862,27 @@ public class OpCodeHandler
                     })
             }
         };
+    }
+
+    private static void Sub(Registers r, byte value)
+    {
+        var result = r.A - value;
+        r.FlagZ = (result & 0b_1111_1111) == 0;
+        r.FlagN = true;
+        r.FlagH = (value & 0b_0000_1111) > (r.A & 0b_0000_1111);
+        r.FlagC = result < 0;
+        r.A = (u8) (result);
+    }
+
+    private static void SubWithCarry(Registers r, byte value)
+    {
+        var c = (r.FlagC ? 1 : 0);
+        var result = r.A - value - c;
+        r.FlagZ = (result & 0b_1111_1111) == 0;
+        r.FlagN = true;
+        r.FlagH = (value & 0b_0000_1111) + c > (r.A & 0b_0000_1111);
+        r.FlagC = result < 0;
+        r.A = (u8) (result);
     }
 
     private static void Add(Registers r, u8 value)
