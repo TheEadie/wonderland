@@ -1834,6 +1834,324 @@ public class OpCodeHandler
 
             #endregion
 
+            #region AND
+
+            {
+                0xA7, new OpCode(0xA7, "AND A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA0, new OpCode(0xA0, "AND A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA1, new OpCode(0xA1, "AND A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA2, new OpCode(0xA2, "AND A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA3, new OpCode(0xA3, "AND A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA4, new OpCode(0xA4, "AND A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA5, new OpCode(0xA5, "AND A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            And(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA6, new OpCode(0xA6, "AND A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            And(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xE6, new OpCode(0xE6, "AND A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            And(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #region XOR
+
+            {
+                0xAF, new OpCode(0xAF, "XOR A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA8, new OpCode(0xA8, "XOR A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xA9, new OpCode(0xA9, "XOR A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xAA, new OpCode(0xAA, "XOR A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xAB, new OpCode(0xAB, "XOR A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xAC, new OpCode(0xAC, "XOR A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xAD, new OpCode(0xAD, "XOR A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Xor(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xAE, new OpCode(0xAE, "XOR A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Xor(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xEE, new OpCode(0xDE, "XOR A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Xor(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #region OR
+
+            {
+                0xB7, new OpCode(0xB7, "OR A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB0, new OpCode(0xB0, "OR A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB1, new OpCode(0xB1, "OR A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB2, new OpCode(0xB2, "OR A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB3, new OpCode(0xB3, "OR A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB4, new OpCode(0xB4, "OR A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB5, new OpCode(0xB5, "OR A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Or(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB6, new OpCode(0xB6, "OR A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Or(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xF6, new OpCode(0xF6, "OR A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Or(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             {
@@ -1886,7 +2204,37 @@ public class OpCodeHandler
         };
     }
 
-    private static void Sub(Registers r, byte value)
+    private static void And(Registers r, u8 value)
+    {
+        var result = r.A & value;
+        r.FlagZ = result == 0;
+        r.FlagN = false;
+        r.FlagH = true;
+        r.FlagC = false;
+        r.A = (u8) result;
+    }
+
+    private static void Xor(Registers r, u8 value)
+    {
+        var result = r.A ^ value;
+        r.FlagZ = result == 0;
+        r.FlagN = false;
+        r.FlagH = false;
+        r.FlagC = false;
+        r.A = (u8) result;
+    }
+
+    private static void Or(Registers r, u8 value)
+    {
+        var result = r.A | value;
+        r.FlagZ = result == 0;
+        r.FlagN = false;
+        r.FlagH = false;
+        r.FlagC = false;
+        r.A = (u8) result;
+    }
+
+    private static void Sub(Registers r, u8 value)
     {
         var result = r.A - value;
         r.FlagZ = (result & 0b_1111_1111) == 0;
@@ -1896,7 +2244,7 @@ public class OpCodeHandler
         r.A = (u8) (result);
     }
 
-    private static void SubWithCarry(Registers r, byte value)
+    private static void SubWithCarry(Registers r, u8 value)
     {
         var c = (r.FlagC ? 1 : 0);
         var result = r.A - value - c;
