@@ -1,5 +1,6 @@
 ﻿using u8 = System.Byte;
 using u16 = System.UInt16;
+using s8 = System.SByte;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 
@@ -12,6 +13,7 @@ public class OpCodeHandler
     // Yuck
     private u8 _lsb;
     private u8 _msb;
+    private s8 _signed8bit;
 
     public OpCodeHandler()
     {
@@ -156,7 +158,7 @@ public class OpCodeHandler
                     })
             },
             {
-                0x44, new OpCode(0x43, "LD B, H", 1, 4,
+                0x44, new OpCode(0x44, "LD B, H", 1, 4,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
                     {
                         (r, _, _) =>
@@ -2359,7 +2361,7 @@ public class OpCodeHandler
                     })
             },
             {
-                0x44, new OpCode(0x24, "INC (HL)", 1, 12,
+                0x34, new OpCode(0x34, "INC (HL)", 1, 12,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
                     {
                         (r, m, _) =>
@@ -2413,6 +2415,28 @@ public class OpCodeHandler
                         (r, _, _) =>
                         {
                             r.PC = Bits.CreateU16(_msb, _lsb);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x20, new OpCode(0x20, "JP NC s8", 2, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _signed8bit = m.GetSignedMemory(r.PC++);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            if (r.FlagC)
+                            {
+                                return true;
+                            }
+
+                            r.PC = Convert.ToUInt16(r.PC + _signed8bit);
                             return false;
                         },
                         (_, _, _) => true
@@ -2505,7 +2529,7 @@ public class OpCodeHandler
     public OpCode Lookup(u8 value)
     {
         if (!_opCodes.ContainsKey(value))
-            throw new NotImplementedException($"Unknown Opcode: {value:X2}");
+            throw new NotImplementedException($"Unknown Opcode: 0x{value:X2}");
         return _opCodes[value];
     }
 }

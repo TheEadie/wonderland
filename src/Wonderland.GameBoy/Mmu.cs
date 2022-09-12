@@ -1,5 +1,6 @@
 ﻿using u8 = System.Byte;
 using u16 = System.UInt16;
+using s8 = System.SByte;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 
@@ -23,6 +24,11 @@ public class Mmu
     public u8 GetMemory(u16 location)
     {
         return _memory[location];
+    }
+
+    public s8 GetSignedMemory(u16 location)
+    {
+        return unchecked((sbyte) _memory[location]);
     }
 
     public void WriteMemory(u16 location, u8 value)
