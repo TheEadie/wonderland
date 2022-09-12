@@ -2152,6 +2152,236 @@ public class OpCodeHandler
 
             #endregion
 
+            #region CP
+
+            {
+                0xBF, new OpCode(0xBF, "CP A, A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.A);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB8, new OpCode(0xB8, "CP A, B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.B);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xB9, new OpCode(0xB9, "CP A, C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.C);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xBA, new OpCode(0xBA, "CP A, D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.D);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xBB, new OpCode(0xBB, "CP A, E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.E);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xBC, new OpCode(0xBC, "CP A, H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.H);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xBD, new OpCode(0xBD, "CP A, L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            Compare(r, r.L);
+                            return true;
+                        }
+                    })
+            },
+            {
+                0xBE, new OpCode(0xBE, "CP A, (HL)", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Compare(r, m.GetMemory(r.HL));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0xFE, new OpCode(0xFE, "CP A, u8", 1, 8,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            Compare(r, m.GetMemory(r.PC++));
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
+            #region INC
+
+            {
+                0x3C, new OpCode(0x3C, "INC A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.A & 0b_0000_1111) == 0b_0000_1111;
+                            r.A++;
+                            r.FlagZ = r.A == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x04, new OpCode(0x04, "INC B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.B & 0b_0000_1111) == 0b_0000_1111;
+                            r.B++;
+                            r.FlagZ = r.B == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x0C, new OpCode(0x0C, "INC C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.C & 0b_0000_1111) == 0b_0000_1111;
+                            r.C++;
+                            r.FlagZ = r.C == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x14, new OpCode(0x14, "INC D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.D & 0b_0000_1111) == 0b_0000_1111;
+                            r.D++;
+                            r.FlagZ = r.D == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x1C, new OpCode(0x1C, "INC E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.E & 0b_0000_1111) == 0b_0000_1111;
+                            r.E++;
+                            r.FlagZ = r.E == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x24, new OpCode(0x24, "INC H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.H & 0b_0000_1111) == 0b_0000_1111;
+                            r.H++;
+                            r.FlagZ = r.H == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x2C, new OpCode(0x2C, "INC L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.L & 0b_0000_1111) == 0b_0000_1111;
+                            r.L++;
+                            r.FlagZ = r.L == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x44, new OpCode(0x24, "INC (HL)", 1, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.HL);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            r.FlagH = (_lsb & 0b_0000_1111) == 0b_0000_1111;
+                            _lsb++;
+                            r.FlagZ = _lsb == 0;
+                            r.FlagN = false;
+                            m.WriteMemory(r.HL, _lsb);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             {
@@ -2165,20 +2395,7 @@ public class OpCodeHandler
                         }
                     })
             },
-            {
-                0x04, new OpCode(0x04, "INC B", 1, 4,
-                    new Func<Registers, Mmu, InterruptManager, bool>[]
-                    {
-                        (r, _, _) =>
-                        {
-                            r.FlagH = (r.BC & 0b_0000_1111) == 0b_0000_1111;
-                            r.BC++;
-                            r.FlagZ = r.BC == 0;
-                            r.FlagN = false;
-                            return true;
-                        }
-                    })
-            },
+
             {
                 0xC3, new OpCode(0xC3, "JP u16", 3, 16,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
@@ -2232,6 +2449,15 @@ public class OpCodeHandler
         r.FlagH = false;
         r.FlagC = false;
         r.A = (u8) result;
+    }
+
+    private static void Compare(Registers r, u8 value)
+    {
+        var result = r.A - value;
+        r.FlagZ = (result & 0b_1111_1111) == 0;
+        r.FlagN = true;
+        r.FlagH = (value & 0b_0000_1111) > (r.A & 0b_0000_1111);
+        r.FlagC = result < 0;
     }
 
     private static void Sub(Registers r, u8 value)
