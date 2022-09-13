@@ -575,7 +575,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.A = m.GetMemory(++r.PC);
+                            r.A = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -587,7 +587,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.B = m.GetMemory(++r.PC);
+                            r.B = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -599,7 +599,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.C = m.GetMemory(++r.PC);
+                            r.C = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -611,7 +611,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.D = m.GetMemory(++r.PC);
+                            r.D = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -623,7 +623,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.E = m.GetMemory(++r.PC);
+                            r.E = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -635,7 +635,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.H = m.GetMemory(++r.PC);
+                            r.H = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -647,7 +647,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.L = m.GetMemory(++r.PC);
+                            r.L = m.GetMemory(r.PC++);
                             return false;
                         },
                         (_, _, _) => true
@@ -842,7 +842,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -883,12 +883,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -929,12 +929,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -951,7 +951,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -968,7 +968,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -1082,12 +1082,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             r.BC = Bits.CreateU16(_msb, _lsb);
                             return false;
                         },
@@ -1100,12 +1100,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             r.DE = Bits.CreateU16(_msb, _lsb);
                             return false;
                         },
@@ -1118,12 +1118,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             r.HL = Bits.CreateU16(_msb, _lsb);
                             return false;
                         },
@@ -1136,12 +1136,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             r.SP = Bits.CreateU16(_msb, _lsb);
                             return false;
                         },
@@ -1154,12 +1154,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
@@ -1195,12 +1195,12 @@ public class OpCodeHandler
                         (_, _, _) => false,
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.B);
+                            m.WriteMemory(r.SP--, r.B);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.C);
+                            m.WriteMemory(r.SP--, r.C);
                             return false;
                         },
                         (_, _, _) => true
@@ -1213,12 +1213,12 @@ public class OpCodeHandler
                         (_, _, _) => false,
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.D);
+                            m.WriteMemory(r.SP--, r.D);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.E);
+                            m.WriteMemory(r.SP--, r.E);
                             return false;
                         },
                         (_, _, _) => true
@@ -1231,12 +1231,12 @@ public class OpCodeHandler
                         (_, _, _) => false,
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.H);
+                            m.WriteMemory(r.SP--, r.H);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.L);
+                            m.WriteMemory(r.SP--, r.L);
                             return false;
                         },
                         (_, _, _) => true
@@ -1249,12 +1249,12 @@ public class OpCodeHandler
                         (_, _, _) => false,
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.A);
+                            m.WriteMemory(r.SP--, r.A);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            m.WriteMemory(--r.SP, r.F);
+                            m.WriteMemory(r.SP--, r.F);
                             return false;
                         },
                         (_, _, _) => true
@@ -1266,12 +1266,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.C = m.GetMemory(++r.SP);
+                            r.C = m.GetMemory(r.SP++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            r.B = m.GetMemory(++r.SP);
+                            r.B = m.GetMemory(r.SP++);
                             return false;
                         },
                         (_, _, _) => true
@@ -1283,12 +1283,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.E = m.GetMemory(++r.SP);
+                            r.E = m.GetMemory(r.SP++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            r.D = m.GetMemory(++r.SP);
+                            r.D = m.GetMemory(r.SP++);
                             return false;
                         },
                         (_, _, _) => true
@@ -1300,12 +1300,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.L = m.GetMemory(++r.SP);
+                            r.L = m.GetMemory(r.SP++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            r.H = m.GetMemory(++r.SP);
+                            r.H = m.GetMemory(r.SP++);
                             return false;
                         },
                         (_, _, _) => true
@@ -1317,12 +1317,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            r.F = m.GetMemory(++r.SP);
+                            r.F = m.GetMemory(r.SP++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            r.A = m.GetMemory(++r.SP);
+                            r.A = m.GetMemory(r.SP++);
                             return false;
                         },
                         (_, _, _) => true
@@ -1509,7 +1509,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            Add(r, m.GetMemory(++r.PC));
+                            Add(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -1615,7 +1615,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            AddWithCarry(r, m.GetMemory(++r.PC));
+                            AddWithCarry(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -1721,7 +1721,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            Sub(r, m.GetMemory(++r.PC));
+                            Sub(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -1827,7 +1827,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            SubWithCarry(r, m.GetMemory(++r.PC));
+                            SubWithCarry(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -1933,7 +1933,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            And(r, m.GetMemory(++r.PC));
+                            And(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -2039,7 +2039,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            Xor(r, m.GetMemory(++r.PC));
+                            Xor(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -2145,7 +2145,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            Or(r, m.GetMemory(++r.PC));
+                            Or(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -2251,7 +2251,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            Compare(r, m.GetMemory(++r.PC));
+                            Compare(r, m.GetMemory(r.PC++));
                             return false;
                         },
                         (_, _, _) => true
@@ -2539,12 +2539,12 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _lsb = m.GetMemory(++r.PC);
+                            _lsb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, m, _) =>
                         {
-                            _msb = m.GetMemory(++r.PC);
+                            _msb = m.GetMemory(r.PC++);
                             return false;
                         },
                         (r, _, _) =>
@@ -2561,7 +2561,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _signed8bit = m.GetSignedMemory(++r.PC);
+                            _signed8bit = m.GetSignedMemory(r.PC++);
                             return false;
                         },
                         (r, _, _) =>
@@ -2583,7 +2583,7 @@ public class OpCodeHandler
                     {
                         (r, m, _) =>
                         {
-                            _signed8bit = m.GetSignedMemory(++r.PC);
+                            _signed8bit = m.GetSignedMemory(r.PC++);
                             return false;
                         },
                         (r, _, _) =>

@@ -18,7 +18,7 @@ public class Mmu
     public void LoadCart(string filePath)
     {
         var rom = File.ReadAllBytes(filePath);
-        rom[..0x3FFF].CopyTo(_memory, 0);
+        rom[..0x7FFF].CopyTo(_memory, 0);
     }
 
     public u8 GetMemory(u16 location)

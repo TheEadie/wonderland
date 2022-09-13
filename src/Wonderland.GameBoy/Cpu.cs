@@ -63,13 +63,14 @@ public class Cpu
 
     private OpCode FetchAndDecode()
     {
-        var memory = ++_registers.PC;
+        var memory = _registers.PC;
         var opCode = _mmu.GetMemory(memory);
         var decoded = _opCodeHandler.Lookup(opCode);
 
         Console.WriteLine(
             $"{memory:X4} - {opCode:X2}: {decoded.Description.PadRight(20)}{_registers} : {_mmu.GetMemory((ushort) (_registers.PC + 1)):X2} {_mmu.GetMemory((ushort) (_registers.PC + 2)):X2}");
 
+        _registers.PC++;
         return decoded;
     }
 }
