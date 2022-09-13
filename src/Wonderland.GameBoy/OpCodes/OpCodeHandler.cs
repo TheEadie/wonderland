@@ -2421,7 +2421,29 @@ public class OpCodeHandler
                     })
             },
             {
-                0x20, new OpCode(0x20, "JP NC s8", 2, 12,
+                0x20, new OpCode(0x20, "JP NZ s8", 2, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _signed8bit = m.GetSignedMemory(r.PC++);
+                            return false;
+                        },
+                        (r, _, _) =>
+                        {
+                            if (r.FlagZ)
+                            {
+                                return true;
+                            }
+
+                            r.PC = Convert.ToUInt16(r.PC + _signed8bit);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+            {
+                0x30, new OpCode(0x30, "JP NC s8", 2, 12,
                     new Func<Registers, Mmu, InterruptManager, bool>[]
                     {
                         (r, m, _) =>

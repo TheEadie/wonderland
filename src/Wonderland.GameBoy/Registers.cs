@@ -87,4 +87,9 @@ public class Registers
         get => (F & 0b_00010000) != 0;
         set => F = (u8) (F & 0b_11101111 | (value ? 0b00010000 : 0b00000000));
     }
+
+    public override string ToString()
+    {
+        return $"A: {A:X2}, B: {B:X2}, C: {C:X2}, D: {D:X2}, E: {E:X2}, F: {F:X2}, H: {H:X2}, L:{L:X2}";
+    }
 }

@@ -50,5 +50,13 @@ public class Cpu
     private bool RunNextSubInstruction() =>
         _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu, _interruptManager);
 
-    private OpCode FetchAndDecode() => _opCodeHandler.Lookup(_mmu.GetMemory(_registers.PC++));
+    private OpCode FetchAndDecode()
+    {
+        var memory = _registers.PC++;
+        var opCode = _mmu.GetMemory(memory);
+        var decoded = _opCodeHandler.Lookup(opCode);
+
+        Console.WriteLine($"{memory:X4} - {opCode:X2}: {decoded.Description.PadRight(20)}{_registers}");
+        return decoded;
+    }
 }

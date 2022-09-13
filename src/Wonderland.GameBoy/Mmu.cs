@@ -12,7 +12,7 @@ public class Mmu
 
     public Mmu()
     {
-        _memory = new u8[65_535];
+        _memory = new u8[65_536];
     }
 
     public void LoadCart(string filePath)
