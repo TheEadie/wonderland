@@ -2508,6 +2508,58 @@ public class OpCodeHandler
 
             #endregion
 
+            {
+                0x27, new OpCode(0x27, "DAA", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            if (r.FlagN)
+                            {
+                                if (r.FlagC)
+                                {
+                                    r.A -= 0x60;
+                                }
+
+                                if (r.FlagH)
+                                {
+                                    r.A -= 0x6;
+                                }
+                            }
+                            else
+                            {
+                                if (r.FlagC || (r.A > 0x99))
+                                {
+                                    r.A += 0x60;
+                                    r.FlagC = true;
+                                }
+
+                                if (r.FlagH || (r.A & 0xF) > 0x9)
+                                {
+                                    r.A += 0x6;
+                                }
+                            }
+
+                            r.FlagZ = (r.A == 0);
+                            r.FlagH = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x2F, new OpCode(0x2F, "CPL", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.A = (u8) (r.A ^ 0xFF);
+                            r.FlagN = true;
+                            r.FlagH = true;
+                            return true;
+                        }
+                    })
+            },
+
             #endregion
 
             {
