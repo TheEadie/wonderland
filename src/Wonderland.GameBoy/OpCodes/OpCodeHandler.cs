@@ -2384,6 +2384,130 @@ public class OpCodeHandler
 
             #endregion
 
+            #region DEC
+
+            {
+                0x3D, new OpCode(0x3D, "DEC A", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.A & 0b_0000_1111) == 0b_0000_0000;
+                            r.A--;
+                            r.FlagZ = r.A == 0;
+                            r.FlagN = true;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x05, new OpCode(0x05, "DEC B", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.B & 0b_0000_1111) == 0b_0000_0000;
+                            r.B--;
+                            r.FlagZ = r.B == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x0D, new OpCode(0x0D, "DEC C", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.C & 0b_0000_1111) == 0b_0000_0000;
+                            r.C--;
+                            r.FlagZ = r.C == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x15, new OpCode(0x15, "DEC D", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.D & 0b_0000_1111) == 0b_0000_0000;
+                            r.D--;
+                            r.FlagZ = r.D == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x1D, new OpCode(0x1D, "DEC E", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.E & 0b_0000_1111) == 0b_0000_0000;
+                            r.E--;
+                            r.FlagZ = r.E == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x25, new OpCode(0x25, "DEC H", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.H & 0b_0000_1111) == 0b_0000_0000;
+                            r.H--;
+                            r.FlagZ = r.H == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x2D, new OpCode(0x2D, "DEC L", 1, 4,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, _, _) =>
+                        {
+                            r.FlagH = (r.L & 0b_0000_1111) == 0b_0000_0000;
+                            r.L--;
+                            r.FlagZ = r.L == 0;
+                            r.FlagN = false;
+                            return true;
+                        }
+                    })
+            },
+            {
+                0x35, new OpCode(0x35, "DEC (HL)", 1, 12,
+                    new Func<Registers, Mmu, InterruptManager, bool>[]
+                    {
+                        (r, m, _) =>
+                        {
+                            _lsb = m.GetMemory(r.HL);
+                            return false;
+                        },
+                        (r, m, _) =>
+                        {
+                            r.FlagH = (_lsb & 0b_0000_1111) == 0b_0000_0000;
+                            _lsb--;
+                            r.FlagZ = _lsb == 0;
+                            r.FlagN = false;
+                            m.WriteMemory(r.HL, _lsb);
+                            return false;
+                        },
+                        (_, _, _) => true
+                    })
+            },
+
+            #endregion
+
             #endregion
 
             {
