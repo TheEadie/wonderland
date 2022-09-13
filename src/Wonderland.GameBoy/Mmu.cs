@@ -33,9 +33,12 @@ public class Mmu
 
     public void WriteMemory(u16 location, u8 value)
     {
-        if (location == 0xFF01)
+        if (location == 0xFF02)
         {
-            Console.WriteLine(value.ToString("x2"));
+            if (value == 0x81)
+            {
+                Console.WriteLine(GetMemory(0xFF01).ToString("x2"));
+            }
         }
 
         _memory[location] = value;
