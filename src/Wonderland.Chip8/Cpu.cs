@@ -291,7 +291,7 @@ public class Cpu
             {
                 0x0A, new OpCode(i => $"WAIT FOR KEY; V{i.X:x} = KEY", i =>
                 {
-                    var pressedKey = _io.GetPressedKey();
+                    var pressedKey = _io.GetReleasedKey();
                     if (pressedKey is not null)
                     {
                         V[i.X] = pressedKey.Value;

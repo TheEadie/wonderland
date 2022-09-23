@@ -5,6 +5,8 @@ namespace Wonderland.Chip8.IO;
 public class SfmlInput : IInputOutput
 {
     public bool[] Keys { get; } = new bool[16];
+
+    private readonly bool[] _keysReleased = new bool[16];
     public bool Pause { get; private set; }
     public bool StepForward { get; private set; }
 
@@ -13,7 +15,8 @@ public class SfmlInput : IInputOutput
 
     public SfmlInput()
     {
-        _lookup = new Dictionary<Keyboard.Key, byte> {
+        _lookup = new Dictionary<Keyboard.Key, byte>
+        {
             {Keyboard.Key.Num1, 0x1},
             {Keyboard.Key.Num2, 0x2},
             {Keyboard.Key.Num3, 0x3},
@@ -33,16 +36,16 @@ public class SfmlInput : IInputOutput
         };
     }
 
-    public byte? GetPressedKey()
+    public byte? GetReleasedKey()
     {
-        var keyPressed = Keys.Select((b, i) => new { Index = i, Value = b })
+        var keyReleased = _keysReleased.Select((b, i) => new {Index = i, Value = b})
             .Where(o => o.Value)
             .Select(o => o.Index)
             .ToList();
 
-        var keyPressedCount = keyPressed.Count;
-        var keyPressedFirst = keyPressed.FirstOrDefault();
-        return (keyPressedCount > 0) ? (byte)keyPressedFirst : null;
+        var keyReleasedCount = keyReleased.Count;
+        var keyReleasedFirst = keyReleased.FirstOrDefault();
+        return (keyReleasedCount > 0) ? (byte) keyReleasedFirst : null;
     }
 
     public void Beep()
@@ -59,6 +62,7 @@ public class SfmlInput : IInputOutput
         StepForward = nPressed && _cooldown == 0;
         foreach (var key in _lookup.Keys)
         {
+            _keysReleased[_lookup[key]] = Keys[_lookup[key]] && !Keyboard.IsKeyPressed(key);
             Keys[_lookup[key]] = Keyboard.IsKeyPressed(key);
         }
 

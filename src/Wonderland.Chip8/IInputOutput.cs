@@ -5,7 +5,7 @@ public interface IInputOutput
     bool[] Keys { get; }
     bool Pause { get; }
     bool StepForward { get; }
-    byte? GetPressedKey();
+    byte? GetReleasedKey();
     void Beep();
     void Step();
 }
