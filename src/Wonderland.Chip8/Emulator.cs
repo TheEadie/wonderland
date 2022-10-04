@@ -84,39 +84,42 @@ public class Emulator
         var prevtime60Hz = TimeSpan.Zero;
         _screen.Init();
 
+        void EverySecond()
+        {
+            _screen.UpdateStatus(_actualFps, _actualClockSpeed);
+            _actualFps = 0;
+            _actualClockSpeed = 0;
+        }
+
+        void EveryFrame()
+        {
+            ProcessInput();
+            _screen.UpdateButtonStates(_pause);
+            _screen.DrawFrame();
+            _actualFps++;
+
+            if (_pause) return;
+
+            _cpu.Step60Hz();
+            for (var i = 0; i < _stepsPerFrame; i++)
+            {
+                _cpu.Step();
+                _actualClockSpeed++;
+            }
+        }
+
+        var runEverySecond = new Action(EverySecond);
+        var runEveryFrame = new Action(EveryFrame);
+
         while (!cancellationToken.IsCancellationRequested && _screen.IsOpen())
         {
-            void EverySecond()
-            {
-                _screen.UpdateStatus(_actualFps, _actualClockSpeed);
-                _actualFps = 0;
-                _actualClockSpeed = 0;
-            }
-
-            void EveryFrame()
-            {
-                ProcessInput();
-                _screen.UpdateButtonStates(_pause);
-                _screen.DrawFrame();
-                _actualFps++;
-
-                if (_pause) return;
-
-                _cpu.Step60Hz();
-                for (var i = 0; i < _stepsPerFrame; i++)
-                {
-                    _cpu.Step();
-                    _actualClockSpeed++;
-                }
-            }
-
             prevtime1Hz = RunOnTimer(timer.Elapsed, prevtime1Hz,
                 TimeSpan.FromSeconds(1),
-                EverySecond);
+                ref runEverySecond);
 
             prevtime60Hz = RunOnTimerWithCatchUp(timer.Elapsed, prevtime60Hz,
                 TimeSpan.FromTicks(TimeSpan.TicksPerSecond / _targetFps),
-                EveryFrame);
+                ref runEveryFrame);
         }
     }
 
@@ -154,7 +157,7 @@ public class Emulator
         }
     }
 
-    private static TimeSpan RunOnTimer(TimeSpan now, TimeSpan lastRun, TimeSpan interval, Action toRun)
+    private static TimeSpan RunOnTimer(TimeSpan now, TimeSpan lastRun, TimeSpan interval, ref Action toRun)
     {
         var elapsed = now - lastRun;
         if (elapsed >= interval)
@@ -171,7 +174,7 @@ public class Emulator
     /// Will run the action toRun() each time the interval has elapsed.
     /// If an interval is missed it will keep running till it catches up 
     /// </summary>
-    private static TimeSpan RunOnTimerWithCatchUp(TimeSpan now, TimeSpan lastRun, TimeSpan interval, Action toRun)
+    private static TimeSpan RunOnTimerWithCatchUp(TimeSpan now, TimeSpan lastRun, TimeSpan interval, ref Action toRun)
     {
         var elapsed = now - lastRun;
         while (elapsed >= interval)

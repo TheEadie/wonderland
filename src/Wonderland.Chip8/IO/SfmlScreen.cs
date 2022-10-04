@@ -22,12 +22,20 @@ public class SfmlScreen : IScreen
 
     private readonly TabControl _tabControl;
 
+    private const int Scale = 5;
+
+    private readonly Color[,] _sfmlArray;
+    private readonly Sprite _sprite;
+
     public Queue<EmulatorAction> Actions { get; }
 
     public SfmlScreen(Gpu gpu, Cpu cpu)
     {
         _gpu = gpu;
         _cpu = cpu;
+
+        _sfmlArray = new Color[(_gpu.Width) * Scale, (_gpu.Height) * Scale];
+        _sprite = new Sprite();
 
         Actions = new Queue<EmulatorAction>();
 
@@ -36,7 +44,7 @@ public class SfmlScreen : IScreen
         _window.KeyPressed +=
             (sender, e) =>
             {
-                var window = (Window) sender!;
+                var window = (Window)sender!;
                 if (e.Code == Keyboard.Key.Escape)
                 {
                     window.Close();
@@ -95,39 +103,36 @@ public class SfmlScreen : IScreen
         _window.Draw(border);
 
         var vRam = _gpu.GetVRam();
-        var width = vRam.GetLength(0);
-        var height = vRam.GetLength(1);
-
-        const int scale = 5;
-
-        var sfmlArray = new Color[(width) * scale, (height) * scale];
+        var width = _gpu.Width;
+        var height = _gpu.Height;
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                for (var i = 0; i < scale; i++)
+                for (var i = 0; i < Scale; i++)
                 {
-                    for (var j = 0; j < scale; j++)
+                    for (var j = 0; j < Scale; j++)
                     {
-                        if (i is scale - 1 || j is scale - 1)
+                        if (i is Scale - 1 || j is Scale - 1)
                         {
-                            sfmlArray[x * scale + i, y * scale + j] = Colours.BackgroundLevel2;
+                            _sfmlArray[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
                         }
                         else
                         {
-                            sfmlArray[x * scale + i, y * scale + j] = vRam[x, y] ? Color.White : Color.Black;
+                            _sfmlArray[x * Scale + i, y * Scale + j] = vRam[x, y] ? Color.White : Color.Black;
                         }
                     }
                 }
             }
         }
 
-        var image = new Image(sfmlArray);
+        var image = new Image(_sfmlArray);
         var texture = new Texture(image);
-        var sprite = new Sprite(texture);
-        sprite.Position = position + new Vector2f(24, 24);
-        _window.Draw(sprite);
+        _sprite.Texture = texture;
+        _sprite.Position = position + new Vector2f(24, 24);
+        _window.Draw(_sprite);
+        image.Dispose();
     }
 
     private void DrawMainSection(Vector2f position, Vector2f size, string title)

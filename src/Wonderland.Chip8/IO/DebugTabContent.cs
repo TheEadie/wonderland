@@ -13,8 +13,17 @@ public class DebugTabContent : ITabContent
     private readonly Cpu _cpu;
     private readonly Gpu _gpu;
 
+    private const int Scale = 10;
+    private readonly Color[,] _sfmlArray = new Color[8 * Scale, 16 * Scale];
+    private Image _image;
+    private readonly Sprite _sprite;
+
     public DebugTabContent(Vector2f position, RenderTarget window, Cpu cpu, Gpu gpu)
     {
+        _image = new Image(_sfmlArray);
+        var texture = new Texture(_image);
+        _sprite = new Sprite(texture);
+
         _position = position;
         _window = window;
         _cpu = cpu;
@@ -115,24 +124,22 @@ public class DebugTabContent : ITabContent
         text.Position = position + new Vector2f(147, 55);
         _window.Draw(text);
 
-        const int scale = 10;
-        var sfmlArray = new Color[8 * scale, memory.Count * scale];
 
         for (var y = 0; y < memory.Count; y++)
         {
             for (var x = 0; x < 8; x++)
             {
-                for (var i = 0; i < scale; i++)
+                for (var i = 0; i < Scale; i++)
                 {
-                    for (var j = 0; j < scale; j++)
+                    for (var j = 0; j < Scale; j++)
                     {
-                        if (i is scale - 1 || j is scale - 1)
+                        if (i is Scale - 1 || j is Scale - 1)
                         {
-                            sfmlArray[x * scale + i, y * scale + j] = Colours.BackgroundLevel2;
+                            _sfmlArray[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
                         }
                         else
                         {
-                            sfmlArray[x * scale + i, y * scale + j] = (memory.ElementAt(y) >> (7 - x) & 0b0000001) == 1
+                            _sfmlArray[x * Scale + i, y * Scale + j] = (memory.ElementAt(y) >> (7 - x) & 0b0000001) == 1
                                 ? Color.White
                                 : Color.Black;
                         }
@@ -141,11 +148,10 @@ public class DebugTabContent : ITabContent
             }
         }
 
-        var image = new Image(sfmlArray);
-        var texture = new Texture(image);
-        var sprite = new Sprite(texture);
-        sprite.Position = position + new Vector2f(120, 48 + 36);
-        _window.Draw(sprite);
+        _image = new Image(_sfmlArray);
+        _sprite.Texture = new Texture(_image);
+        _sprite.Position = position + new Vector2f(120, 48 + 36);
+        _window.Draw(_sprite);
     }
 
     private void DrawDebugInstructions(Vector2f position)

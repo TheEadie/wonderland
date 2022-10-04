@@ -162,7 +162,7 @@ public class Cpu
 
         for (var n = 0; n < 16; n++)
         {
-            _opCodes0.Add((byte) (0xC0 + n), new OpCode(i => $"SCROLL DOWN {i.N}", i => _gpu.ScrollDown(i.N)));
+            _opCodes0.Add((byte)(0xC0 + n), new OpCode(i => $"SCROLL DOWN {i.N}", i => _gpu.ScrollDown(i.N)));
         }
 
         _opCodes8 = new Dictionary<byte, OpCode>
@@ -322,6 +322,7 @@ public class Cpu
         var instruction = Fetch(PC);
         PC += 2;
         var opCode = Decode(instruction);
+        Console.WriteLine(instruction + " " + opCode.Description.Invoke(instruction));
         opCode.Run(instruction);
     }
 
@@ -331,13 +332,13 @@ public class Cpu
         opCode += _memory[pc + 1];
 
         return new Instruction(
-            (ushort) opCode,
-            (byte) ((opCode >> 12) & 0x000F),
-            (byte) ((opCode >> 8) & 0x000F),
-            (byte) ((opCode >> 4) & 0x000F),
-            (byte) (opCode & 0x000F),
-            (byte) (opCode & 0x00FF),
-            (ushort) (opCode & 0x0FFF));
+            (ushort)opCode,
+            (byte)((opCode >> 12) & 0x000F),
+            (byte)((opCode >> 8) & 0x000F),
+            (byte)((opCode >> 4) & 0x000F),
+            (byte)(opCode & 0x000F),
+            (byte)(opCode & 0x00FF),
+            (ushort)(opCode & 0x0FFF));
     }
 
     private OpCode Decode(Instruction instruction)
@@ -366,7 +367,7 @@ public class Cpu
     {
         for (var i = -4; i < 12; i++)
         {
-            var instruction = Fetch((ushort) (PC + 2 * i));
+            var instruction = Fetch((ushort)(PC + 2 * i));
             var opCode = Decode(instruction);
             yield return (instruction, opCode);
         }
@@ -390,4 +391,10 @@ public class Cpu
     }
 }
 
-internal record struct Instruction(ushort OpCode, byte Type, byte X, byte Y, byte N, byte NN, ushort NNN);
+internal record struct Instruction(ushort OpCode, byte Type, byte X, byte Y, byte N, byte NN, ushort NNN)
+{
+    public override string ToString()
+    {
+        return $"OpCode: {OpCode:X4}";
+    }
+}

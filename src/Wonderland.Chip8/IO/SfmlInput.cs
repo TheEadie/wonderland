@@ -38,14 +38,14 @@ public class SfmlInput : IInputOutput
 
     public byte? GetReleasedKey()
     {
-        var keyReleased = _keysReleased.Select((b, i) => new {Index = i, Value = b})
+        var keyReleased = _keysReleased.Select((b, i) => new { Index = i, Value = b })
             .Where(o => o.Value)
             .Select(o => o.Index)
             .ToList();
 
         var keyReleasedCount = keyReleased.Count;
         var keyReleasedFirst = keyReleased.FirstOrDefault();
-        return (keyReleasedCount > 0) ? (byte) keyReleasedFirst : null;
+        return (keyReleasedCount > 0) ? (byte)keyReleasedFirst : null;
     }
 
     public void Beep()
@@ -62,8 +62,11 @@ public class SfmlInput : IInputOutput
         StepForward = nPressed && _cooldown == 0;
         foreach (var key in _lookup.Keys)
         {
-            _keysReleased[_lookup[key]] = Keys[_lookup[key]] && !Keyboard.IsKeyPressed(key);
-            Keys[_lookup[key]] = Keyboard.IsKeyPressed(key);
+            var isKeyPressed = Keyboard.IsKeyPressed(key);
+            var mappedKey = _lookup[key];
+
+            _keysReleased[mappedKey] = Keys[mappedKey] && !isKeyPressed;
+            Keys[mappedKey] = isKeyPressed;
         }
 
         if ((pPressed || nPressed) && _cooldown == 0)

@@ -5,10 +5,14 @@ public class Gpu
     private readonly bool[,] _vRam;
 
     public bool HighResolutionMode { get; set; }
+    public int Width { get; }
+    public int Height { get; }
 
     public Gpu()
     {
-        _vRam = new bool[128, 64];
+        Width = 128;
+        Height = 64;
+        _vRam = new bool[Width, Height];
         HighResolutionMode = false;
     }
 
@@ -19,9 +23,9 @@ public class Gpu
 
     public void Clear()
     {
-        for (var x = 0; x < _vRam.GetLength(0); x++)
+        for (var x = 0; x < Width; x++)
         {
-            for (var y = 0; y < _vRam.GetLength(1); y++)
+            for (var y = 0; y < Height; y++)
             {
                 _vRam[x, y] = false;
             }
@@ -31,11 +35,10 @@ public class Gpu
     public void ScrollRight()
     {
         const int pixels = 4;
-        var width = _vRam.GetLength(0);
 
-        for (var x = width - 1; x >= pixels; x--)
+        for (var x = Width - 1; x >= pixels; x--)
         {
-            for (var y = 0; y < _vRam.GetLength(1); y++)
+            for (var y = 0; y < Height; y++)
             {
                 _vRam[x, y] = _vRam[x - pixels, y];
             }
@@ -43,7 +46,7 @@ public class Gpu
 
         for (var x = pixels - 1; x >= 0; x--)
         {
-            for (var y = 0; y < _vRam.GetLength(1); y++)
+            for (var y = 0; y < Height; y++)
             {
                 _vRam[x, y] = false;
             }
@@ -53,19 +56,18 @@ public class Gpu
     public void ScrollLeft()
     {
         const int pixels = 4;
-        var width = _vRam.GetLength(0);
 
-        for (var x = 0; x < width - pixels; x++)
+        for (var x = 0; x < Width - pixels; x++)
         {
-            for (var y = 0; y < _vRam.GetLength(1); y++)
+            for (var y = 0; y < Height; y++)
             {
                 _vRam[x, y] = _vRam[x + pixels, y];
             }
         }
 
-        for (var x = width - pixels; x < width; x++)
+        for (var x = Width - pixels; x < Width; x++)
         {
-            for (var y = 0; y < _vRam.GetLength(1); y++)
+            for (var y = 0; y < Height; y++)
             {
                 _vRam[x, y] = false;
             }
@@ -74,17 +76,15 @@ public class Gpu
 
     public void ScrollDown(int pixels)
     {
-        var height = _vRam.GetLength(1);
-
-        for (var x = 0; x < _vRam.GetLength(0); x++)
+        for (var x = 0; x < Width; x++)
         {
-            for (var y = height - 1; y >= pixels; y--)
+            for (var y = Height - 1; y >= pixels; y--)
             {
                 _vRam[x, y] = _vRam[x, y - pixels];
             }
         }
 
-        for (var x = 0; x < _vRam.GetLength(0); x++)
+        for (var x = 0; x < Width; x++)
         {
             for (var y = pixels - 1; y >= 0; y--)
             {
@@ -97,13 +97,13 @@ public class Gpu
     {
         if (HighResolutionMode)
         {
-            xStart %= _vRam.GetLength(0);
-            yStart %= _vRam.GetLength(1);
+            xStart %= Width;
+            yStart %= Height;
         }
         else
         {
-            xStart %= _vRam.GetLength(0) / 2;
-            yStart %= _vRam.GetLength(1) / 2;
+            xStart %= Width / 2;
+            yStart %= Height / 2;
         }
 
         var spriteHeight = bytes.Length / width;
@@ -126,9 +126,6 @@ public class Gpu
 
     private bool SetRam(int x, int y, bool value, bool wrap)
     {
-        var width = _vRam.GetLength(0);
-        var height = _vRam.GetLength(1);
-
         if (!HighResolutionMode)
         {
             x *= 2;
@@ -137,11 +134,11 @@ public class Gpu
 
         if (wrap)
         {
-            x %= width;
-            y %= height;
+            x %= Width;
+            y %= Height;
         }
 
-        if (x < 0 || y < 0 || x >= width || y >= height)
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
             return false;
         }
@@ -161,11 +158,9 @@ public class Gpu
 
     public void PrintDebug()
     {
-        int width = _vRam.GetLength(0);
-        int height = _vRam.GetLength(1);
-        for (var y = 0; y < height; y++)
+        for (var y = 0; y < Height; y++)
         {
-            for (var x = 0; x < width; x++)
+            for (var x = 0; x < Width; x++)
             {
                 Console.Write(_vRam[x, y] || y == 0 ? 'X' : ' ');
             }
