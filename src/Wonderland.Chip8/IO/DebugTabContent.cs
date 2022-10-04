@@ -1,6 +1,7 @@
 using System.Text;
 using SFML.Graphics;
 using SFML.System;
+using Wonderland.Chip8.IO.Sprites;
 using Wonderland.Chip8.IO.Tabs;
 using Wonderland.Chip8.IO.Text;
 
@@ -14,15 +15,11 @@ public class DebugTabContent : ITabContent
     private readonly Gpu _gpu;
 
     private const int Scale = 10;
-    private readonly Color[,] _sfmlArray = new Color[8 * Scale, 16 * Scale];
-    private Image _image;
-    private readonly Sprite _sprite;
+    private readonly PixelSprite _sprite;
 
     public DebugTabContent(Vector2f position, RenderTarget window, Cpu cpu, Gpu gpu)
     {
-        _image = new Image(_sfmlArray);
-        var texture = new Texture(_image);
-        _sprite = new Sprite(texture);
+        _sprite = new PixelSprite(window, 8 * Scale, 16 * Scale);
 
         _position = position;
         _window = window;
@@ -135,11 +132,11 @@ public class DebugTabContent : ITabContent
                     {
                         if (i is Scale - 1 || j is Scale - 1)
                         {
-                            _sfmlArray[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
+                            _sprite.Pixels[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
                         }
                         else
                         {
-                            _sfmlArray[x * Scale + i, y * Scale + j] = (memory.ElementAt(y) >> (7 - x) & 0b0000001) == 1
+                            _sprite.Pixels[x * Scale + i, y * Scale + j] = (memory.ElementAt(y) >> (7 - x) & 0b0000001) == 1
                                 ? Color.White
                                 : Color.Black;
                         }
@@ -148,10 +145,7 @@ public class DebugTabContent : ITabContent
             }
         }
 
-        _image = new Image(_sfmlArray);
-        _sprite.Texture = new Texture(_image);
-        _sprite.Position = position + new Vector2f(120, 48 + 36);
-        _window.Draw(_sprite);
+        _sprite.Draw(position + new Vector2f(120, 48 + 36));
     }
 
     private void DrawDebugInstructions(Vector2f position)

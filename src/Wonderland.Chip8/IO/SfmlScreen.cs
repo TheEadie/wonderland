@@ -2,6 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using Wonderland.Chip8.IO.Buttons;
+using Wonderland.Chip8.IO.Sprites;
 using Wonderland.Chip8.IO.Tabs;
 using Wonderland.Chip8.IO.Text;
 
@@ -21,12 +22,10 @@ public class SfmlScreen : IScreen
     private readonly Button _stepButton;
 
     private readonly TabControl _tabControl;
+    private readonly PixelSprite _sprite;
 
     private const int Scale = 5;
 
-    private readonly Color[,] _sfmlArray;
-    private readonly byte[] _spriteArray;
-    private readonly Sprite _sprite;
 
     public Queue<EmulatorAction> Actions { get; }
 
@@ -34,10 +33,6 @@ public class SfmlScreen : IScreen
     {
         _gpu = gpu;
         _cpu = cpu;
-
-        _sfmlArray = new Color[(_gpu.Width) * Scale, (_gpu.Height) * Scale];
-        _spriteArray = new byte[(_gpu.Width) * Scale * (_gpu.Height) * Scale * 4];
-        _sprite = new Sprite();
 
         Actions = new Queue<EmulatorAction>();
 
@@ -52,6 +47,8 @@ public class SfmlScreen : IScreen
                     window.Close();
                 }
             };
+
+        _sprite = new PixelSprite(_window, (_gpu.Width) * Scale, (_gpu.Height) * Scale);
 
         _pauseButton = new Button(new Vector2f(318, 454), "||",
             (obj) =>
@@ -118,37 +115,17 @@ public class SfmlScreen : IScreen
                     {
                         if (i is Scale - 1 || j is Scale - 1)
                         {
-                            _sfmlArray[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
+                            _sprite.Pixels[x * Scale + i, y * Scale + j] = Colours.BackgroundLevel2;
                         }
                         else
                         {
-                            _sfmlArray[x * Scale + i, y * Scale + j] = vRam[x, y] ? Color.White : Color.Black;
+                            _sprite.Pixels[x * Scale + i, y * Scale + j] = vRam[x, y] ? Color.White : Color.Black;
                         }
                     }
                 }
             }
         }
-
-        var sfmlWidth = _sfmlArray.GetLength(0);
-        var sfmlHeight = _sfmlArray.GetLength(1);
-
-        for (var y = 0; y < sfmlHeight; y++)
-        {
-            for (var x = 0; x < sfmlWidth; x++)
-            {
-                _spriteArray[(y * sfmlWidth + x) * 4] = _sfmlArray[x, y].R;
-                _spriteArray[(y * sfmlWidth + x) * 4 + 1] = _sfmlArray[x, y].G;
-                _spriteArray[(y * sfmlWidth + x) * 4 + 2] = _sfmlArray[x, y].B;
-                _spriteArray[(y * sfmlWidth + x) * 4 + 3] = 255;
-            }
-        }
-
-        var image = new Image((uint)(width * Scale), (uint)(height * Scale), _spriteArray);
-        var texture = new Texture(image);
-        _sprite.Texture = texture;
-        _sprite.Position = position + new Vector2f(24, 24);
-        _window.Draw(_sprite);
-        image.Dispose();
+        _sprite.Draw(position + new Vector2f(24, 24));
     }
 
     private void DrawMainSection(Vector2f position, Vector2f size, string title)
