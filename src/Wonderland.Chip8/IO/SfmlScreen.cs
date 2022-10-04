@@ -25,6 +25,7 @@ public class SfmlScreen : IScreen
     private const int Scale = 5;
 
     private readonly Color[,] _sfmlArray;
+    private readonly byte[] _spriteArray;
     private readonly Sprite _sprite;
 
     public Queue<EmulatorAction> Actions { get; }
@@ -35,6 +36,7 @@ public class SfmlScreen : IScreen
         _cpu = cpu;
 
         _sfmlArray = new Color[(_gpu.Width) * Scale, (_gpu.Height) * Scale];
+        _spriteArray = new byte[(_gpu.Width) * Scale * (_gpu.Height) * Scale * 4];
         _sprite = new Sprite();
 
         Actions = new Queue<EmulatorAction>();
@@ -127,7 +129,21 @@ public class SfmlScreen : IScreen
             }
         }
 
-        var image = new Image(_sfmlArray);
+        var sfmlWidth = _sfmlArray.GetLength(0);
+        var sfmlHeight = _sfmlArray.GetLength(1);
+
+        for (var y = 0; y < sfmlHeight; y++)
+        {
+            for (var x = 0; x < sfmlWidth; x++)
+            {
+                _spriteArray[(y * sfmlWidth + x) * 4] = _sfmlArray[x, y].R;
+                _spriteArray[(y * sfmlWidth + x) * 4 + 1] = _sfmlArray[x, y].G;
+                _spriteArray[(y * sfmlWidth + x) * 4 + 2] = _sfmlArray[x, y].B;
+                _spriteArray[(y * sfmlWidth + x) * 4 + 3] = 255;
+            }
+        }
+
+        var image = new Image((uint)(width * Scale), (uint)(height * Scale), _spriteArray);
         var texture = new Texture(image);
         _sprite.Texture = texture;
         _sprite.Position = position + new Vector2f(24, 24);
