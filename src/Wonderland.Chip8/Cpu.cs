@@ -56,6 +56,14 @@ public class Cpu
         QuirkShifting = true;
         QuirkJumping = true;
 
+        // XO-Chip defaults 
+        QuirkVfReset = false;
+        QuirkMemory = true;
+        QuirkDisplayWait = false;
+        QuirkWrapOverflow = true;
+        QuirkShifting = false;
+        QuirkJumping = false;
+
         _opCodes = new Dictionary<byte, OpCode>
         {
             {0x1, new OpCode(i => $"GOTO {i.NNN:x3}", i => PC = i.NNN)},
