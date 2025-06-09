@@ -1,6 +1,10 @@
 ﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.And;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Compare;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Dec;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Inc;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Or;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Sub;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.SubWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Xor;
@@ -236,557 +240,49 @@ public class OpCodeHandler
             #endregion
 
             #region OR
-            {
-                0xB7, new OpCode(
-                    0xB7,
-                    "OR A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB0, new OpCode(
-                    0xB0,
-                    "OR A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB1, new OpCode(
-                    0xB1,
-                    "OR A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB2, new OpCode(
-                    0xB2,
-                    "OR A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB3, new OpCode(
-                    0xB3,
-                    "OR A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB4, new OpCode(
-                    0xB4,
-                    "OR A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB5, new OpCode(
-                    0xB5,
-                    "OR A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Or(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB6, new OpCode(
-                    0xB6,
-                    "OR A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Or(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xF6, new OpCode(
-                    0xF6,
-                    "OR A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Or(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0xB7, new Or_A_A() },
+            { 0xB0, new Or_A_B() },
+            { 0xB1, new Or_A_C() },
+            { 0xB2, new Or_A_D() },
+            { 0xB3, new Or_A_E() },
+            { 0xB4, new Or_A_H() },
+            { 0xB5, new Or_A_L() },
+            { 0xB6, new Or_A_HL() },
+            { 0xF6, new Or_A_u8() },
             #endregion
 
             #region CP
-            {
-                0xBF, new OpCode(
-                    0xBF,
-                    "CP A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB8, new OpCode(
-                    0xB8,
-                    "CP A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xB9, new OpCode(
-                    0xB9,
-                    "CP A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xBA, new OpCode(
-                    0xBA,
-                    "CP A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xBB, new OpCode(
-                    0xBB,
-                    "CP A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xBC, new OpCode(
-                    0xBC,
-                    "CP A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xBD, new OpCode(
-                    0xBD,
-                    "CP A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Compare(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xBE, new OpCode(
-                    0xBE,
-                    "CP A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Compare(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xFE, new OpCode(
-                    0xFE,
-                    "CP A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Compare(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0xBF, new Compare_A_A() },
+            { 0xB8, new Compare_A_B() },
+            { 0xB9, new Compare_A_C() },
+            { 0xBA, new Compare_A_D() },
+            { 0xBB, new Compare_A_E() },
+            { 0xBC, new Compare_A_H() },
+            { 0xBD, new Compare_A_L() },
+            { 0xBE, new Compare_A_HL() },
+            { 0xFE, new Compare_A_u8() },
             #endregion
 
             #region INC
-            {
-                0x3C, new OpCode(
-                    0x3C,
-                    "INC A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.A & 0b_0000_1111) == 0b_0000_1111;
-                                r.A++;
-                                r.FlagZ = r.A == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x04, new OpCode(
-                    0x04,
-                    "INC B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.B & 0b_0000_1111) == 0b_0000_1111;
-                                r.B++;
-                                r.FlagZ = r.B == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x0C, new OpCode(
-                    0x0C,
-                    "INC C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.C & 0b_0000_1111) == 0b_0000_1111;
-                                r.C++;
-                                r.FlagZ = r.C == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x14, new OpCode(
-                    0x14,
-                    "INC D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.D & 0b_0000_1111) == 0b_0000_1111;
-                                r.D++;
-                                r.FlagZ = r.D == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x1C, new OpCode(
-                    0x1C,
-                    "INC E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.E & 0b_0000_1111) == 0b_0000_1111;
-                                r.E++;
-                                r.FlagZ = r.E == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x24, new OpCode(
-                    0x24,
-                    "INC H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.H & 0b_0000_1111) == 0b_0000_1111;
-                                r.H++;
-                                r.FlagZ = r.H == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x2C, new OpCode(
-                    0x2C,
-                    "INC L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.L & 0b_0000_1111) == 0b_0000_1111;
-                                r.L++;
-                                r.FlagZ = r.L == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x34, new OpCode(
-                    0x34,
-                    "INC (HL)",
-                    1,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                r.FlagH = (_lsb & 0b_0000_1111) == 0b_0000_1111;
-                                _lsb++;
-                                r.FlagZ = _lsb == 0;
-                                r.FlagN = false;
-                                m.WriteMemory(r.HL, _lsb);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x3C, new Inc_A() },
+            { 0x04, new Inc_B() },
+            { 0x0C, new Inc_C() },
+            { 0x14, new Inc_D() },
+            { 0x1C, new Inc_E() },
+            { 0x24, new Inc_H() },
+            { 0x2C, new Inc_L() },
+            { 0x34, new Inc_HL() },
             #endregion
 
             #region DEC
-            {
-                0x3D, new OpCode(
-                    0x3D,
-                    "DEC A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.A & 0b_0000_1111) == 0b_0000_0000;
-                                r.A--;
-                                r.FlagZ = r.A == 0;
-                                r.FlagN = true;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x05, new OpCode(
-                    0x05,
-                    "DEC B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.B & 0b_0000_1111) == 0b_0000_0000;
-                                r.B--;
-                                r.FlagZ = r.B == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x0D, new OpCode(
-                    0x0D,
-                    "DEC C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.C & 0b_0000_1111) == 0b_0000_0000;
-                                r.C--;
-                                r.FlagZ = r.C == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x15, new OpCode(
-                    0x15,
-                    "DEC D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.D & 0b_0000_1111) == 0b_0000_0000;
-                                r.D--;
-                                r.FlagZ = r.D == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x1D, new OpCode(
-                    0x1D,
-                    "DEC E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.E & 0b_0000_1111) == 0b_0000_0000;
-                                r.E--;
-                                r.FlagZ = r.E == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x25, new OpCode(
-                    0x25,
-                    "DEC H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.H & 0b_0000_1111) == 0b_0000_0000;
-                                r.H--;
-                                r.FlagZ = r.H == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x2D, new OpCode(
-                    0x2D,
-                    "DEC L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagH = (r.L & 0b_0000_1111) == 0b_0000_0000;
-                                r.L--;
-                                r.FlagZ = r.L == 0;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x35, new OpCode(
-                    0x35,
-                    "DEC (HL)",
-                    1,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                r.FlagH = (_lsb & 0b_0000_1111) == 0b_0000_0000;
-                                _lsb--;
-                                r.FlagZ = _lsb == 0;
-                                r.FlagN = false;
-                                m.WriteMemory(r.HL, _lsb);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x3D, new Dec_A() },
+            { 0x05, new Dec_B() },
+            { 0x0D, new Dec_C() },
+            { 0x15, new Dec_D() },
+            { 0x1D, new Dec_E() },
+            { 0x25, new Dec_H() },
+            { 0x2D, new Dec_L() },
+            { 0x35, new Dec_HL() },
             #endregion
 
             {
