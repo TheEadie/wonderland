@@ -3,6 +3,7 @@ using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.And;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Sub;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.SubWithCarry;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Xor;
 using Wonderland.GameBoy.OpCodes.CpuControl;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
@@ -223,134 +224,15 @@ public class OpCodeHandler
             #endregion
 
             #region XOR
-            {
-                0xAF, new OpCode(
-                    0xAF,
-                    "XOR A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA8, new OpCode(
-                    0xA8,
-                    "XOR A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA9, new OpCode(
-                    0xA9,
-                    "XOR A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xAA, new OpCode(
-                    0xAA,
-                    "XOR A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xAB, new OpCode(
-                    0xAB,
-                    "XOR A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xAC, new OpCode(
-                    0xAC,
-                    "XOR A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xAD, new OpCode(
-                    0xAD,
-                    "XOR A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Xor(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xAE, new OpCode(
-                    0xAE,
-                    "XOR A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Xor(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xEE, new OpCode(
-                    0xDE,
-                    "XOR A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Xor(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0xAF, new Xor_A_A() },
+            { 0xA8, new Xor_A_B() },
+            { 0xA9, new Xor_A_C() },
+            { 0xAA, new Xor_A_D() },
+            { 0xAB, new Xor_A_E() },
+            { 0xAC, new Xor_A_H() },
+            { 0xAD, new Xor_A_L() },
+            { 0xAE, new Xor_A_HL() },
+            { 0xEE, new Xor_A_u8() },
             #endregion
 
             #region OR
