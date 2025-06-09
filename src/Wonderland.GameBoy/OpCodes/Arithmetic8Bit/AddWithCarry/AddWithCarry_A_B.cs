@@ -1,14 +1,14 @@
 namespace Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 
-public record Add_With_Carry_A_C() : OpCode(
-    0x89,
-    "ADC A, C",
+public record AddWithCarry_A_B() : OpCode(
+    0x88,
+    "ADC A, B",
     1,
     4,
     [
         (r, _, _) =>
             {
-                OpCodeHandler.AddWithCarry(r, r.C);
+                OpCodeHandler.AddWithCarry(r, r.B);
                 return true;
             }
     ]);

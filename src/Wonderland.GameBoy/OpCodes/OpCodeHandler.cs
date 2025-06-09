@@ -174,15 +174,15 @@ public class OpCodeHandler
             #endregion
 
             #region ADD with Carry
-            { 0x8F, new Add_With_Carry_A_A() },
-            { 0x88, new Add_With_Carry_A_B() },
-            { 0x89, new Add_With_Carry_A_C() },
-            { 0x8A, new Add_With_Carry_A_D() },
-            { 0x8B, new Add_With_Carry_A_E() },
-            { 0x8C, new Add_With_Carry_A_H() },
-            { 0x8D, new Add_With_Carry_A_L() },
-            { 0x8E, new Add_With_Carry_A_HL() },
-            { 0xCE, new Add_With_Carry_A_u8() },
+            { 0x8F, new AddWithCarry_A_A() },
+            { 0x88, new AddWithCarry_A_B() },
+            { 0x89, new AddWithCarry_A_C() },
+            { 0x8A, new AddWithCarry_A_D() },
+            { 0x8B, new AddWithCarry_A_E() },
+            { 0x8C, new AddWithCarry_A_H() },
+            { 0x8D, new AddWithCarry_A_L() },
+            { 0x8E, new AddWithCarry_A_HL() },
+            { 0xCE, new AddWithCarry_A_u8() },
             #endregion
 
             #region SUB

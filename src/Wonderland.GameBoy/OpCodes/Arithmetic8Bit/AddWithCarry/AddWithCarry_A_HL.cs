@@ -1,6 +1,6 @@
 namespace Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 
-public record Add_With_Carry_A_HL() : OpCode(
+public record AddWithCarry_A_HL() : OpCode(
     0x8E,
     "ADC A, (HL)",
     1,
