@@ -1,4 +1,5 @@
-﻿using Wonderland.GameBoy.OpCodes.Load16Bit;
+﻿using Wonderland.GameBoy.OpCodes.CpuControl;
+using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
 using u8 = byte;
 using s8 = sbyte;
@@ -144,69 +145,13 @@ public class OpCodeHandler
             // CPU Control Instructions
 
             #region CPU Control
-            {
-                0xCF, new OpCode(
-                    0xCF,
-                    "CCF",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagC = !r.FlagC;
-                                r.FlagH = false;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xC7, new OpCode(
-                    0xC7,
-                    "SCF",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.FlagC = true;
-                                r.FlagH = false;
-                                r.FlagN = false;
-                                return true;
-                            }
-                    ])
-            },
-            { 0x00, new OpCode(0x00, "NOP", 1, 4, [(_, _, _) => true]) },
-            { 0x76, new OpCode(0x76, "HALT", 1, 4, [(_, _, _) => throw new NotImplementedException()]) },
-            { 0x10, new OpCode(0x10, "STOP", 1, 4, [(_, _, _) => throw new NotImplementedException()]) },
-            {
-                0xF3, new OpCode(
-                    0xF3,
-                    "DI",
-                    1,
-                    4,
-                    [
-                        (_, _, i) =>
-                            {
-                                i.DisableInterrupts();
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xFB, new OpCode(
-                    0xFB,
-                    "EI",
-                    1,
-                    4,
-                    [
-                        (_, _, i) =>
-                            {
-                                i.EnableInterruptsWithDelay();
-                                return true;
-                            }
-                    ])
-            },
+            { 0xCF, new CCF() },
+            { 0xC7, new SCF() },
+            { 0x00, new NOP() },
+            { 0x76, new Halt() },
+            { 0x10, new Stop() },
+            { 0xF3, new DisableInterrupts() },
+            { 0xFB, new EnableInterrupts() },
             #endregion
 
             // 8-bit Arithmetic / Logic Instructions
