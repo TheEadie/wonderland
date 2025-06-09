@@ -1,6 +1,4 @@
-﻿using Wonderland.GameBoy.OpCodes.Load8Bit.Memory;
-using Wonderland.GameBoy.OpCodes.Load8Bit.Register;
-using Wonderland.GameBoy.OpCodes.Load8Bit.Value;
+﻿using Wonderland.GameBoy.OpCodes.Load8Bit;
 using u8 = byte;
 using u16 = ushort;
 using s8 = sbyte;
@@ -22,6 +20,7 @@ public class OpCodeHandler
         {
             // 8-bit Load Instructions
 
+            #region 8-bit load
             #region r=r
             { 0x7F, new Load_A_A() },
             { 0x78, new Load_A_B() },
@@ -105,282 +104,22 @@ public class OpCodeHandler
             #endregion
 
             #region other
-            {
-                0x36, new OpCode(
-                    0x36,
-                    "LD (HL), u8",
-                    2,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, _lsb);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x0A, new OpCode(
-                    0x0A,
-                    "LD A, (BC)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.BC);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x1A, new OpCode(
-                    0x1A,
-                    "LD A, (DE)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.DE);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xFA, new OpCode(
-                    0xFA,
-                    "LD A, (u16)",
-                    3,
-                    16,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                _msb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(Bits.CreateU16(_msb, _lsb));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x02, new OpCode(
-                    0x02,
-                    "LD (BC), A",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.BC, r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x12, new OpCode(
-                    0x12,
-                    "LD (DE), A",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.DE, r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xEA, new OpCode(
-                    0xEA,
-                    "LD (u16), A",
-                    3,
-                    16,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                _msb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(Bits.CreateU16(_msb, _lsb), r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xF0, new OpCode(
-                    0xF0,
-                    "LD A, (FF00+u8)",
-                    2,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(Bits.CreateU16(0xFF, _lsb));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xE0, new OpCode(
-                    0xE0,
-                    "LD (FF00+u8), A",
-                    2,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(Bits.CreateU16(0xFF, _lsb), r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xF2, new OpCode(
-                    0xF2,
-                    "LD A, (FF00+C)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(Bits.CreateU16(0xFF, r.C));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xE2, new OpCode(
-                    0xE2,
-                    "LD (FF00+C), A",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(Bits.CreateU16(0xFF, r.C), r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x22, new OpCode(
-                    0x22,
-                    "LD (HL+), A",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.A);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                r.HL++;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x2A, new OpCode(
-                    0x2A,
-                    "LD A, (HL+)",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                r.HL++;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x32, new OpCode(
-                    0x32,
-                    "LD (HL-), A",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.A);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                r.HL--;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x3A, new OpCode(
-                    0x3A,
-                    "LD A, (HL-)",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                r.HL--;
-                                return true;
-                            }
-                    ])
-            },
+            { 0x36, new Load_HL_u8() },
+            { 0x0A, new Load_A_BC() },
+            { 0x1A, new Load_A_DE() },
+            { 0xFA, new Load_A_u16() },
+            { 0x02, new Load_BC_A() },
+            { 0x12, new Load_DE_A() },
+            { 0xEA, new Load_u16_A() },
+            { 0xF0, new Load_A_FF00_u8() },
+            { 0xE0, new Load_FF00_u8_A() },
+            { 0xF2, new Load_A_FF00_C() },
+            { 0xE2, new Load_FF00_C_A() },
+            { 0x22, new Load_HL_INC_A() },
+            { 0x2A, new Load_A_HL_INC() },
+            { 0x32, new Load_HL_DEC_A() },
+            { 0x3A, new Load_A_HL_DEC() },
+            #endregion
             #endregion
 
             // 16-bit Load Instructions

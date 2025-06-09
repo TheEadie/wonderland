@@ -1,6 +1,12 @@
-﻿namespace Wonderland.GameBoy.OpCodes;
+﻿using u8 = byte;
 
-public record OpCode(byte Value, string Description, int Length, int ClockCycles,
+namespace Wonderland.GameBoy.OpCodes;
+
+public record OpCode(
+    u8 Value,
+    string Description,
+    int Length,
+    int ClockCycles,
     Func<Registers, Mmu, InterruptManager, bool>[] Steps)
 {
     public int MachineCycles => ClockCycles / 4;
