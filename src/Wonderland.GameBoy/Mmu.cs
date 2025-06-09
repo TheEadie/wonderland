@@ -1,19 +1,12 @@
-﻿using u8 = System.Byte;
-using u16 = System.UInt16;
-using s8 = System.SByte;
-
-// ReSharper disable BuiltInTypeReferenceStyle
+﻿using u8 = byte;
+using u16 = ushort;
+using s8 = sbyte;
 
 namespace Wonderland.GameBoy;
 
 public class Mmu
 {
-    private readonly u8[] _memory;
-
-    public Mmu()
-    {
-        _memory = new u8[65_536];
-    }
+    private readonly u8[] _memory = new u8[65_536];
 
     public void LoadCart(string filePath)
     {
@@ -21,15 +14,9 @@ public class Mmu
         rom[..0x7FFF].CopyTo(_memory, 0);
     }
 
-    public u8 GetMemory(u16 location)
-    {
-        return _memory[location];
-    }
+    public u8 GetMemory(u16 location) => _memory[location];
 
-    public s8 GetSignedMemory(u16 location)
-    {
-        return unchecked((sbyte) _memory[location]);
-    }
+    public s8 GetSignedMemory(u16 location) => unchecked((s8)_memory[location]);
 
     public void WriteMemory(u16 location, u8 value)
     {

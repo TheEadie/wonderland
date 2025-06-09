@@ -1,18 +1,14 @@
 ﻿using Wonderland.GameBoy.OpCodes;
-using u8 = System.Byte;
-using u16 = System.UInt16;
-
-// ReSharper disable BuiltInTypeReferenceStyle
 
 namespace Wonderland.GameBoy;
 
 public class Cpu
 {
-    private readonly Registers _registers;
-    private readonly Mmu _mmu;
     private readonly InterruptManager _interruptManager;
+    private readonly Mmu _mmu;
 
     private readonly OpCodeHandler _opCodeHandler;
+    private readonly Registers _registers;
     private OpCode _currentOpCode;
     private int _currentOpCodeMachineCycle;
 
@@ -23,11 +19,7 @@ public class Cpu
         _registers = new Registers();
         _interruptManager = new InterruptManager();
         _opCodeHandler = new OpCodeHandler();
-        _currentOpCode = new OpCode(0x00, "NULL", 1, 4,
-            new Func<Registers, Mmu, InterruptManager, bool>[]
-            {
-                (_, _, _) => true
-            });
+        _currentOpCode = new OpCode(0x00, "NULL", 1, 4, [(_, _, _) => true]);
 
         _registers.PC = 0x100;
         _registers.A = 0x01;
@@ -68,7 +60,7 @@ public class Cpu
         var decoded = _opCodeHandler.Lookup(opCode);
 
         Console.WriteLine(
-            $"{memory:X4} - {opCode:X2}: {decoded.Description.PadRight(20)}{_registers} : {_mmu.GetMemory((ushort) (_registers.PC + 1)):X2} {_mmu.GetMemory((ushort) (_registers.PC + 2)):X2}");
+            $"{memory:X4} - {opCode:X2}: {decoded.Description,-20}{_registers} : {_mmu.GetMemory((ushort)(_registers.PC + 1)):X2} {_mmu.GetMemory((ushort)(_registers.PC + 2)):X2}");
 
         _registers.PC++;
         return decoded;

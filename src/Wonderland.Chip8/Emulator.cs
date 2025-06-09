@@ -7,11 +7,9 @@ public class Emulator
 {
     private readonly byte[] _memory;
     private readonly Cpu _cpu;
-    private readonly Gpu _gpu;
     private readonly IScreen _screen;
     private readonly IInputOutput _io;
 
-    private readonly int _targetClockSpeed;
     private readonly int _targetFps;
     private int _actualClockSpeed;
     private int _actualFps;
@@ -24,12 +22,11 @@ public class Emulator
     {
         _memory = new byte[4096];
         _io = new SfmlInput();
-        _gpu = new Gpu();
-        _cpu = new Cpu(_memory, _gpu, _io);
-        _screen = new SfmlScreen(_gpu, _cpu);
-        _targetClockSpeed = clockSpeed;
+        var gpu = new Gpu();
+        _cpu = new Cpu(_memory, gpu, _io);
+        _screen = new SfmlScreen(gpu, _cpu);
         _targetFps = 60;
-        _stepsPerFrame = (double)_targetClockSpeed / _targetFps;
+        _stepsPerFrame = (double)clockSpeed / _targetFps;
 
         _pause = true;
     }
@@ -172,7 +169,7 @@ public class Emulator
 
     /// <summary>
     /// Will run the action toRun() each time the interval has elapsed.
-    /// If an interval is missed it will keep running till it catches up 
+    /// If an interval is missed it will keep running till it catches up
     /// </summary>
     private static TimeSpan RunOnTimerWithCatchUp(TimeSpan now, TimeSpan lastRun, TimeSpan interval, ref Action toRun)
     {
