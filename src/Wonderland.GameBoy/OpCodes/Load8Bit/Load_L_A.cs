@@ -1,14 +1,14 @@
 namespace Wonderland.GameBoy.OpCodes.Load8Bit;
 
-public record Load_E_L() : OpCode(
-    0x5D,
-    "LD E, L",
+public record Load_L_A() : OpCode(
+    0x6F,
+    "LD L, A",
     1,
     4,
     [
         (r, _, _) =>
             {
-                r.E = r.L;
+                r.L = r.A;
                 return true;
             }
     ]);
