@@ -1,5 +1,7 @@
 ﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Sub;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.SubWithCarry;
 using Wonderland.GameBoy.OpCodes.CpuControl;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
@@ -184,265 +186,27 @@ public class OpCodeHandler
             #endregion
 
             #region SUB
-            {
-                0x97, new OpCode(
-                    0x97,
-                    "SUB A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x90, new OpCode(
-                    0x90,
-                    "SUB A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x91, new OpCode(
-                    0x91,
-                    "SUB A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x92, new OpCode(
-                    0x92,
-                    "SUB A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x93, new OpCode(
-                    0x93,
-                    "SUB A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x94, new OpCode(
-                    0x94,
-                    "SUB A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x95, new OpCode(
-                    0x95,
-                    "SUB A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Sub(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x96, new OpCode(
-                    0x96,
-                    "SUB A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Sub(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xD6, new OpCode(
-                    0xD6,
-                    "SUB A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Sub(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x97, new Sub_A_A() },
+            { 0x90, new Sub_A_B() },
+            { 0x91, new Sub_A_C() },
+            { 0x92, new Sub_A_D() },
+            { 0x93, new Sub_A_E() },
+            { 0x94, new Sub_A_H() },
+            { 0x95, new Sub_A_L() },
+            { 0x96, new Sub_A_HL() },
+            { 0xD6, new Sub_A_u8() },
             #endregion
 
             #region SUB with Carry
-            {
-                0x9F, new OpCode(
-                    0x9F,
-                    "SBC A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x98, new OpCode(
-                    0x98,
-                    "SBC A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x99, new OpCode(
-                    0x99,
-                    "SBC A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x9A, new OpCode(
-                    0x9A,
-                    "SBC A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x9B, new OpCode(
-                    0x9B,
-                    "SBC A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x9C, new OpCode(
-                    0x9C,
-                    "SBC A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x9D, new OpCode(
-                    0x9D,
-                    "SBC A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                SubWithCarry(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x9E, new OpCode(
-                    0x9E,
-                    "SBC A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                SubWithCarry(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xDE, new OpCode(
-                    0xDE,
-                    "SBC A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                SubWithCarry(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x9F, new SubWithCarry_A_A() },
+            { 0x98, new SubWithCarry_A_B() },
+            { 0x99, new SubWithCarry_A_C() },
+            { 0x9A, new SubWithCarry_A_D() },
+            { 0x9B, new SubWithCarry_A_E() },
+            { 0x9C, new SubWithCarry_A_H() },
+            { 0x9D, new SubWithCarry_A_L() },
+            { 0x9E, new SubWithCarry_A_HL() },
+            { 0xDE, new SubWithCarry_A_u8() },
             #endregion
 
             #region AND
