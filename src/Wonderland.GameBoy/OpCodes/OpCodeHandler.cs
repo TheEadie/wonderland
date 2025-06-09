@@ -1,4 +1,5 @@
 ﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 using Wonderland.GameBoy.OpCodes.CpuControl;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
@@ -171,134 +172,15 @@ public class OpCodeHandler
             #endregion
 
             #region ADD with Carry
-            {
-                0x8F, new OpCode(
-                    0x8F,
-                    "ADC A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x88, new OpCode(
-                    0x88,
-                    "ADC A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x89, new OpCode(
-                    0x89,
-                    "ADC A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x8A, new OpCode(
-                    0x8A,
-                    "ADC A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x8B, new OpCode(
-                    0x8B,
-                    "ADC A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x8C, new OpCode(
-                    0x8C,
-                    "ADC A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x8D, new OpCode(
-                    0x8D,
-                    "ADC A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                AddWithCarry(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x8E, new OpCode(
-                    0x8E,
-                    "ADC A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                AddWithCarry(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xCE, new OpCode(
-                    0xCE,
-                    "ADC A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                AddWithCarry(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x8F, new Add_With_Carry_A_A() },
+            { 0x88, new Add_With_Carry_A_B() },
+            { 0x89, new Add_With_Carry_A_C() },
+            { 0x8A, new Add_With_Carry_A_D() },
+            { 0x8B, new Add_With_Carry_A_E() },
+            { 0x8C, new Add_With_Carry_A_H() },
+            { 0x8D, new Add_With_Carry_A_L() },
+            { 0x8E, new Add_With_Carry_A_HL() },
+            { 0xCE, new Add_With_Carry_A_u8() },
             #endregion
 
             #region SUB
