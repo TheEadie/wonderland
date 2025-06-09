@@ -1,5 +1,6 @@
 ﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.And;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Sub;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.SubWithCarry;
 using Wonderland.GameBoy.OpCodes.CpuControl;
@@ -210,134 +211,15 @@ public class OpCodeHandler
             #endregion
 
             #region AND
-            {
-                0xA7, new OpCode(
-                    0xA7,
-                    "AND A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA0, new OpCode(
-                    0xA0,
-                    "AND A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA1, new OpCode(
-                    0xA1,
-                    "AND A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA2, new OpCode(
-                    0xA2,
-                    "AND A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA3, new OpCode(
-                    0xA3,
-                    "AND A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA4, new OpCode(
-                    0xA4,
-                    "AND A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA5, new OpCode(
-                    0xA5,
-                    "AND A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                And(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xA6, new OpCode(
-                    0xA6,
-                    "AND A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                And(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xE6, new OpCode(
-                    0xE6,
-                    "AND A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                And(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0xA7, new And_A_A() },
+            { 0xA0, new And_A_B() },
+            { 0xA1, new And_A_C() },
+            { 0xA2, new And_A_D() },
+            { 0xA3, new And_A_E() },
+            { 0xA4, new And_A_H() },
+            { 0xA5, new And_A_L() },
+            { 0xA6, new And_A_HL() },
+            { 0xE6, new And_A_u8() },
             #endregion
 
             #region XOR

@@ -1,6 +1,6 @@
 namespace Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 
-public record Add_With_Carry_A_u8() : OpCode(
+public record AddWithCarry_A_u8() : OpCode(
     0xCE,
     "ADC A, u8",
     1,
