@@ -20,7 +20,6 @@ public class OpCodeHandler
         {
             // 8-bit Load Instructions
 
-            #region 8-bit load
             #region r=r
             { 0x7F, new Load_A_A() },
             { 0x78, new Load_A_B() },
@@ -43,202 +42,20 @@ public class OpCodeHandler
             { 0x4B, new Load_C_E() },
             { 0x4C, new Load_C_H() },
             { 0x4D, new Load_C_L() },
-            {
-                0x57, new OpCode(
-                    0x57,
-                    "LD D, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.A;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x50, new OpCode(
-                    0x50,
-                    "LD D, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.B;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x51, new OpCode(
-                    0x51,
-                    "LD D, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.C;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x52, new OpCode(
-                    0x52,
-                    "LD D, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.D;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x53, new OpCode(
-                    0x53,
-                    "LD D, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.E;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x54, new OpCode(
-                    0x54,
-                    "LD D, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.H;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x55, new OpCode(
-                    0x55,
-                    "LD D, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.D = r.L;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x5F, new OpCode(
-                    0x5F,
-                    "LD E, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.A;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x58, new OpCode(
-                    0x58,
-                    "LD E, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.B;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x59, new OpCode(
-                    0x59,
-                    "LD E, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.C;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x5A, new OpCode(
-                    0x5A,
-                    "LD E, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.D;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x5B, new OpCode(
-                    0x5B,
-                    "LD E, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.E;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x5C, new OpCode(
-                    0x5C,
-                    "LD E, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.H;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x5D, new OpCode(
-                    0x5D,
-                    "LD E, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.E = r.L;
-                                return true;
-                            }
-                    ])
-            },
+            { 0x57, new Load_D_A() },
+            { 0x50, new Load_D_B() },
+            { 0x51, new Load_D_C() },
+            { 0x52, new Load_D_D() },
+            { 0x53, new Load_D_E() },
+            { 0x54, new Load_D_H() },
+            { 0x55, new Load_D_L() },
+            { 0x5F, new Load_E_A() },
+            { 0x58, new Load_E_B() },
+            { 0x59, new Load_E_C() },
+            { 0x5A, new Load_E_D() },
+            { 0x5B, new Load_E_E() },
+            { 0x5C, new Load_E_H() },
+            { 0x5D, new Load_E_L() },
             {
                 0x67, new OpCode(
                     0x67,
@@ -1038,7 +855,6 @@ public class OpCodeHandler
                             }
                     ])
             },
-            #endregion
             #endregion
 
             // 16-bit Load Instructions
