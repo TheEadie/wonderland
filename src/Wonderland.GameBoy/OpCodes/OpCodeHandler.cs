@@ -1,4 +1,5 @@
-﻿using Wonderland.GameBoy.OpCodes.CpuControl;
+﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
+using Wonderland.GameBoy.OpCodes.CpuControl;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
 using u8 = byte;
@@ -158,134 +159,15 @@ public class OpCodeHandler
 
             #region 8-bit Arithmetic/Logic
             #region ADD
-            {
-                0x87, new OpCode(
-                    0x87,
-                    "ADD A, A",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.A);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x80, new OpCode(
-                    0x80,
-                    "ADD A, B",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.B);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x81, new OpCode(
-                    0x81,
-                    "ADD A, C",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.C);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x82, new OpCode(
-                    0x82,
-                    "ADD A, D",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.D);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x83, new OpCode(
-                    0x83,
-                    "ADD A, E",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.E);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x84, new OpCode(
-                    0x84,
-                    "ADD A, H",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.H);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x85, new OpCode(
-                    0x85,
-                    "ADD A, L",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                Add(r, r.L);
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x86, new OpCode(
-                    0x86,
-                    "ADD A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Add(r, m.GetMemory(r.HL));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0xC6, new OpCode(
-                    0xC6,
-                    "ADD A, u8",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                Add(r, m.GetMemory(r.PC++));
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x87, new Add_A_A() },
+            { 0x80, new Add_A_B() },
+            { 0x81, new Add_A_C() },
+            { 0x82, new Add_A_D() },
+            { 0x83, new Add_A_E() },
+            { 0x84, new Add_A_H() },
+            { 0x85, new Add_A_L() },
+            { 0x86, new Add_A_HL() },
+            { 0xC6, new Add_A_u8() },
             #endregion
 
             #region ADD with Carry
@@ -1662,7 +1544,7 @@ public class OpCodeHandler
         };
     }
 
-    private static void And(Registers r, u8 value)
+    internal static void And(Registers r, u8 value)
     {
         var result = r.A & value;
         r.FlagZ = result == 0;
@@ -1672,7 +1554,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void Xor(Registers r, u8 value)
+    internal static void Xor(Registers r, u8 value)
     {
         var result = r.A ^ value;
         r.FlagZ = result == 0;
@@ -1682,7 +1564,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void Or(Registers r, u8 value)
+    internal static void Or(Registers r, u8 value)
     {
         var result = r.A | value;
         r.FlagZ = result == 0;
@@ -1692,7 +1574,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void Compare(Registers r, u8 value)
+    internal static void Compare(Registers r, u8 value)
     {
         var result = r.A - value;
         r.FlagZ = (result & 0b_1111_1111) == 0;
@@ -1701,7 +1583,7 @@ public class OpCodeHandler
         r.FlagC = result < 0;
     }
 
-    private static void Sub(Registers r, u8 value)
+    internal static void Sub(Registers r, u8 value)
     {
         var result = r.A - value;
         r.FlagZ = (result & 0b_1111_1111) == 0;
@@ -1711,7 +1593,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void SubWithCarry(Registers r, u8 value)
+    internal static void SubWithCarry(Registers r, u8 value)
     {
         var c = r.FlagC ? 1 : 0;
         var result = r.A - value - c;
@@ -1722,7 +1604,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void Add(Registers r, u8 value)
+    internal static void Add(Registers r, u8 value)
     {
         var result = r.A + value;
         r.FlagZ = (result & 0b_1111_1111) == 0;
@@ -1732,7 +1614,7 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
-    private static void AddWithCarry(Registers r, u8 value)
+    internal static void AddWithCarry(Registers r, u8 value)
     {
         var c = r.FlagC ? 1 : 0;
         var result = r.A + value + c;
