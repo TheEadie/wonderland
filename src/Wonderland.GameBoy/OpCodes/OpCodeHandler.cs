@@ -1,4 +1,6 @@
-﻿using Wonderland.GameBoy.OpCodes.Load8Bit;
+﻿using Wonderland.GameBoy.OpCodes.Load8Bit.Memory;
+using Wonderland.GameBoy.OpCodes.Load8Bit.Register;
+using Wonderland.GameBoy.OpCodes.Load8Bit.Value;
 using u8 = byte;
 using u16 = ushort;
 using s8 = sbyte;
@@ -73,327 +75,33 @@ public class OpCodeHandler
             #endregion
 
             #region r=n
-            {
-                0x3E, new OpCode(
-                    0x3E,
-                    "LD A, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x06, new OpCode(
-                    0x06,
-                    "LD B, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.B = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x0E, new OpCode(
-                    0x0E,
-                    "LD C, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.C = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x16, new OpCode(
-                    0x16,
-                    "LD D, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.D = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x1E, new OpCode(
-                    0x1E,
-                    "LD E, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.E = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x26, new OpCode(
-                    0x26,
-                    "LD H, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.H = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x2E, new OpCode(
-                    0x2E,
-                    "LD L, u8",
-                    2,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.L = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x3E, new Load_A_u8() },
+            { 0x06, new Load_B_u8() },
+            { 0x0E, new Load_C_u8() },
+            { 0x16, new Load_D_u8() },
+            { 0x1E, new Load_E_u8() },
+            { 0x26, new Load_H_u8() },
+            { 0x2E, new Load_L_u8() },
             #endregion
 
             #region r=(HL)
-            {
-                0x7E, new OpCode(
-                    0x7E,
-                    "LD A, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.A = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x46, new OpCode(
-                    0x46,
-                    "LD B, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.B = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x4E, new OpCode(
-                    0x4E,
-                    "LD C, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.C = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x56, new OpCode(
-                    0x56,
-                    "LD D, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.D = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x5E, new OpCode(
-                    0x5E,
-                    "LD E, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.E = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x66, new OpCode(
-                    0x66,
-                    "LD H, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.H = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x6E, new OpCode(
-                    0x6E,
-                    "LD L, (HL)",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                r.L = m.GetMemory(r.HL);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x7E, new Load_A_HL() },
+            { 0x46, new Load_B_HL() },
+            { 0x4E, new Load_C_HL() },
+            { 0x56, new Load_D_HL() },
+            { 0x5E, new Load_E_HL() },
+            { 0x66, new Load_H_HL() },
+            { 0x6E, new Load_L_HL() },
             #endregion
 
             #region (HL)=r
-            {
-                0x77, new OpCode(
-                    0x77,
-                    "LD (HL), A",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.A);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x70, new OpCode(
-                    0x70,
-                    "LD (HL), B",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.B);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x71, new OpCode(
-                    0x71,
-                    "LD (HL), C",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.C);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x72, new OpCode(
-                    0x72,
-                    "LD (HL), D",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.D);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x73, new OpCode(
-                    0x73,
-                    "LD (HL), E",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.E);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x74, new OpCode(
-                    0x74,
-                    "LD (HL), H",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.H);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x75, new OpCode(
-                    0x75,
-                    "LD (HL), L",
-                    1,
-                    8,
-                    [
-                        (r, m, _) =>
-                            {
-                                m.WriteMemory(r.HL, r.L);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
+            { 0x77, new Load_HL_A() },
+            { 0x70, new Load_HL_B() },
+            { 0x71, new Load_HL_C() },
+            { 0x72, new Load_HL_D() },
+            { 0x73, new Load_HL_E() },
+            { 0x74, new Load_HL_H() },
+            { 0x75, new Load_HL_L() },
             #endregion
 
             #region other
