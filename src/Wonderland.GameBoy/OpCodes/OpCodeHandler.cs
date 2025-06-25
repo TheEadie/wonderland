@@ -1,4 +1,5 @@
-﻿using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
+﻿using Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Inc;
+using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.And;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Compare;
@@ -9,21 +10,16 @@ using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Sub;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.SubWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Xor;
 using Wonderland.GameBoy.OpCodes.CpuControl;
+using Wonderland.GameBoy.OpCodes.JumpAndCalls;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
 using u8 = byte;
-using s8 = sbyte;
 
 namespace Wonderland.GameBoy.OpCodes;
 
 public class OpCodeHandler
 {
     private readonly Dictionary<u8, OpCode> _opCodes;
-
-    // Yuck
-    private u8 _lsb;
-    private u8 _msb;
-    private s8 _signed8Bit;
 
     public OpCodeHandler()
     {
@@ -285,168 +281,15 @@ public class OpCodeHandler
             { 0x35, new Dec_HL() },
             #endregion
 
-            {
-                0x27, new OpCode(
-                    0x27,
-                    "DAA",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                if (r.FlagN)
-                                {
-                                    if (r.FlagC)
-                                    {
-                                        r.A -= 0x60;
-                                    }
-
-                                    if (r.FlagH)
-                                    {
-                                        r.A -= 0x6;
-                                    }
-                                }
-                                else
-                                {
-                                    if (r.FlagC || r.A > 0x99)
-                                    {
-                                        r.A += 0x60;
-                                        r.FlagC = true;
-                                    }
-
-                                    if (r.FlagH || (r.A & 0xF) > 0x9)
-                                    {
-                                        r.A += 0x6;
-                                    }
-                                }
-
-                                r.FlagZ = r.A == 0;
-                                r.FlagH = false;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x2F, new OpCode(
-                    0x2F,
-                    "CPL",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.A = (u8)(r.A ^ 0xFF);
-                                r.FlagN = true;
-                                r.FlagH = true;
-                                return true;
-                            }
-                    ])
-            },
+            { 0x27, new DAA() },
+            { 0x2F, new CPL() },
             #endregion
 
-            {
-                0x03, new OpCode(
-                    0x03,
-                    "INC BC",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.BC++;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0x13, new OpCode(
-                    0x03,
-                    "INC DE",
-                    1,
-                    4,
-                    [
-                        (r, _, _) =>
-                            {
-                                r.DE++;
-                                return true;
-                            }
-                    ])
-            },
-            {
-                0xC3, new OpCode(
-                    0xC3,
-                    "JP u16",
-                    3,
-                    16,
-                    [
-                        (r, m, _) =>
-                            {
-                                _lsb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, m, _) =>
-                            {
-                                _msb = m.GetMemory(r.PC++);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                r.PC = Bits.CreateU16(_msb, _lsb);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x20, new OpCode(
-                    0x20,
-                    "JP NZ s8",
-                    2,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _signed8Bit = m.GetSignedMemory(r.PC++);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                if (r.FlagZ)
-                                {
-                                    return true;
-                                }
-
-                                r.PC = Convert.ToUInt16(r.PC + _signed8Bit);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            },
-            {
-                0x30, new OpCode(
-                    0x30,
-                    "JP NC s8",
-                    2,
-                    12,
-                    [
-                        (r, m, _) =>
-                            {
-                                _signed8Bit = m.GetSignedMemory(r.PC++);
-                                return false;
-                            },
-                        (r, _, _) =>
-                            {
-                                if (r.FlagC)
-                                {
-                                    return true;
-                                }
-
-                                r.PC = Convert.ToUInt16(r.PC + _signed8Bit);
-                                return false;
-                            },
-                        (_, _, _) => true
-                    ])
-            }
+            { 0x03, new Inc_BC() },
+            { 0x13, new Inc_DE() },
+            { 0xC3, new JP_u16() },
+            { 0x20, new JP_NZ_s8() },
+            { 0x30, new JP_NC_s8() }
         };
     }
 
@@ -533,11 +376,11 @@ public class OpCodeHandler
 
     public OpCode Lookup(u8 value)
     {
-        if (!_opCodes.ContainsKey(value))
+        if (!_opCodes.TryGetValue(value, out var lookup))
         {
             throw new NotImplementedException($"Unknown Opcode: 0x{value:X2}");
         }
 
-        return _opCodes[value];
+        return lookup;
     }
 }
