@@ -18,14 +18,15 @@ public class Mmu
 
     public s8 GetSignedMemory(u16 location) => unchecked((s8)_memory[location]);
 
+    public event Action<u8>? SerialByteTransferred;
+
     public void WriteMemory(u16 location, u8 value)
     {
-        if (location == 0xFF02)
+        if (location == 0xFF02 && value == 0x81)
         {
-            if (value == 0x81)
-            {
-                Console.WriteLine(GetMemory(0xFF01).ToString("x2"));
-            }
+            var data = GetMemory(0xFF01);
+            Console.WriteLine(data.ToString("x2"));
+            SerialByteTransferred?.Invoke(data);
         }
 
         _memory[location] = value;
