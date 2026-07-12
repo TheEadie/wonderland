@@ -452,3 +452,6 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Game Boy test ROMs (blargg cpu_instrs) - developer-supplied, not committed
+roms/
