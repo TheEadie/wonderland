@@ -9,26 +9,61 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wonderland.Chip8", "src\Won
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wonderland.GameBoy", "src\Wonderland.GameBoy\Wonderland.GameBoy.csproj", "{64A5C7BB-F078-4242-8064-FBA9E969994B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wonderland.GameBoy.Tests", "src\Wonderland.GameBoy.Tests\Wonderland.GameBoy.Tests.csproj", "{DCA8BB24-51DF-4127-AB09-7083665509FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|x64.Build.0 = Debug|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Debug|x86.Build.0 = Debug|Any CPU
 		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|x64.ActiveCfg = Release|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|x64.Build.0 = Release|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED00EC94-F8FC-4E43-9E2E-9821578F7153}.Release|x86.Build.0 = Release|Any CPU
 		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|x64.Build.0 = Debug|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Debug|x86.Build.0 = Debug|Any CPU
 		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|x64.ActiveCfg = Release|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|x64.Build.0 = Release|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|x86.ActiveCfg = Release|Any CPU
+		{64A5C7BB-F078-4242-8064-FBA9E969994B}.Release|x86.Build.0 = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Debug|x86.Build.0 = Debug|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|x64.Build.0 = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|x86.ActiveCfg = Release|Any CPU
+		{DCA8BB24-51DF-4127-AB09-7083665509FD}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ED00EC94-F8FC-4E43-9E2E-9821578F7153} = {FA0B11EE-C4C5-40BE-9EC0-6015D1F403D2}
 		{64A5C7BB-F078-4242-8064-FBA9E969994B} = {FA0B11EE-C4C5-40BE-9EC0-6015D1F403D2}
+		{DCA8BB24-51DF-4127-AB09-7083665509FD} = {FA0B11EE-C4C5-40BE-9EC0-6015D1F403D2}
 	EndGlobalSection
 EndGlobal

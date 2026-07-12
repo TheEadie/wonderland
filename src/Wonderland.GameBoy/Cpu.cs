@@ -9,12 +9,14 @@ public class Cpu
 
     private readonly OpCodeHandler _opCodeHandler;
     private readonly Registers _registers;
+    private readonly bool _trace;
     private OpCode _currentOpCode;
     private int _currentOpCodeMachineCycle;
 
-    public Cpu(Mmu mmu)
+    public Cpu(Mmu mmu, bool trace = true)
     {
         _mmu = mmu;
+        _trace = trace;
 
         _registers = new Registers();
         _interruptManager = new InterruptManager();
@@ -59,8 +61,12 @@ public class Cpu
         var opCode = _mmu.GetMemory(memory);
         var decoded = _opCodeHandler.Lookup(opCode);
 
-        Console.WriteLine(
-            $"{memory:X4} - {opCode:X2}: {decoded.Description,-20}{_registers} : {_mmu.GetMemory((ushort)(_registers.PC + 1)):X2} {_mmu.GetMemory((ushort)(_registers.PC + 2)):X2}");
+        if (_trace)
+        {
+            Console.WriteLine(
+                $"{memory:X4} - {opCode:X2}: {decoded.Description,-20}{_registers} : "
+                + $"{_mmu.GetMemory((ushort)(_registers.PC + 1)):X2} {_mmu.GetMemory((ushort)(_registers.PC + 2)):X2}");
+        }
 
         _registers.PC++;
         return decoded;
