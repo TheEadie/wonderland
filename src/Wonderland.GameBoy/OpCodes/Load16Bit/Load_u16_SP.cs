@@ -28,7 +28,7 @@ public record Load_u16_SP() : OpCode(
             {
                 m.WriteMemory(
                     (u16)(Bits.CreateU16(r.SubOp_MSB, r.SubOp_LSB) + 1),
-                    (u8)(r.SP & (0b_1111_1111_0000_0000 >> 8)));
+                    (u8)((r.SP & 0b_1111_1111_0000_0000) >> 8));
                 return false;
             },
         (_, _, _) => true
