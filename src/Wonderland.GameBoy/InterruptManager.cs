@@ -1,34 +1,37 @@
-﻿namespace Wonderland.GameBoy;
+namespace Wonderland.GameBoy;
 
 public class InterruptManager
 {
     public bool InterruptsEnabled { get; private set; }
 
-    private bool _enableOnNextCycle;
+    private int _imeEnableDelay;
 
     public void DisableInterrupts()
     {
         InterruptsEnabled = false;
-        _enableOnNextCycle = false;
+        _imeEnableDelay = 0;
     }
 
     public void EnableInterruptsWithDelay()
     {
-        _enableOnNextCycle = true;
+        _imeEnableDelay = 2;
     }
 
     public void EnableInterrupts()
     {
         InterruptsEnabled = true;
-        _enableOnNextCycle = false;
+        _imeEnableDelay = 0;
     }
 
-    public void Step()
+    public void OnInstructionComplete()
     {
-        if (_enableOnNextCycle)
+        if (_imeEnableDelay > 0)
         {
-            InterruptsEnabled = true;
-            _enableOnNextCycle = false;
+            _imeEnableDelay--;
+            if (_imeEnableDelay == 0)
+            {
+                InterruptsEnabled = true;
+            }
         }
     }
 }
