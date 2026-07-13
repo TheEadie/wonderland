@@ -9,12 +9,12 @@ public record Push_AF() : OpCode(
         (_, _, _) => false,
         (r, m, _) =>
             {
-                m.WriteMemory(r.SP--, r.A);
+                m.WriteMemory(--r.SP, r.A);
                 return false;
             },
         (r, m, _) =>
             {
-                m.WriteMemory(r.SP--, r.F);
+                m.WriteMemory(--r.SP, r.F);
                 return false;
             },
         (_, _, _) => true

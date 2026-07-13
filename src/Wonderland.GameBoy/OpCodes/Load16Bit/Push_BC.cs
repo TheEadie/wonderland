@@ -9,12 +9,12 @@ public record Push_BC() : OpCode(
         (_, _, _) => false,
         (r, m, _) =>
             {
-                m.WriteMemory(r.SP--, r.B);
+                m.WriteMemory(--r.SP, r.B);
                 return false;
             },
         (r, m, _) =>
             {
-                m.WriteMemory(r.SP--, r.C);
+                m.WriteMemory(--r.SP, r.C);
                 return false;
             },
         (_, _, _) => true

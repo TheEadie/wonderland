@@ -151,8 +151,8 @@ public class OpCodeHandler
             // CPU Control Instructions
 
             #region CPU Control
-            { 0xCF, new CCF() },
-            { 0xC7, new SCF() },
+            { 0x3F, new CCF() },
+            { 0x37, new SCF() },
             { 0x00, new NOP() },
             { 0x76, new Halt() },
             { 0x10, new Stop() },

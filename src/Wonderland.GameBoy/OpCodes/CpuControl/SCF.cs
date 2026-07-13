@@ -1,7 +1,7 @@
 namespace Wonderland.GameBoy.OpCodes.CpuControl;
 
 public record SCF() : OpCode(
-    0xC7,
+    0x37,
     "SCF",
     1,
     4,

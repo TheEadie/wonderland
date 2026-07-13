@@ -8,7 +8,7 @@ public record Pop_AF() : OpCode(
     [
         (r, m, _) =>
             {
-                r.F = m.GetMemory(r.SP++);
+                r.F = (byte)(m.GetMemory(r.SP++) & 0xF0);
                 return false;
             },
         (r, m, _) =>
