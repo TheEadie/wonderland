@@ -59,7 +59,9 @@ public class Cpu
     {
         var memory = _registers.PC;
         var opCode = _mmu.GetMemory(memory);
-        var decoded = _opCodeHandler.Lookup(opCode);
+        var decoded = opCode == 0xCB
+            ? _opCodeHandler.LookupCb(_mmu.GetMemory((ushort)(memory + 1)))
+            : _opCodeHandler.Lookup(opCode);
 
         if (_trace)
         {
@@ -68,7 +70,7 @@ public class Cpu
                 + $"{_mmu.GetMemory((ushort)(_registers.PC + 1)):X2} {_mmu.GetMemory((ushort)(_registers.PC + 2)):X2}");
         }
 
-        _registers.PC++;
+        _registers.PC += (ushort)(opCode == 0xCB ? 2 : 1);
         return decoded;
     }
 }

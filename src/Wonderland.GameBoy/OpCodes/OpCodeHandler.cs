@@ -16,16 +16,47 @@ using Wonderland.GameBoy.OpCodes.JumpAndCalls;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
 using Wonderland.GameBoy.OpCodes.RotateShift;
+using Wonderland.GameBoy.OpCodes.SingleBit;
 using u8 = byte;
 
 namespace Wonderland.GameBoy.OpCodes;
 
 public class OpCodeHandler
 {
+    // CB-prefixed opcodes encode their target in the low three bits, in this
+    // order; index 6 is (HL) and is handled by the dedicated *_HL records.
+    private static readonly (string Name, Func<Registers, u8> Get, Action<Registers, u8> Set)[] CbTargets =
+    [
+        ("B", r => r.B, (r, v) => r.B = v),
+        ("C", r => r.C, (r, v) => r.C = v),
+        ("D", r => r.D, (r, v) => r.D = v),
+        ("E", r => r.E, (r, v) => r.E = v),
+        ("H", r => r.H, (r, v) => r.H = v),
+        ("L", r => r.L, (r, v) => r.L = v),
+        ("(HL)", null!, null!),
+        ("A", r => r.A, (r, v) => r.A = v)
+    ];
+
     private readonly Dictionary<u8, OpCode> _opCodes;
+    private readonly Dictionary<u8, OpCode> _cbOpCodes;
 
     public OpCodeHandler()
     {
+        _cbOpCodes = new Dictionary<u8, OpCode>();
+
+        for (var bit = 0; bit < 8; bit++)
+        {
+            for (var i = 0; i < 8; i++)
+            {
+                var (name, get, _) = CbTargets[i];
+
+                var bitValue = (u8)(0x40 + (bit * 8) + i);
+                _cbOpCodes[bitValue] = i == 6
+                    ? new BIT_HL(bitValue, bit)
+                    : new BIT(bitValue, bit, name, get);
+            }
+        }
+
         _opCodes = new Dictionary<u8, OpCode>
         {
             // 8-bit Load Instructions
@@ -418,6 +449,13 @@ public class OpCodeHandler
         r.A = (u8)result;
     }
 
+    internal static void TestBit(Registers r, int bit, u8 value)
+    {
+        r.FlagZ = (value & (1 << bit)) == 0;
+        r.FlagN = false;
+        r.FlagH = true;
+    }
+
     internal static void AddToHl(Registers r, ushort value)
     {
         var result = r.HL + value;
@@ -453,6 +491,16 @@ public class OpCodeHandler
         if (!_opCodes.TryGetValue(value, out var lookup))
         {
             throw new NotImplementedException($"Unknown Opcode: 0x{value:X2}");
+        }
+
+        return lookup;
+    }
+
+    public OpCode LookupCb(u8 value)
+    {
+        if (!_cbOpCodes.TryGetValue(value, out var lookup))
+        {
+            throw new NotImplementedException($"Unknown CB-prefixed Opcode: 0xCB 0x{value:X2}");
         }
 
         return lookup;
