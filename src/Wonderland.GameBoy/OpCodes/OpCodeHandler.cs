@@ -59,6 +59,11 @@ public class OpCodeHandler
                 _cbOpCodes[resValue] = i == 6
                     ? new RES_HL(resValue, bit)
                     : new RES(resValue, bit, name, get, set);
+
+                var setValue = (u8)(0xC0 + (bit * 8) + i);
+                _cbOpCodes[setValue] = i == 6
+                    ? new SET_HL(setValue, bit)
+                    : new SET(setValue, bit, name, get, set);
             }
         }
 
