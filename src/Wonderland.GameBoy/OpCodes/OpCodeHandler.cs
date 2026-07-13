@@ -13,6 +13,7 @@ using Wonderland.GameBoy.OpCodes.CpuControl;
 using Wonderland.GameBoy.OpCodes.JumpAndCalls;
 using Wonderland.GameBoy.OpCodes.Load16Bit;
 using Wonderland.GameBoy.OpCodes.Load8Bit;
+using Wonderland.GameBoy.OpCodes.RotateShift;
 using u8 = byte;
 
 namespace Wonderland.GameBoy.OpCodes;
@@ -283,6 +284,15 @@ public class OpCodeHandler
 
             { 0x27, new DAA() },
             { 0x2F, new CPL() },
+            #endregion
+
+            // Rotate and Shift Instructions
+
+            #region Rotate/Shift
+            { 0x07, new RLCA() },
+            { 0x17, new RLA() },
+            { 0x0F, new RRCA() },
+            { 0x1F, new RRA() },
             #endregion
 
             { 0x03, new Inc_BC() },
