@@ -331,7 +331,12 @@ public class OpCodeHandler
             { 0xC4, new CALL_NZ_u16() },
             { 0xCC, new CALL_Z_u16() },
             { 0xD4, new CALL_NC_u16() },
-            { 0xDC, new CALL_C_u16() }
+            { 0xDC, new CALL_C_u16() },
+            { 0xC9, new RET() },
+            { 0xC0, new RET_NZ() },
+            { 0xC8, new RET_Z() },
+            { 0xD0, new RET_NC() },
+            { 0xD8, new RET_C() }
         };
     }
 
