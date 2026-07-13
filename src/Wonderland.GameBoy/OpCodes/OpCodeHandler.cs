@@ -326,7 +326,12 @@ public class OpCodeHandler
             { 0x20, new JR_NZ_s8() },
             { 0x30, new JR_NC_s8() },
             { 0x28, new JR_Z_s8() },
-            { 0x38, new JR_C_s8() }
+            { 0x38, new JR_C_s8() },
+            { 0xCD, new CALL_u16() },
+            { 0xC4, new CALL_NZ_u16() },
+            { 0xCC, new CALL_Z_u16() },
+            { 0xD4, new CALL_NC_u16() },
+            { 0xDC, new CALL_C_u16() }
         };
     }
 
