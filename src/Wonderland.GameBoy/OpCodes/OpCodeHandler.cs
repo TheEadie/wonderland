@@ -336,7 +336,15 @@ public class OpCodeHandler
             { 0xC0, new RET_NZ() },
             { 0xC8, new RET_Z() },
             { 0xD0, new RET_NC() },
-            { 0xD8, new RET_C() }
+            { 0xD8, new RET_C() },
+            { 0xC7, new RST(0xC7, 0x00) },
+            { 0xCF, new RST(0xCF, 0x08) },
+            { 0xD7, new RST(0xD7, 0x10) },
+            { 0xDF, new RST(0xDF, 0x18) },
+            { 0xE7, new RST(0xE7, 0x20) },
+            { 0xEF, new RST(0xEF, 0x28) },
+            { 0xF7, new RST(0xF7, 0x30) },
+            { 0xFF, new RST(0xFF, 0x38) }
         };
     }
 
