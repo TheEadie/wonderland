@@ -288,8 +288,16 @@ public class OpCodeHandler
             { 0x03, new Inc_BC() },
             { 0x13, new Inc_DE() },
             { 0xC3, new JP_u16() },
-            { 0x20, new JP_NZ_s8() },
-            { 0x30, new JP_NC_s8() }
+            { 0xC2, new JP_NZ_u16() },
+            { 0xCA, new JP_Z_u16() },
+            { 0xD2, new JP_NC_u16() },
+            { 0xDA, new JP_C_u16() },
+            { 0xE9, new JP_HL() },
+            { 0x18, new JR_s8() },
+            { 0x20, new JR_NZ_s8() },
+            { 0x30, new JR_NC_s8() },
+            { 0x28, new JR_Z_s8() },
+            { 0x38, new JR_C_s8() }
         };
     }
 
