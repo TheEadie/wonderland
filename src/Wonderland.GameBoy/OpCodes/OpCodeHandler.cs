@@ -71,6 +71,10 @@ public class OpCodeHandler
         RegisterCbRotateShiftRow(0x08, "RRC", Rrc);
         RegisterCbRotateShiftRow(0x10, "RL", Rl);
         RegisterCbRotateShiftRow(0x18, "RR", Rr);
+        RegisterCbRotateShiftRow(0x20, "SLA", Sla);
+        RegisterCbRotateShiftRow(0x28, "SRA", Sra);
+        RegisterCbRotateShiftRow(0x30, "SWAP", Swap);
+        RegisterCbRotateShiftRow(0x38, "SRL", Srl);
 
         _opCodes = new Dictionary<u8, OpCode>
         {
@@ -504,6 +508,37 @@ public class OpCodeHandler
     {
         var carry = (value & 0b_0000_0001) != 0;
         var result = (u8)((value >> 1) | (r.FlagC ? 0b_1000_0000 : 0));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Sla(Registers r, u8 value)
+    {
+        var carry = (value & 0b_1000_0000) != 0;
+        var result = (u8)(value << 1);
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Sra(Registers r, u8 value)
+    {
+        var carry = (value & 0b_0000_0001) != 0;
+        var result = (u8)((value >> 1) | (value & 0b_1000_0000));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Swap(Registers r, u8 value)
+    {
+        var result = (u8)((value << 4) | (value >> 4));
+        SetRotateShiftFlags(r, result, false);
+        return result;
+    }
+
+    internal static u8 Srl(Registers r, u8 value)
+    {
+        var carry = (value & 0b_0000_0001) != 0;
+        var result = (u8)(value >> 1);
         SetRotateShiftFlags(r, result, carry);
         return result;
     }
