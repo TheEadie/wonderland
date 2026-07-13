@@ -1,9 +1,15 @@
-﻿using Wonderland.GameBoy.OpCodes;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+using Wonderland.GameBoy.OpCodes;
 
 namespace Wonderland.GameBoy;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Cpu
 {
+    private const ushort InterruptEnableRegister = 0xFFFF;
+    private const ushort InterruptFlagRegister = 0xFF0F;
+
     private readonly InterruptManager _interruptManager;
     private readonly Mmu _mmu;
 
@@ -36,14 +42,26 @@ public class Cpu
         _registers.SP = 0xFFFE;
     }
 
+    public ushort PC => _registers.PC;
+    public ushort SP => _registers.SP;
+
     public void Step()
     {
-        _interruptManager.Step();
-
         var opCodeComplete = RunNextSubInstruction();
         if (opCodeComplete)
         {
-            _currentOpCode = FetchAndDecode();
+            _interruptManager.OnInstructionComplete();
+            var pending = PendingInterrupts();
+            if (_interruptManager.InterruptsEnabled && pending != 0)
+            {
+                var interruptBit = BitOperations.TrailingZeroCount(pending);
+                _currentOpCode = BuildInterruptDispatch(interruptBit);
+            }
+            else
+            {
+                _currentOpCode = FetchAndDecode();
+            }
+
             _currentOpCodeMachineCycle = 0;
         }
         else
@@ -54,6 +72,40 @@ public class Cpu
 
     private bool RunNextSubInstruction() =>
         _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu, _interruptManager);
+
+    private byte PendingInterrupts() =>
+        (byte)(_mmu.GetMemory(InterruptEnableRegister) & _mmu.GetMemory(InterruptFlagRegister) & 0x1F);
+
+    private static OpCode BuildInterruptDispatch(int interruptBit)
+    {
+        var vector = (ushort)(0x40 + (interruptBit * 8));
+        return new OpCode(0x00, "INT", 1, 20,
+        [
+            (_, _, i) =>
+                {
+                    i.DisableInterrupts();
+                    return false;
+                },
+            (_, _, _) => false,
+            (r, m, _) =>
+                {
+                    m.WriteMemory(--r.SP, (byte)(r.PC >> 8));
+                    return false;
+                },
+            (r, m, _) =>
+                {
+                    m.WriteMemory(--r.SP, (byte)r.PC);
+                    return false;
+                },
+            (r, m, _) =>
+                {
+                    m.WriteMemory(InterruptFlagRegister,
+                        (byte)(m.GetMemory(InterruptFlagRegister) & ~(1 << interruptBit)));
+                    r.PC = vector;
+                    return true;
+                }
+        ]);
+    }
 
     private OpCode FetchAndDecode()
     {
