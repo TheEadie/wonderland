@@ -34,33 +34,27 @@ public class CpuInstrsTests
             return;
         }
 
-        var mmu = new Mmu();
+        var serial = new MemoryStream();
+        var mmu = new Mmu(serial);
         mmu.LoadCart(romPath);
-
-        var serial = new StringBuilder();
-        var dirty = false;
-        mmu.SerialByteTransferred += b =>
-        {
-            serial.Append((char)b);
-            dirty = true;
-        };
 
         var cpu = new Cpu(mmu, trace: false);
 
         var passed = false;
         string? failure = null;
+        var lastLength = 0L;
         try
         {
             for (var step = 0; step < StepLimit; step++)
             {
                 cpu.Step();
-                if (!dirty)
+                if (serial.Length == lastLength)
                 {
                     continue;
                 }
 
-                dirty = false;
-                var output = serial.ToString();
+                lastLength = serial.Length;
+                var output = Encoding.ASCII.GetString(serial.ToArray());
                 if (output.Contains("Passed", StringComparison.Ordinal))
                 {
                     passed = true;
@@ -77,7 +71,7 @@ public class CpuInstrsTests
         catch (Exception ex)
         {
             failure = $"Exception while running '{subTest}': {ex}{Environment.NewLine}"
-                + $"Serial so far:{Environment.NewLine}{serial}";
+                + $"Serial so far:{Environment.NewLine}{Encoding.ASCII.GetString(serial.ToArray())}";
         }
 
         if (passed)
@@ -87,7 +81,7 @@ public class CpuInstrsTests
 
         Assert.Fail(failure
             ?? $"Timed out after {StepLimit} steps without Passed/Failed.{Environment.NewLine}"
-                + $"Serial so far:{Environment.NewLine}{serial}");
+                + $"Serial so far:{Environment.NewLine}{Encoding.ASCII.GetString(serial.ToArray())}");
     }
 
     private static string? FindRepoRoot()

@@ -7,6 +7,12 @@ namespace Wonderland.GameBoy;
 public class Mmu
 {
     private readonly u8[] _memory = new u8[65_536];
+    private readonly Stream _serialOutput;
+
+    public Mmu(Stream? serialOutput = null)
+    {
+        _serialOutput = serialOutput ?? new MemoryStream();
+    }
 
     public void LoadCart(string filePath)
     {
@@ -18,15 +24,11 @@ public class Mmu
 
     public s8 GetSignedMemory(u16 location) => unchecked((s8)_memory[location]);
 
-    public event Action<u8>? SerialByteTransferred;
-
     public void WriteMemory(u16 location, u8 value)
     {
         if (location == 0xFF02 && value == 0x81)
         {
-            var data = GetMemory(0xFF01);
-            Console.WriteLine(data.ToString("x2"));
-            SerialByteTransferred?.Invoke(data);
+            _serialOutput.WriteByte(GetMemory(0xFF01));
         }
 
         _memory[location] = value;
