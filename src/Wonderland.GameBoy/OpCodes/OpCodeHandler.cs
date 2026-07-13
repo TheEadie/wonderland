@@ -383,6 +383,7 @@ public class OpCodeHandler
             { 0xD4, new CALL_NC_u16() },
             { 0xDC, new CALL_C_u16() },
             { 0xC9, new RET() },
+            { 0xD9, new RETI() },
             { 0xC0, new RET_NZ() },
             { 0xC8, new RET_Z() },
             { 0xD0, new RET_NC() },

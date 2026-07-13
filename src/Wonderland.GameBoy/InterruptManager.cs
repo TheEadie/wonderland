@@ -17,6 +17,12 @@ public class InterruptManager
         _enableOnNextCycle = true;
     }
 
+    public void EnableInterrupts()
+    {
+        InterruptsEnabled = true;
+        _enableOnNextCycle = false;
+    }
+
     public void Step()
     {
         if (_enableOnNextCycle)
