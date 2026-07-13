@@ -38,7 +38,7 @@ public class CpuInstrsTests
         var mmu = new Mmu(serial);
         mmu.LoadCart(romPath);
 
-        var cpu = new Cpu(mmu, trace: false);
+        var cpu = new Cpu(mmu);
 
         var passed = false;
         string? failure = null;
