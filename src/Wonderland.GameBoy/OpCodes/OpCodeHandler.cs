@@ -48,12 +48,17 @@ public class OpCodeHandler
         {
             for (var i = 0; i < 8; i++)
             {
-                var (name, get, _) = CbTargets[i];
+                var (name, get, set) = CbTargets[i];
 
                 var bitValue = (u8)(0x40 + (bit * 8) + i);
                 _cbOpCodes[bitValue] = i == 6
                     ? new BIT_HL(bitValue, bit)
                     : new BIT(bitValue, bit, name, get);
+
+                var resValue = (u8)(0x80 + (bit * 8) + i);
+                _cbOpCodes[resValue] = i == 6
+                    ? new RES_HL(resValue, bit)
+                    : new RES(resValue, bit, name, get, set);
             }
         }
 
