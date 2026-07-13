@@ -67,6 +67,11 @@ public class OpCodeHandler
             }
         }
 
+        RegisterCbRotateShiftRow(0x00, "RLC", Rlc);
+        RegisterCbRotateShiftRow(0x08, "RRC", Rrc);
+        RegisterCbRotateShiftRow(0x10, "RL", Rl);
+        RegisterCbRotateShiftRow(0x18, "RR", Rr);
+
         _opCodes = new Dictionary<u8, OpCode>
         {
             // 8-bit Load Instructions
@@ -457,6 +462,58 @@ public class OpCodeHandler
         r.FlagH = (r.A & 0b_0000_1111) + (value & 0b_0000_1111) > 0b_0000_1111;
         r.FlagC = result > 0b_1111_1111;
         r.A = (u8)result;
+    }
+
+    private void RegisterCbRotateShiftRow(u8 baseValue, string mnemonic, Func<Registers, u8, u8> transform)
+    {
+        for (var i = 0; i < 8; i++)
+        {
+            var (name, get, set) = CbTargets[i];
+            var value = (u8)(baseValue + i);
+            _cbOpCodes[value] = i == 6
+                ? new RotateShift_HL(value, mnemonic, transform)
+                : new RotateShift_r(value, mnemonic, name, get, set, transform);
+        }
+    }
+
+    internal static u8 Rlc(Registers r, u8 value)
+    {
+        var carry = (value & 0b_1000_0000) != 0;
+        var result = (u8)((value << 1) | (carry ? 1 : 0));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Rrc(Registers r, u8 value)
+    {
+        var carry = (value & 0b_0000_0001) != 0;
+        var result = (u8)((value >> 1) | (carry ? 0b_1000_0000 : 0));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Rl(Registers r, u8 value)
+    {
+        var carry = (value & 0b_1000_0000) != 0;
+        var result = (u8)((value << 1) | (r.FlagC ? 1 : 0));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    internal static u8 Rr(Registers r, u8 value)
+    {
+        var carry = (value & 0b_0000_0001) != 0;
+        var result = (u8)((value >> 1) | (r.FlagC ? 0b_1000_0000 : 0));
+        SetRotateShiftFlags(r, result, carry);
+        return result;
+    }
+
+    private static void SetRotateShiftFlags(Registers r, u8 result, bool carry)
+    {
+        r.FlagZ = result == 0;
+        r.FlagN = false;
+        r.FlagH = false;
+        r.FlagC = carry;
     }
 
     internal static void TestBit(Registers r, int bit, u8 value)
