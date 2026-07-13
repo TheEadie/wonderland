@@ -4,11 +4,12 @@ public record Inc_BC() : OpCode(
     0x03,
     "INC BC",
     1,
-    4,
+    8,
     [
         (r, _, _) =>
             {
                 r.BC++;
-                return true;
-            }
+                return false;
+            },
+        (_, _, _) => true
     ]);

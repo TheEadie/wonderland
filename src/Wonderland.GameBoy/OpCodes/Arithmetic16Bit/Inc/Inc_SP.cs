@@ -1,14 +1,14 @@
 namespace Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Inc;
 
-public record Inc_DE() : OpCode(
-    0x13,
-    "INC DE",
+public record Inc_SP() : OpCode(
+    0x33,
+    "INC SP",
     1,
     8,
     [
         (r, _, _) =>
             {
-                r.DE++;
+                r.SP++;
                 return false;
             },
         (_, _, _) => true

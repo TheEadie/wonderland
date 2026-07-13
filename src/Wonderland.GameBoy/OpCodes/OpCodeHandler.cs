@@ -1,4 +1,6 @@
-﻿using Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Inc;
+﻿using Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Add;
+using Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Dec;
+using Wonderland.GameBoy.OpCodes.Arithmetic16Bit.Inc;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.Add;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.AddWithCarry;
 using Wonderland.GameBoy.OpCodes.Arithmetic8Bit.And;
@@ -139,6 +141,7 @@ public class OpCodeHandler
             { 0x31, new Load_SP_u16() },
             { 0x08, new Load_u16_SP() },
             { 0xF9, new Load_SP_HL() },
+            { 0xF8, new Load_HL_SP_s8() },
             { 0xC5, new Push_BC() },
             { 0xD5, new Push_DE() },
             { 0xE5, new Push_HL() },
@@ -268,7 +271,7 @@ public class OpCodeHandler
             { 0x1C, new Inc_E() },
             { 0x24, new Inc_H() },
             { 0x2C, new Inc_L() },
-            { 0x34, new Inc_HL() },
+            { 0x34, new Arithmetic8Bit.Inc.Inc_HL() },
             #endregion
 
             #region DEC
@@ -279,7 +282,7 @@ public class OpCodeHandler
             { 0x1D, new Dec_E() },
             { 0x25, new Dec_H() },
             { 0x2D, new Dec_L() },
-            { 0x35, new Dec_HL() },
+            { 0x35, new Arithmetic8Bit.Dec.Dec_HL() },
             #endregion
 
             { 0x27, new DAA() },
@@ -295,8 +298,24 @@ public class OpCodeHandler
             { 0x1F, new RRA() },
             #endregion
 
+            // 16-bit Arithmetic Instructions
+
+            #region 16-bit Arithmetic
             { 0x03, new Inc_BC() },
             { 0x13, new Inc_DE() },
+            { 0x23, new Arithmetic16Bit.Inc.Inc_HL() },
+            { 0x33, new Inc_SP() },
+            { 0x0B, new Dec_BC() },
+            { 0x1B, new Dec_DE() },
+            { 0x2B, new Arithmetic16Bit.Dec.Dec_HL() },
+            { 0x3B, new Dec_SP() },
+            { 0x09, new Add_HL_BC() },
+            { 0x19, new Add_HL_DE() },
+            { 0x29, new Add_HL_HL() },
+            { 0x39, new Add_HL_SP() },
+            { 0xE8, new Add_SP_s8() },
+            #endregion
+
             { 0xC3, new JP_u16() },
             { 0xC2, new JP_NZ_u16() },
             { 0xCA, new JP_Z_u16() },
@@ -379,6 +398,25 @@ public class OpCodeHandler
         r.FlagH = (r.A & 0b_0000_1111) + (value & 0b_0000_1111) > 0b_0000_1111;
         r.FlagC = result > 0b_1111_1111;
         r.A = (u8)result;
+    }
+
+    internal static void AddToHl(Registers r, ushort value)
+    {
+        var result = r.HL + value;
+        r.FlagN = false;
+        r.FlagH = (r.HL & 0b_0000_1111_1111_1111) + (value & 0b_0000_1111_1111_1111) > 0b_0000_1111_1111_1111;
+        r.FlagC = result > 0b_1111_1111_1111_1111;
+        r.HL = (ushort)result;
+    }
+
+    internal static ushort AddSignedByteToSp(Registers r)
+    {
+        var value = (u8)r.SubOp_SignedByte;
+        r.FlagZ = false;
+        r.FlagN = false;
+        r.FlagH = (r.SP & 0b_0000_1111) + (value & 0b_0000_1111) > 0b_0000_1111;
+        r.FlagC = (r.SP & 0b_1111_1111) + value > 0b_1111_1111;
+        return (ushort)(r.SP + r.SubOp_SignedByte);
     }
 
     internal static void AddWithCarry(Registers r, u8 value)
