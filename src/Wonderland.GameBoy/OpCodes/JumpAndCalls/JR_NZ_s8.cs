@@ -1,8 +1,8 @@
 namespace Wonderland.GameBoy.OpCodes.JumpAndCalls;
 
-public record JP_NZ_s8() : OpCode(
+public record JR_NZ_s8() : OpCode(
     0x20,
-    "JP NZ s8",
+    "JR NZ s8",
     2,
     12,
     [
@@ -18,7 +18,7 @@ public record JP_NZ_s8() : OpCode(
                     return true;
                 }
 
-                r.PC = Convert.ToUInt16(r.PC + r.SubOp_SignedByte);
+                r.PC = (ushort)(r.PC + r.SubOp_SignedByte);
                 return false;
             },
         (_, _, _) => true
