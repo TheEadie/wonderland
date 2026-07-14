@@ -35,10 +35,11 @@ public class CpuInstrsTests
         }
 
         var serial = new MemoryStream();
-        var mmu = new Mmu(serial);
+        var interruptManager = new InterruptManager();
+        var mmu = new Mmu(serial, interruptManager);
         mmu.LoadCart(romPath);
 
-        var cpu = new Cpu(mmu);
+        var cpu = new Cpu(mmu, interruptManager);
 
         var passed = false;
         string? failure = null;

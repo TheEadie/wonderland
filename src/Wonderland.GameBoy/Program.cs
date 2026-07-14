@@ -16,9 +16,11 @@ return await rootCommand.Parse(args).InvokeAsync();
 
 void RunEmulator(string romPath)
 {
-    var mmu = new Mmu();
+    var serialOutput = new MemoryStream();
+    var interruptManager = new InterruptManager();
+    var mmu = new Mmu(serialOutput, interruptManager);
     mmu.LoadCart(romPath);
-    var cpu = new Cpu(mmu);
+    var cpu = new Cpu(mmu, interruptManager);
 
     while (true)
     {

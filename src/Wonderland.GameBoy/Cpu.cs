@@ -12,12 +12,12 @@ public class Cpu
     private OpCode _currentOpCode;
     private int _currentOpCodeMachineCycle;
 
-    public Cpu(Mmu mmu)
+    public Cpu(Mmu mmu, InterruptManager  interruptManager)
     {
         _mmu = mmu;
 
         _registers = new Registers();
-        _interruptManager = new InterruptManager();
+        _interruptManager = interruptManager;
         _opCodeHandler = new OpCodeHandler();
         _currentOpCode = new OpCode(0x00, "NULL", 1, 4, [(_, _, _) => true]);
 
@@ -36,12 +36,11 @@ public class Cpu
 
     public void Step()
     {
-        _interruptManager.Step();
-
         var opCodeComplete = RunNextSubInstruction();
+
         if (opCodeComplete)
         {
-            _currentOpCode = FetchAndDecode();
+            _currentOpCode = _interruptManager.CheckAndDispatch() ?? FetchAndDecode();
             _currentOpCodeMachineCycle = 0;
         }
         else
