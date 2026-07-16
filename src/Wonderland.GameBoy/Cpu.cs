@@ -36,6 +36,18 @@ public class Cpu
 
     public void Step()
     {
+        if (_interruptManager.HaltCpu)
+        {
+            if (!_interruptManager.AnyPending())
+            {
+                return;
+            }
+            _interruptManager.HaltCpu  = false;
+            _currentOpCode = _interruptManager.CheckAndDispatch() ?? FetchAndDecode();
+            _currentOpCodeMachineCycle = 0;
+            return;
+        }
+
         var opCodeComplete = RunNextSubInstruction();
 
         if (opCodeComplete)
@@ -60,7 +72,15 @@ public class Cpu
             ? _opCodeHandler.LookupCb(_mmu.GetMemory((ushort)(memory + 1)))
             : _opCodeHandler.Lookup(opCode);
 
-        _registers.PC += (ushort)(opCode == 0xCB ? 2 : 1);
+        if (_interruptManager.HaltBug)
+        {
+            _interruptManager.HaltBug = false;
+        }
+        else
+        {
+            _registers.PC += (ushort)(opCode == 0xCB ? 2 : 1);
+        }
+
         return decoded;
     }
 }

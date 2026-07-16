@@ -9,6 +9,7 @@ public class CpuInstrsTests
     private static readonly string[] SubTests =
     [
         "01-special",
+        "02-interrupts",
         "03-op sp,hl",
         "04-op r,imm",
         "05-op rp",
