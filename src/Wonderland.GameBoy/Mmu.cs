@@ -4,7 +4,7 @@ using s8 = sbyte;
 
 namespace Wonderland.GameBoy;
 
-public class Mmu(Stream serialOutput, InterruptManager interruptManager)
+public class Mmu(Stream serialOutput, InterruptManager interruptManager, Timer timer)
 {
     private readonly u8[] _memory = new u8[65_536];
 
@@ -39,6 +39,18 @@ public class Mmu(Stream serialOutput, InterruptManager interruptManager)
                 return;
             case 0xFF0F:
                 interruptManager.IF = value;
+                return;
+            case 0xFF07:
+                timer.TAC = value;
+                return;
+            case 0xFF06:
+                timer.TMA = value;
+                return;
+            case 0xFF05:
+                timer.TIMA = value;
+                return;
+            case 0xFF04:
+                timer.DIV = value;
                 return;
             case 0xFF02 when value == 0x81:
                 serialOutput.WriteByte(GetMemory(0xFF01));

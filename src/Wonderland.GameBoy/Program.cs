@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using Wonderland.GameBoy;
+using Timer = Wonderland.GameBoy.Timer;
 
 var romArg = new Argument<string>("rom-path")
 {
@@ -18,12 +19,14 @@ void RunEmulator(string romPath)
 {
     var serialOutput = new MemoryStream();
     var interruptManager = new InterruptManager();
-    var mmu = new Mmu(serialOutput, interruptManager);
+    var timer = new Timer(interruptManager);
+    var mmu = new Mmu(serialOutput, interruptManager, timer);
     mmu.LoadCart(romPath);
     var cpu = new Cpu(mmu, interruptManager);
 
     while (true)
     {
+        timer.Step();
         cpu.Step();
     }
 }

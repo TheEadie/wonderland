@@ -1,0 +1,123 @@
+namespace Wonderland.GameBoy;
+
+public class Timer(InterruptManager interruptManager)
+{
+    public byte DIV
+    {
+        get => (byte)(_systemCounter >> 8);
+        set
+        {
+            _systemCounter = 0;
+            CheckForEdge();
+        }
+    }
+
+    public byte TIMA
+    {
+        get;
+        set
+        {
+            if (_overflowPending)
+            {
+                _overflowPending = false;
+            }
+            field = value;
+        }
+    }
+
+    public byte TMA
+    {
+        get;
+        set
+        {
+            field = value;
+            if (_overflowPending)
+            {
+                TIMA = value;
+            }
+        }
+    }
+
+    public byte TAC
+    {
+        get;
+        set
+        {
+            var oldWatch = CurrentWatchValue();
+            field = (byte)(value & 0x07);
+            var newWatch = CurrentWatchValue();
+            if (oldWatch && !newWatch)
+            {
+                IncrementTIMA();
+            }
+            _lastWatchValue = newWatch;
+        }
+    }
+
+    public bool TimerEnabled => (TAC & 0x04) != 0;
+    public TimerFrequency TimerFrequency => (TimerFrequency)(TAC & 0x03);
+
+    private readonly int[] _watchBit =
+    [
+        9,
+        3,
+        5,
+        7
+    ];
+
+    private ushort _systemCounter;
+    private bool _lastWatchValue;
+    private bool _overflowPending;
+
+    public void Step()
+    {
+        if (_overflowPending)
+        {
+            TIMA = TMA;
+            _overflowPending = false;
+            interruptManager.RequestInterrupt(InterruptSource.Timer);
+        }
+        _systemCounter += 4;
+        CheckForEdge();
+    }
+
+    private void CheckForEdge()
+    {
+        var current = CurrentWatchValue();
+
+        if (_lastWatchValue && !current)
+        {
+            IncrementTIMA();
+        }
+
+        _lastWatchValue = current;
+    }
+
+    private bool CurrentWatchValue()
+    {
+        var watch = _watchBit[(int)TimerFrequency];
+        var value = ((_systemCounter >> watch) & 1) != 0;
+        return value && TimerEnabled;
+    }
+
+    private void IncrementTIMA()
+    {
+        if (TIMA == 0xFF)
+        {
+            TIMA = 0x00;
+            _overflowPending = true;
+        }
+        else
+        {
+            TIMA++;
+        }
+    }
+}
+
+public enum TimerFrequency
+{
+    MCycles256 = 0,
+    MCycles4 = 1,
+    MCycles16 = 2,
+    MCycles64 = 3
+}
