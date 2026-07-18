@@ -19,6 +19,10 @@ public class Mmu(Stream serialOutput, InterruptManager interruptManager, Timer t
         {
             0xFFFF => interruptManager.IE,
             0xFF0F => interruptManager.IF,
+            0xFF07 => timer.TAC,
+            0xFF06 => timer.TMA,
+            0xFF05 => timer.TIMA,
+            0xFF04 => timer.DIV,
             _ => _memory[location]
         };
 
@@ -27,6 +31,10 @@ public class Mmu(Stream serialOutput, InterruptManager interruptManager, Timer t
         {
             0xFFFF => unchecked((s8)interruptManager.IE),
             0xFF0F => unchecked((s8)interruptManager.IF),
+            0xFF07 => unchecked((s8)timer.TAC),
+            0xFF06 => unchecked((s8)timer.TMA),
+            0xFF05 => unchecked((s8)timer.TIMA),
+            0xFF04 => unchecked((s8)timer.DIV),
             _ => unchecked((s8)_memory[location])
         };
 
