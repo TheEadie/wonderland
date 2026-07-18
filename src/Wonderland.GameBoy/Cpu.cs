@@ -4,11 +4,12 @@ namespace Wonderland.GameBoy;
 
 public class Cpu
 {
+    public Registers Registers { get; }
+
     private readonly InterruptManager _interruptManager;
     private readonly Mmu _mmu;
 
     private readonly OpCodeHandler _opCodeHandler;
-    private readonly Registers _registers;
     private OpCode _currentOpCode;
     private int _currentOpCodeMachineCycle;
 
@@ -16,22 +17,22 @@ public class Cpu
     {
         _mmu = mmu;
 
-        _registers = new Registers();
+        Registers = new Registers();
         _interruptManager = interruptManager;
         _opCodeHandler = new OpCodeHandler();
         _currentOpCode = new OpCode(0x00, "NULL", 1, 4, [(_, _, _) => true]);
 
-        _registers.PC = 0x100;
-        _registers.A = 0x01;
-        _registers.F = 0x00;
-        _registers.FlagZ = true;
-        _registers.B = 0x00;
-        _registers.C = 0x13;
-        _registers.D = 0x00;
-        _registers.E = 0xD8;
-        _registers.H = 0x01;
-        _registers.L = 0x4D;
-        _registers.SP = 0xFFFE;
+        Registers.PC = 0x100;
+        Registers.A = 0x01;
+        Registers.F = 0x00;
+        Registers.FlagZ = true;
+        Registers.B = 0x00;
+        Registers.C = 0x13;
+        Registers.D = 0x00;
+        Registers.E = 0xD8;
+        Registers.H = 0x01;
+        Registers.L = 0x4D;
+        Registers.SP = 0xFFFE;
     }
 
     public void Step()
@@ -62,11 +63,11 @@ public class Cpu
     }
 
     private bool RunNextSubInstruction() =>
-        _currentOpCode.Steps[_currentOpCodeMachineCycle](_registers, _mmu, _interruptManager);
+        _currentOpCode.Steps[_currentOpCodeMachineCycle](Registers, _mmu, _interruptManager);
 
     private OpCode FetchAndDecode()
     {
-        var memory = _registers.PC;
+        var memory = Registers.PC;
         var opCode = _mmu.GetMemory(memory);
         var decoded = opCode == 0xCB
             ? _opCodeHandler.LookupCb(_mmu.GetMemory((ushort)(memory + 1)))
@@ -78,7 +79,7 @@ public class Cpu
         }
         else
         {
-            _registers.PC += (ushort)(opCode == 0xCB ? 2 : 1);
+            Registers.PC += (ushort)(opCode == 0xCB ? 2 : 1);
         }
 
         return decoded;

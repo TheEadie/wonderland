@@ -1,37 +1,19 @@
 using System.Text;
 
-namespace Wonderland.GameBoy.Tests;
+namespace Wonderland.GameBoy.Tests.Blargg;
 
-public class CpuInstrsTests
+internal static class BlarggRunner
 {
     private const int StepLimit = 50_000_000;
 
-    private static readonly string[] SubTests =
-    [
-        "01-special",
-        "02-interrupts",
-        "03-op sp,hl",
-        "04-op r,imm",
-        "05-op rp",
-        "06-ld r,r",
-        "07-jr,jp,call,ret,rst",
-        "08-misc instrs",
-        "09-op r,r",
-        "10-bit ops",
-        "11-op a,(hl)"
-    ];
-
-    [TestCaseSource(nameof(SubTests))]
-    public void RunCpuInstrsSubTest(string subTest)
+    public static void Run(params string[] romSegments)
     {
-        var repoRoot = FindRepoRoot();
-        var romPath = repoRoot is null
-            ? null
-            : Path.Combine(repoRoot, "roms", "gameboy", "cpu_instrs", "individual", $"{subTest}.gb");
+        var romPath = RepoPaths.GameBoyRomPath(romSegments);
+        var romRelativePath = string.Join('/', romSegments);
 
         if (romPath is null || !File.Exists(romPath))
         {
-            Assert.Ignore($"ROM file not found: roms/gameboy/cpu_instrs/individual/{subTest}.gb");
+            Assert.Ignore($"ROM file not found: roms/gameboy/{romRelativePath}");
             return;
         }
 
@@ -69,7 +51,7 @@ public class CpuInstrsTests
         }
         catch (Exception ex)
         {
-            failure = $"Exception while running '{subTest}': {ex}{Environment.NewLine}"
+            failure = $"Exception while running '{romRelativePath}': {ex}{Environment.NewLine}"
                 + $"Serial so far:{Environment.NewLine}{Encoding.ASCII.GetString(serial.ToArray())}";
         }
 
@@ -81,21 +63,5 @@ public class CpuInstrsTests
         Assert.Fail(failure
             ?? $"Timed out after {StepLimit} steps without Passed/Failed.{Environment.NewLine}"
                 + $"Serial so far:{Environment.NewLine}{Encoding.ASCII.GetString(serial.ToArray())}");
-    }
-
-    private static string? FindRepoRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "wonderland.sln")))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        return null;
     }
 }
