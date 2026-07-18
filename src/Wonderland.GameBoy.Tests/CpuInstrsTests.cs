@@ -36,12 +36,8 @@ public class CpuInstrsTests
         }
 
         var serial = new MemoryStream();
-        var interruptManager = new InterruptManager();
-        var timer  = new Timer(interruptManager);
-        var mmu = new Mmu(serial, interruptManager, timer);
-        mmu.LoadCart(romPath);
-
-        var cpu = new Cpu(mmu, interruptManager);
+        var emulator = new Emulator(serial);
+        emulator.Load(romPath);
 
         var passed = false;
         string? failure = null;
@@ -50,8 +46,7 @@ public class CpuInstrsTests
         {
             for (var step = 0; step < StepLimit; step++)
             {
-                timer.Step();
-                cpu.Step();
+                emulator.Step();
                 if (serial.Length == lastLength)
                 {
                     continue;
