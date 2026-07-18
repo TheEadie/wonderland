@@ -14,14 +14,22 @@ public class Timer(InterruptManager interruptManager)
 
     public byte TIMA
     {
-        get;
+        get => _tima;
         set
         {
             if (_overflowPending)
             {
                 _overflowPending = false;
+                _tima = value;
+                return;
             }
-            field = value;
+
+            if (_reloading)
+            {
+                return;
+            }
+
+            _tima = value;
         }
     }
 
@@ -31,9 +39,9 @@ public class Timer(InterruptManager interruptManager)
         set
         {
             field = value;
-            if (_overflowPending)
+            if (_reloading)
             {
-                TIMA = value;
+                _tima = value;
             }
         }
     }
@@ -68,13 +76,18 @@ public class Timer(InterruptManager interruptManager)
     private ushort _systemCounter;
     private bool _lastWatchValue;
     private bool _overflowPending;
+    private bool _reloading;
+    private byte _tima;
 
     public void Step()
     {
+        _reloading = false;
+
         if (_overflowPending)
         {
-            TIMA = TMA;
+            _tima = TMA;
             _overflowPending = false;
+            _reloading = true;
             interruptManager.RequestInterrupt(InterruptSource.Timer);
         }
         _systemCounter += 4;
@@ -102,14 +115,14 @@ public class Timer(InterruptManager interruptManager)
 
     private void IncrementTIMA()
     {
-        if (TIMA == 0xFF)
+        if (_tima == 0xFF)
         {
-            TIMA = 0x00;
+            _tima = 0x00;
             _overflowPending = true;
         }
         else
         {
-            TIMA++;
+            _tima++;
         }
     }
 }
