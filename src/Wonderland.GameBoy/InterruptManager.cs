@@ -22,7 +22,10 @@ public class InterruptManager
 
     public void EnableInterruptsWithDelay()
     {
-        _enableDelay = 2;
+        if (_enableDelay == 0)
+        {
+            _enableDelay = 2;
+        }
     }
 
     public void EnableInterrupts()
